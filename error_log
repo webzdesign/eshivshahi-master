@@ -1,0 +1,6 @@
+[31-Aug-2018 13:35:46 UTC] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 199233536 bytes) in /home/eshivhlh/public_html/app/Http/Controllers/VendorAccountantController.php on line 68
+[07-Sep-2018 13:52:40 UTC] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 199233536 bytes) in /home/eshivhlh/public_html/test/app/Http/Controllers/UserController.php on line 41
+[07-Sep-2018 14:45:11 UTC] PHP Fatal error:  Constant expression contains invalid operations in /home/eshivhlh/public_html/test/app/Http/Controllers/VendorController.php on line 20
+[07-Sep-2018 14:45:24 UTC] PHP Fatal error:  Constant expression contains invalid operations in /home/eshivhlh/public_html/test/app/Http/Controllers/VendorController.php on line 20
+[07-Sep-2018 14:46:10 UTC] PHP Fatal error:  Constant expression contains invalid operations in /home/eshivhlh/public_html/test/app/Http/Controllers/VendorController.php on line 21
+[08-Sep-2018 12:51:03 Etc/GMT] PHP Warning:  proc_open(): fork failed - Cannot allocate memory in phar:///opt/cpanel/composer/bin/composer/vendor/symfony/console/Application.php on line 958
