@@ -10,19 +10,11 @@ class Vehicle extends Model
     use SoftDeletes;
 
     protected $fillable = [
-       'division_id','vendor_id' ,'depot_id','bus_type','vehicle_no', 'created_by', 'updated_by'
+       'vendor_id', 'bus_type', 'vehicle_no', 'status', 'created_by', 'updated_by'
     ];
 
     protected $dates = ['deleted_at'];
 
-    public function division()
-    {
-        return $this->belongsTo(Division::class);
-    }
-    public function depot()
-    {
-        return $this->belongsTo(Depot::class);
-    }
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);

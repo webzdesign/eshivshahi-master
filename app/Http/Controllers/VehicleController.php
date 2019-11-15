@@ -6,8 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Model\Vehicle;
 use Illuminate\Http\Request;
-use App\Model\Division;
-use App\Model\Depot;
 use App\Model\Vendor;
 use App\Model\VendorManager;
 use DataTables;
@@ -21,11 +19,7 @@ class VehicleController extends Controller
     public $view = 'vehicle';
     public $primaryId = 'id';
     public $moduleName = 'Vehicle';
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         if (auth()->user()->usertype_id!='1') {
@@ -35,24 +29,22 @@ class VehicleController extends Controller
         $title=$this->moduleName;
         $module='modal';
         $tabletype='serverside';
-        $divisions=Division::get();
         $user=User::findorfail(Auth::user()->id);
-        $depots=Depot::get();
         $vendors=Vendor::get();
-        $vendorselected=VendorManager::where('user_id',Auth::user()->id)->get();
+        $vendorselected=VendorManager::where('user_id', Auth::user()->id)->get();
         $dataurl='vehicledata';
         $validateurl='validatevehiclenum';
         $action='insert';
         $checkremote=true;
         $route=$this->route;
-        return view($this->view.'/index',compact('title','divisions','validateurl','depots','route','action','dataurl','tabletype','module','checkremote','user','vendors','vendorselected'));
+        return view($this->view.'/index',compact('title','validateurl','route','action','dataurl','tabletype','module','checkremote','user','vendors','vendorselected'));
     }
 
     public function vehicledata()
     {
         if(Auth::user()->usertype_id ==1)
         {
-            $vehicles=Vehicle::with(['division','depot','vendor'])->get();
+            $vehicles=Vehicle::with(['vendor'])->get();
         }
         else{
             $vendor=VendorManager::where('user_id',Auth::user()->id)->get();
@@ -64,7 +56,7 @@ class VehicleController extends Controller
             {
                 $vendor_id='';
             }
-            $vehicles=Vehicle::with(['division','depot','vendor'])->where('vendor_id',$vendor_id)->get();
+            $vehicles=Vehicle::with(['vendor'])->where('vendor_id',$vendor_id)->get();
         }
 
 
@@ -89,7 +81,7 @@ class VehicleController extends Controller
                     $actions .= "<a id='inactive' href='".$inactiveUrl."' class='btn btn-danger btn-xs'><i class='fa fa-times'></i> Inactive</a>";
                 }
                 return $actions;
-                })
+            })
             ->addColumn('bus_type', function($vehicles) {
                 return ucwords($vehicles->bus_type);
             })
@@ -100,7 +92,6 @@ class VehicleController extends Controller
 
     public function vehicleactiveinactive($type,$id)
     {
-        //echo $type; echo $id;exit();
         if ($type == 'active') {
             Vehicle::where('id', $id)->update(['status'=>'1']);
             Helper::activeInactiveMsg('active', $this->msgName);
@@ -111,47 +102,10 @@ class VehicleController extends Controller
         return redirect('vehicle');
     }
 
-
-    public function create()
-    {
-        //
-    }
-
-	public function getDepot(Request $req)
-	{
-		$divisionId = $req->division_id;
-		$depotData = Depot::where('division_id',$divisionId)->get();
-		echo '<option value=""></option>';
-		if(!empty($depotData)){
-			foreach($depotData as $depotVal){
-				echo '<option value="'.$depotVal->id.'">'.$depotVal->name.'</option>';
-			}
-		}
-	}
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-    //     /* $vendor=Vendor::where('user_id',Auth::user()->id)->get(); */
-	// 	if(Auth::user()->usertype_id==1)
-    //    {
-    //        /* User Id Fixed For Fix Error Temporary */
-    //        $vendor = VendorManager::where('user_id',22)->get(); /* Hardik */
-
-
-    //    }
-    //    else
-    //    {
-    //         $vendor =VendorManager::where('user_id',Auth::user()->id)->get(); /* Hardik */
-    //    }
-
         $created_by=auth()->user()->id;
-        if(Vehicle::create(array_merge($request->except(['id','action','hidden_depot_id']),['created_by' =>$created_by])))
+        if(Vehicle::create(array_merge($request->except(['id','action']),['created_by' =>$created_by])))
         {
             echo json_encode(true);
         }
@@ -162,23 +116,6 @@ class VehicleController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Model\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Vehicle $vehicle)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Model\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         if (auth()->user()->usertype_id!='1') {
@@ -191,16 +128,10 @@ class VehicleController extends Controller
         return $vehicle;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Model\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Vehicle $vehicle)
     {
         $updated_by=auth()->user()->id;
+
         if(Vehicle::find($request->id)->update(array_merge($request->all(),['updated_by' =>$updated_by]))){
             echo json_encode(true);
         }
@@ -210,12 +141,6 @@ class VehicleController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Model\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Vehicle $vehicle )
     {
         $vehicle->delete();
