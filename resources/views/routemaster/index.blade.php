@@ -112,93 +112,60 @@
 @endsection
 @section('script')
 <script>
-  jQuery(document).ready(function() {
-    var form=$("#frm");
-    docdatatable=$('#datatable-responsive').DataTable({
-      processing: true,
-      serverSide: true,
-      ajax:{
-            "url": "{{ url($dataurl) }}",
-            "dataType": "json",
-            "type": "get",
-            },
-      columns: [
-            { data: 'id',searchable: false,visible:false},
-            { data: 'DT_Row_Index',searchable: false,orderable: false},
-            { data: 'name'},
-            { data: 'from_depot'},
-            { data: 'to_division'},
-            { data: 'to_depot'},
-            { data: 'scheduled_km'},
-            { data: 'trip_time'},
-            { data: 'scheduled_time'},
-            { data: 'action',orderable: false, searchable: false},
-          ]
-      });
-      $("#new").click(function(){
-        var user='{{Auth::user()->usertype_id}}';
-        @if(isset($vendorselected[0]))
-        var vendor='{{$vendorselected[0]->vendor_id}}';
-        @else
-          var vendor='';
-        @endif
-        if(user !='1')
-        {
-          $("select[name='vendor_id']").val(vendor).trigger('change');
-        }
-        else
-        {
-          $("select[name='vendor_id']").val('').trigger('change');
-        }
-      });
-   var form=$("#frm");
-
-  $('#frm').validate({
-    errorClass: 'errors',
-    rules:
-    {
-      from_depot:{required:true,},
-      to_depot:{required:true,},
-      scheduled_km:{required:true,},
-    },
-    messages:
-    {
-      from_depot:{required:"Please Select From Depot",},
-      to_depot:{required:"Please Select To Depot ",},
-      scheduled_km:{required:"Please Enter Km",},
-    },
-    errorPlacement: function(error, element){
-      error.appendTo(element.parent("div"));
-    },
-    submitHandler: function(form) {
-      $(':input[type="submit"]').prop('disabled', true);
-    }
-  });
-
-  $(document).on("click", "#new", function (event) {
-	  $("#id").val('');
-	  $("#hidden_depot_id").val('');
-  });
-
-  $(document).on("click", "#edit", function (event) {
-    var id = $(this).data('id');
-    var u= '/'+id+'/edit';
-    $.ajax({
-        type: 'GET',
-        url: "{{ url($route) }}"+u,
-        dataType:'json',
-        success: function(res){
-          $('input[name=id]').val(res.id);
-          $('input[name=scheduled_km]').val(res.scheduled_km);
-          $('input[type=submit]').val(res.button);
-          $("#action").val(res.action);
-          $('select[name=from_depot]').val(res.from_depot).trigger('change');
-          $('select[name=to_depot]').val(res.to_depot).trigger('change');
-          $("#frm").append(" <input type='hidden' name='_method' value='PUT'>");
-        }
+jQuery(document).ready(function() {
+  var form=$("#frm");
+  docdatatable=$('#datatable-responsive').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{url('routeMasterData') }}",
+    columns: [
+          { data: 'id',searchable: false,visible:false},
+          { data: 'DT_Row_Index',searchable: false,orderable: false},
+          { data: 'name'},
+          { data: 'from_depot'},
+          { data: 'to_division'},
+          { data: 'to_depot'},
+          { data: 'scheduled_km'},
+          { data: 'trip_time'},
+          { data: 'scheduled_time'},
+          { data: 'action',orderable: false, searchable: false},
+        ]
     });
-  });
 
+
+    $(document).on('click', '#activate', function(e) {
+      e.preventDefault();
+      var linkURL = $(this).attr("href");
+      swal({
+        title: "Are you sure want to Activate?",
+        text: "As that can be undone by doing reverse.",
+        icon: "success",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          window.location.href = linkURL;
+        }
+      });
+    });
+
+    $(document).on('click', '#deactivate', function(e) {
+      e.preventDefault();
+      var linkURL = $(this).attr("href");
+      swal({
+        title: "Are you sure want to Deactivate?",
+        text: "As that can be undone by doing reverse.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          window.location.href = linkURL;
+        }
+      });
+    });
 
 });
 </script>

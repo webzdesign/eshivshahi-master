@@ -241,9 +241,11 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 	 Route::resource('ratemaster','RateMasterController');
 
 	/* Route Master */
-	Route::get('routemasterdata','RouteMasterController@routeMasterData');
+	Route::get('routeMasterData','RouteMasterController@routeMasterData');
 	Route::post('getdepot','RouteMasterController@getdepot');
 	Route::post('checkmaxIdelingMinutes','RouteMasterController@checkmaxIdelingMinutes');
+	Route::get('routeActiveInactive/{type}/{id}', 'RouteMasterController@routeActiveInactive');
+	Route::post('checkScheduledTiming','RouteMasterController@checkScheduledTiming');
 	Route::resource('routemaster','RouteMasterController');
 
 
