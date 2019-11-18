@@ -106,11 +106,12 @@
 									<tbody>
 										<tr>
 										    <td>
-											    <input type="text" class="form-control numberonly s_time" name="s_time" id="s_time" value="{{date('H:i',strtotime($routemaster->scheduled_time)) }}" placeholder="Timing" />
+											    <input type="text" class="form-control numberonly s_time" name="s_time" id="s_time" value="{{date('H:i',strtotime($routemaster->scheduled_time)) }}" placeholder="Timing" readonly/>
 										    </td>
 									    </tr>
 									</tbody>
 								</table>
+								<label id="s_time_server_error" class="server_time_label" name="server_s_time"></label>
 							</div>
 						</div>
 
@@ -150,9 +151,10 @@
 <script>
 
 jQuery(document).ready(function() {
-
+	var serverStatus = 0;
     $('.s_time').datetimepicker({
-      format: 'HH:mm',
+	  format: 'HH:mm',
+	  ignoreReadonly: true
     });
     var form=$("#frm");
 
@@ -182,57 +184,58 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	function checkvalidtime(s_time){
+		var id = $('#id').val();
+		var division_id = $('#division_id').val();
+		var from_depot = $('#from_depot').val();
+		var to_division = $('#to_division').val();
+		var to_depot = $('#to_depot').val();
 
-    $(document).on('click','.add-row' ,function(event){
+		$.ajax({
+			url: "{{url('/checkScheduledTiming')}}",
+			type: "POST",
+			dataType:'json',
+			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time },
+			success:function(data){
+				if(data == false){
+					serverStatus = 1;
+					var str = 'This Schedule Time is already used this Route';
+					var result = str.fontcolor("red");
+					$('body').find('.server_time_label').html(result);
+				} else {
+					serverStatus = 0;
+				}
+			},
+		});
+	}
 
-    	var num = $('.scheduled_time').length;
-      	var t=$(this).closest('.scheduled_time');
-		t.find('.s_time').datetimepicker('destroy');
+	$('.s_time').on('dp.change', function(e){
+		var s_time = $(this).val();
+		checkvalidtime(s_time);
+	});
 
-      	var clone=$(t).clone(true,true);
+/*	function validationCheck() {
+		var timeVals = [];
+		var submitStatus = 0;
+		$('.s_time').each(function (){
+			if($(this).val() !=''){
+				var val = $(this).val();
+				if (jQuery.inArray( val,timeVals ) !== -1) {
+					submitStatus = 1;
+						var str = 'Scheduled Time Already Exists.';
+						var result = str.fontcolor("red");
+						$('body').find('.time_label').html(result);
 
-		clone.find('input').val('');
-		$("#scheduled_time tbody").children().last().after(clone);
-		clone.find(".s_time").attr('id', 's_time['+num+']').attr('name', 's_time['+num+']');
-		clone.find(".s_time").datetimepicker({ format: 'HH:mm'});
-
-		clone.find('td').each(function() {
-			var el = $(this).find(':first-child');
-			var elthis = "#"+el.attr("id");
-			var id = el.attr('id') || null;
-
-			if (id) {
-				var i = id.substr(elthis.indexOf("[")-1);
-				var j= i.replace(/[\[\]]+/g,'');
-				var prefix = id.substr(0, elthis.indexOf("[")-1);
-				if(j > -1){
-					if(prefix=="s_time"){
-					if(el.next().hasClass('errors')){
-						el.next().remove();
-					}
-					el.addClass('s_time');
-					}
+				} else{
+					submitStatus = 0;
+					$('body').find('.time_label').html('');
+					timeVals.push(val);
 				}
 			}
 		});
-		t.find(".s_time").datetimepicker({ format: 'HH:mm'});
-		clone.find(".s_time").rules('add', time_hr);
-    });
+		return submitStatus;
+	}*/
 
-    var time_hr =  {
-        required: true,
-        messages: {
-      	required: "Please Enter Scheduled Time",
-		}
-	}
-
-  	$(document).on('click','.delete-row' ,function(event){
-      if($(".scheduled_time").length>1){
-        $(this).closest(".scheduled_time").remove();
-      }
-    });
-
-    var form=$("#frm");
 	$('#frm').validate({
 
 		errorClass: 'errors',
@@ -277,10 +280,6 @@ jQuery(document).ready(function() {
 				error.insertAfter(element);
 			}
 		},
-		submitHandler: function(form) {
-			$(':input[type="submit"]').prop('disabled', true);
-			form.submit();
-		}
 	});
 
   	jQuery.validator.addMethod("alphanumspace", function(value, element) {
@@ -289,7 +288,22 @@ jQuery(document).ready(function() {
 
     jQuery.validator.addMethod("jquerynumber", function(value, element) {
         return this.optional(element) || /^[0-9]+$/i.test(value);
-    });
+	});
+
+	$("body").on("click","#form_btn",function(e){
+        e.preventDefault();
+
+        if ($("#frm").valid()) {
+            if (serverStatus == 0) {
+				$(':input[type="submit"]').prop('disabled', true);
+                $("#frm").submit();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+		}
+	});
 });
 
 </script>

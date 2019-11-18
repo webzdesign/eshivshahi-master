@@ -46,21 +46,6 @@
 									<select  id="from_depot" name="from_depot" style="width:100%;" class="form-control select2_single col-md-7 col-xs-12 from_depot">
 
 									<option value=""></option>
-
-									@if($action=='update')
-
-										@foreach($depots as $depot)
-
-										<!-- @if($depot->division_id == $routemaster->division_id) -->
-
-											<option value="{{ $depot->id }}" {{($depot->id==$routemaster->from_depot)?'selected':''}}>{{ $depot->name }}</option>
-
-										<!-- @endif -->
-
-										@endforeach
-
-									@endif
-
 									</select>
 
 								</div>
@@ -146,15 +131,17 @@
 									<tbody>
 										<tr class="scheduled_time">
 											<td>
-											    <input  type="text" class="form-control  s_time" name="s_time[0]" id="s_time[0]" value="" placeholder="Timing" />
+												<input  type="text" class="form-control  s_time" name="s_time[0]" id="s_time[0]" value="" placeholder="Timing" readonly/>
 											</td>
-											<td >
+											<td>
 												<button type="button" class="add-row btn btn-success">+</button>
 												<button type="button" class="delete-row btn btn-danger">-</button>
 											</td>
 										</tr>
 									</tbody>
 									</table>
+									<label id="s_time_server_error" class="server_time_label" name="server_s_time"></label>
+									<label id="s_time_error" class="time_label" name="s_time"></label>
 								</div>
 							</div>
 
@@ -196,9 +183,10 @@
 <script>
 
 jQuery(document).ready(function() {
-
+	var serverStatus = 0;
 	$('.s_time').datetimepicker({
 		format: 'HH:mm',
+		ignoreReadonly: true
 	});
 	var form=$("#frm");
 
@@ -229,13 +217,11 @@ jQuery(document).ready(function() {
 		});
 	});
 
-	$('body').on('change', '.s_time , .division_id, .from_depot, .to_division, .to_depot' ,function(){
-		var th = $(this);
-		var division_id = $(this).val();
-		var from_depot = $(this).val();
-		var to_division = $(this).val();
-		var to_depot = $(this).val();
-		var s_time = th.closest('tr').find('.s_time').val();
+	function checkvalidtime(s_time){
+		var division_id = $('#division_id').val();
+		var from_depot = $('#from_depot').val();
+		var to_division = $('#to_division').val();
+		var to_depot = $('#to_depot').val();
 
 		$.ajax({
 			url: "{{url('/checkScheduledTiming')}}",
@@ -243,69 +229,93 @@ jQuery(document).ready(function() {
 			dataType:'json',
 			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time },
 			success:function(data){
-
+				if(data == false){
+					serverStatus = 1;
+					var str = 'This Schedule Time is already used this Route';
+					var result = str.fontcolor("red");
+					$('body').find('.server_time_label').html(result);
+				} else {
+					serverStatus = 0;
+				}
 			},
-		});
-		getscheduletime();
-	});
-
-	function getscheduletime(){
-		$(".s_time").each(function(){
-			var th = $(this);
-			var s_time = th.closest('tr').find('.s_time').val();
-			alert(s_time);
 		});
 	}
 
+	$('.s_time').on('dp.change', function(e){
+		var s_time = $(this).val();
+		checkvalidtime(s_time);
+	});
+
+
   $(document).on('click','.add-row' ,function(event){
-			var num = $('.scheduled_time').length;
-			var t=$(this).closest('.scheduled_time');
+	var num = $('.scheduled_time').length;
+	var t=$(this).closest('.scheduled_time');
 
-			t.find('.s_time').datetimepicker('destroy');
-			var clone=$(t).clone(true,true);
+	t.find('.s_time').datetimepicker('destroy');
+	var clone=$(t).clone(true,true);
 
-			clone.find('input').val('');
-			$("#scheduled_time tbody").children().last().after(clone);
-			clone.find(".s_time").attr('id', 's_time['+num+']').attr('name', 's_time['+num+']');
-			clone.find(".s_time").datetimepicker({ format: 'HH:mm'});
-			clone.find('td').each(function() {
+	clone.find('input').val('');
+	$("#scheduled_time tbody").children().last().after(clone);
+	clone.find(".s_time").attr('id', 's_time['+num+']').attr('name', 's_time['+num+']');
+	clone.find(".s_time").datetimepicker({ format: 'HH:mm', ignoreReadonly: true});
+	clone.find('td').each(function() {
 
-		var el = $(this).find(':first-child');
-		var elthis = "#"+el.attr("id");
-		var id = el.attr('id') || null;
+	var el = $(this).find(':first-child');
+	var elthis = "#"+el.attr("id");
+	var id = el.attr('id') || null;
 
-			if (id) {
-				var i = id.substr(elthis.indexOf("[")-1);
-				var j= i.replace(/[\[\]]+/g,'');
-				var prefix = id.substr(0, elthis.indexOf("[")-1);
-				if(j > -1){
-					if(prefix=="s_time"){
-						if(el.next().hasClass('errors')){
-							el.next().remove();
-						}
-						el.addClass('s_time');
+		if (id) {
+			var i = id.substr(elthis.indexOf("[")-1);
+			var j= i.replace(/[\[\]]+/g,'');
+			var prefix = id.substr(0, elthis.indexOf("[")-1);
+			if(j > -1){
+				if(prefix=="s_time"){
+					if(el.next().hasClass('errors')){
+						el.next().remove();
 					}
+					el.addClass('s_time');
 				}
 			}
-		});
-		t.find(".s_time").datetimepicker({ format: 'HH:mm'});
-		clone.find(".s_time").rules('add', time_hr);
+		}
+	});
+	t.find(".s_time").datetimepicker({ format: 'HH:mm',ignoreReadonly: true});
+	clone.find(".s_time").rules('add', time_hr);
   });
 
     var time_hr =  {
         required: true,
         messages: {
       		required: "Please Enter Scheduled Time",
-        }
+        	}
  		}
 
   	$(document).on('click','.delete-row' ,function(event){
 		if($(".scheduled_time").length>1){
 			$(this).closest(".scheduled_time").remove();
 		}
-    });
+	});
 
-	var form=$("#frm");
+	function validationCheck() {
+		var timeVals = [];
+		var submitStatus = 0;
+		$('.s_time').each(function (){
+			if($(this).val() !=''){
+				var val = $(this).val();
+				if (jQuery.inArray( val,timeVals ) !== -1) {
+					submitStatus = 1;
+						var str = 'Scheduled Time Already Exists.';
+						var result = str.fontcolor("red");
+						$('body').find('.time_label').html(result);
+
+				} else{
+					submitStatus = 0;
+					$('body').find('.time_label').html('');
+					timeVals.push(val);
+				}
+			}
+		});
+		return submitStatus;
+	}
 
 	$('#frm').validate({
 
@@ -317,7 +327,6 @@ jQuery(document).ready(function() {
 			to_division:{required:true,},
 			scheduled_km:{required:true,},
 			maximum_ideling_minutes:{ required:true, jquerynumber:true, },
-
 			'scheduled_hr[0]':{required:true,},
 			'scheduled_min[0]':{required:true,},
 			's_time[0]':{required:true,},
@@ -334,7 +343,6 @@ jQuery(document).ready(function() {
 			maximum_ideling_minutes:{
 				required:"Please Enter Maximum Ideling Minutes",
 				jquerynumber:"Please Enter Positive Numbers",
-				/*remote:"Maximum Ideling Minutes Already Exists"*/
 			},
 			's_time[0]':{required:"Please Enter Sheduled Timing",},
 			'trip_hr':{required:"Please Enter Trip Hours",jquerynumber:"Please Enter Positive Numbers"},
@@ -348,10 +356,6 @@ jQuery(document).ready(function() {
 				error.insertAfter(element);
 			}
 		},
-		submitHandler: function(form) {
-			$(':input[type="submit"]').prop('disabled', true);
-			form.submit();
-		}
 	});
 
     jQuery.validator.addMethod("alphanumspace", function(value, element) {
@@ -360,7 +364,24 @@ jQuery(document).ready(function() {
 
     jQuery.validator.addMethod("jquerynumber", function(value, element) {
         return this.optional(element) || /^[0-9]+$/i.test(value);
-    });
+	});
+
+	$("body").on("click","#form_btn",function(e){
+        e.preventDefault();
+        validationCheck();
+        if ($("#frm").valid()) {
+			var submitStatus = validationCheck();
+
+            if (submitStatus == 0 && serverStatus == 0) {
+				$(':input[type="submit"]').prop('disabled', true);
+                $("#frm").submit();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+		}
+	});
 });
 </script>
 @endsection

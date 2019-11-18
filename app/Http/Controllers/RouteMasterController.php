@@ -186,10 +186,12 @@ class RouteMasterController extends Controller
 
     public function checkScheduledTiming(Request $request){
 
-        $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot', $request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->first();
-
-        echo $checkTime->scheduled_time; exit;
-        if($checkTime->scheduled_time > 0)
+        if (!isset($request->id)) {
+            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->first();
+        } else {
+            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->where('id', '!=', $request->id)->first();
+        }
+        if($checkTime)
         {
             echo json_encode(false);
         } else {
