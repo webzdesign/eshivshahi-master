@@ -72,6 +72,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 		Route::get('vehicledata','VehicleController@vehicledata');
 		Route::post('getRoutesVehicle','VendorinvoicesController@getRoutesVehicle');
 		Route::post('validatevehiclenum','VehicleController@validatevehiclenum');
+
 		/** Hardik (For Get Depot)**/
 	//	Route::post('/getvehicledepotdata','VehicleController@getDepot');
 	  /** Hardik End **/
@@ -124,8 +125,6 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 		Route::post('getavgrate','VendorinvoicesController@getavgrate');
 		Route::get('printVendorinvoice/{id}','VendorinvoicesController@printVendorinvoice');
 		Route::post('checkInvoiceDateVehicle','VendorinvoicesController@checkInvoiceDateVehicle');
-
-
 		Route::resource('vendorinvoice','VendorinvoicesController');
 
 

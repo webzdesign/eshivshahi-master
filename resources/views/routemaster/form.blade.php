@@ -266,7 +266,7 @@ jQuery(document).ready(function() {
 
 		if (id) {
 			var i = id.substr(elthis.indexOf("[")-1);
-			var j= i.replace(/[\[\]]+/g,'');
+			var j= i.replace(/[\[\]']+/g,'');
 			var prefix = id.substr(0, elthis.indexOf("[")-1);
 			if(j > -1){
 				if(prefix=="s_time"){

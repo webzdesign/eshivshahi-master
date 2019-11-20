@@ -38,7 +38,7 @@
                           <th>Sr no.</th>
                           <th>Vendor Name</th>
                           <th>Invoice No</th>
-                          <th>Vehicle No</th>
+                          <th>Route (Scheduled Time)</th>
                           <th>Invoice Date</th>
                           <th>Amount</th>
                           <th>Billing Period</th>
@@ -70,7 +70,7 @@
 							{data: 'DT_Row_Index'},
               {data: 'vendor_name'},
               {data: 'invoice_no'},
-              {data: 'vehicle_no'},
+              {data: 'route'},
               {data: 'date'},
               {data: 'grand_amount'},
               {data: 'billing_period'},

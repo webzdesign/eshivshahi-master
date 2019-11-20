@@ -46,32 +46,34 @@ class VendorinvoicesController extends Controller
     public function index(){
         $modulename = $this->modulename;
         $route = $this->route;
-        return view($this->view.'/index',compact('modulename','route'));
+        return view($this->view.'/index', compact('modulename', 'route'));
     }
 
     public function getVehicle(Request $request)
 	{
 		$vendorId = $request->vendor_id;
-		$vehicleData = Vehicle::where('status',1)->where('vendor_id',$vendorId)->get();
+		$vehicleData = Vehicle::where('status', 1)->where('vendor_id', $vendorId)->get();
 		if(count($vehicleData) > 0){
 			echo '<option value=""></option>';
 			foreach($vehicleData as $vehicleVal){
 				echo '<option value="'.$vehicleVal->id.'">'.$vehicleVal->vehicle_no.'</option>';
 			}
-		}else{
+		} else {
 			echo '<option value=""></option>';
 		}
     }
+
     public function getschedulekm(Request $request){
         $route_id = $request->route_id;
-        $scheduleKm = RouteMaster::where('id',$route_id)->first();
+        $scheduleKm = RouteMaster::where('id', $route_id)->first();
         $res[0] = $scheduleKm->scheduled_km;
         echo json_encode($res);
     }
+
     public function getavgrate(Request $request){
         $avgKm = $request->avgKm;
         $vehicle_id = $request->vehicle_id;
-        $rate = Helper::getRate($avgKm,$vehicle_id);
+        $rate = Helper::getRate($avgKm, $vehicle_id);
         $res[0] = $rate;
         echo json_encode($res);
     }
@@ -79,8 +81,7 @@ class VendorinvoicesController extends Controller
     public function getDepot(Request $request)
     {
         $division_id =  $request->division_id;
-
-        $getDepot = Depot::where('division_id',$division_id)->get();
+        $getDepot = Depot::where('division_id', $division_id)->get();
 
         if(count($getDepot) > 0){
 			echo '<option value=""></option>';
@@ -102,16 +103,14 @@ class VendorinvoicesController extends Controller
             $routes = DB::table('route_masters')
                 ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-                ->where('route_masters.division_id',$division_id)
-                ->where('route_masters.from_depot',$depot_id)
+                ->where('route_masters.division_id', $division_id)
+                ->where('route_masters.from_depot', $depot_id)
                 ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
                 ->get();
 
-            $vehicle = Vehicle::where('status',1)->where('division_id',$division_id)->where('depot_id',$depot_id)->where('vendor_id',$vendor_id)->get();
-
             $return['status'] = true;
             $return['routes'] = $routes;
-            $return['vehicle'] = $vehicle;
+
         } else  {
             $return['status'] = false;
         }
@@ -125,8 +124,10 @@ class VendorinvoicesController extends Controller
 		if(auth()->user()->usertype_id=='1'){
 				$vendorinvoice = DB::table('vendorinvoices')
                 ->join('vendors', 'vendorinvoices.vendor_id', '=', 'vendors.id')
-                ->join('vehicles', 'vendorinvoices.vehicle_id_reff', '=', 'vehicles.id')
-                ->select('vendorinvoices.*', 'vendors.vendor_name','vehicles.vehicle_no')
+                ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
+                ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -138,9 +139,11 @@ class VendorinvoicesController extends Controller
 				$vendordetail = Vendor::where('id',$vendor_id)->get();
 				$vendorinvoice = DB::table('vendorinvoices')
                 ->join('vendors', 'vendorinvoices.vendor_id', '=', 'vendors.id')
-                ->join('vehicles', 'vendorinvoices.vehicle_id_reff', '=', 'vehicles.id')
+                ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
+                ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->where('vendorinvoices.vendor_id',$vendor_id)
-                ->select('vendorinvoices.*', 'vendors.vendor_name','vehicles.vehicle_no')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -151,9 +154,12 @@ class VendorinvoicesController extends Controller
 				$vendordetail = Vendor::where('id',$vendor_id)->get();
 				$vendorinvoice = DB::table('vendorinvoices')
                 ->join('vendors', 'vendorinvoices.vendor_id', '=', 'vendors.id')
-                ->join('vehicles', 'vendorinvoices.vehicle_id_reff', '=', 'vehicles.id')
-				 ->where('vendorinvoices.vendor_id',$vendor_id)
-                ->select('vendorinvoices.*', 'vendors.vendor_name','vehicles.vehicle_no')
+                ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
+                ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
+				->where('vendorinvoices.vendor_id',$vendor_id)
+                ->select('vendorinvoices.*', 'vendors.vendor_name',
+                'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -162,10 +168,12 @@ class VendorinvoicesController extends Controller
                     $depotId = $this->depotId;
                     $vendorinvoice = DB::table('vendorinvoices')
                     ->join('vendors', 'vendorinvoices.vendor_id', '=', 'vendors.id')
-                    ->join('vehicles', 'vendorinvoices.vehicle_id_reff', '=', 'vehicles.id')
+                    ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
                     ->join('parisishtha_bs','vendorinvoices.id', '=', 'parisishtha_bs.vendorinvoice_id')
+                    ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                    ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.depot_id',$depotId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','vehicles.vehicle_no','parisishtha_bs.vendorinvoice_id')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
@@ -175,10 +183,12 @@ class VendorinvoicesController extends Controller
 
                     $vendorinvoice = DB::table('vendorinvoices')
                     ->join('vendors', 'vendorinvoices.vendor_id', '=', 'vendors.id')
-                    ->join('vehicles', 'vendorinvoices.vehicle_id_reff', '=', 'vehicles.id')
+                    ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
                     ->join('parisishtha_bs','vendorinvoices.id', '=', 'parisishtha_bs.vendorinvoice_id')
+                    ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                    ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.division_id',$divisionId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','vehicles.vehicle_no','parisishtha_bs.vendorinvoice_id')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
@@ -189,8 +199,8 @@ class VendorinvoicesController extends Controller
 
         return DataTables::of($vendorinvoice)
 				->addIndexColumn('id')
-                ->addColumn('vehicle_no', function ($vendorinvoice){
-                    return $vendorinvoice->vehicle_no;
+                ->addColumn('route', function ($vendorinvoice){
+                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.' ('.$vendorinvoice->scheduled_time.')';
                 })
                 ->editColumn('billing_period', function($vendorinvoice) {
                     $billing_period=explode(",",$vendorinvoice->billing_period);
@@ -218,8 +228,7 @@ class VendorinvoicesController extends Controller
                         {
                             $btn .='<a href="'.url($route.'/'.encrypt($editId)).'/edit" class="btn btn-warning btn-xs" ><i class="fa fa-eye"></i> Edit</a><a class="btn btn-danger btn-xs vendor-confirm-delete" data-id="'.Crypt::encryptString($deleteId).'" ><i class="fa fa-trash"></i> Delete</a>';
                         }
-                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
                         //$btn .='  <a href="'.url('/vendor_invoice_print/'.encrypt($printId)).'" target="_blank" class="btn btn-danger btn-xs" ><i class="fa fa-print"></i> Print</a>';
                     }
                     else if(Auth::user()->usertype_id=='2')
@@ -249,8 +258,7 @@ class VendorinvoicesController extends Controller
                 {
                     if(Auth::user()->usertype_id=='3')
                     {
-                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
                     }
                     else
                     {
@@ -290,23 +298,12 @@ class VendorinvoicesController extends Controller
             return redirect('home');
         }
 
+        $action = 'insert';
         $modulename = $this->modulename;
         $route = $this->route;
-        $action = 'insert';
         $vendors = Vendor::get();
-        // $vehicle = Vehicle::where('status',1)->get();
         $division = Division::get();
-        $cities = CityMaster::get();
-        // $routes = DB::table('route_masters')
-        //     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-        //     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-        //     ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-        //     ->get();
-        $depots = Depot::where('division_id',$this->divisionId)->get();
-        $getdata='getinvoice';
-        $checkinvoice='checkinvoice';
-        $checkvoucher ='checkvoucher';
-        $getinvoicedata='getinvoicedata';
+        $depots = Depot::where('division_id', $this->divisionId)->get();
         $userdepo = $this->depotId;
         $userdivision = $this->divisionId;
 
@@ -331,7 +328,7 @@ class VendorinvoicesController extends Controller
 
         $default_diseal = Charge::first();
 
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','getdata','getinvoicedata','checkinvoice','checkvoucher','depot','division','userdepo','userdivision','depots','cities','vendor_id','default_diseal'));
+        return view($this->view.'/form',compact('vendors', 'modulename', 'route', 'division','userdepo', 'userdivision', 'depots', 'vendor_id', 'default_diseal', 'action', 'vehicle'));
     }
 
 
@@ -370,7 +367,6 @@ class VendorinvoicesController extends Controller
             'billing_period'=>$billing_period,
             'vendor_id'=>$request->vendor_id,
             'invoice_no'=>$request->invoice_no,
-            'vehicle_id_reff'=>$request->vehicle_id_reff,
             'vehicle_id'=>$vehicle_id,
             'date'=>$date,
             'kms'=>$kms,
@@ -412,11 +408,8 @@ class VendorinvoicesController extends Controller
             Billsummary::where('parisishtha_b_id', $getParisishthaB->id)->update(['vendorinvoice_id'=>$lastInsertedId]);
         } */
 
-
         return redirect($this->route)->with('msg','Vendor Invoice Inserted Successfully');
     }
-
-
 
     public function show($id)
     {
@@ -427,7 +420,6 @@ class VendorinvoicesController extends Controller
         $vendors = Vendor::get();
         $vendorinvoices = Vendorinvoice::get();
         $depots = Depot::get();
-        $cities = CityMaster::get();
         $division = Division::get();
         $vehicle = Vehicle::where('status',1)->get();
         $routes = DB::table('route_masters')
@@ -435,66 +427,75 @@ class VendorinvoicesController extends Controller
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
             ->get();
-        $getdata='getinvoice';
-        $getinvoicedata='getinvoicedata';
-        $checkinvoice='checkinvoice';
-        $checkvoucher ='checkvoucher';
         $confirmvendorinvoice='confirmvendorinvoice';
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
         $default_diseal = Charge::first();
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','confirmvendorinvoice','routes','schduleKm', 'default_diseal'));
+        return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal'));
     }
 
 
     public function edit($id){
+
         if (auth()->user()->usertype_id=='1') {
             return redirect('home');
         }
-        $parisishthab = Vendorinvoice::with('depot')->findorfail(decrypt($id));
+
+        $parisishthab = Vendorinvoice::with('depot')->where('id', decrypt($id))->first();
+
         $modulename = $this->modulename;
         $route = $this->route;
         $action = 'update';
         $vendors = Vendor::get();
-
-
         $depots = Depot::get();
         $division = Division::get();
         $vendorId = $parisishthab->vendor_id;
-        $cities = CityMaster::get();
-        // $vehicle = Vehicle::where('status',1)->where('vendor_id',$vendorId)->get();
-        // $routes = DB::table('route_masters')
-        //     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-        //     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-        //     ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-        //     ->get();
 
         if($this->userTypeId == '1'){
+
             $vendorinvoices_id = ParisishthaB::where('id','!=',$parisishthab->id)->pluck('vendorinvoice_id')->toArray();
             $vendorinvoices_id = array_filter($vendorinvoices_id);
             $vendorinvoices = Vendorinvoice::whereNotIn('id',$vendorinvoices_id)->where('is_approved','1')->where('vendor_id',$vendorId)->get();
-        }else{
+        } else {
            if($this->userTypeId != '2' || $this->userTypeId != '3'){
                 $depot_id = $this->depotId;
                 $division_id = $this->divisionId;
                 $vendorinvoices_id = ParisishthaB::where('id','!=',$parisishthab->id)->pluck('vendorinvoice_id')->toArray();
                 $vendorinvoices_id = array_filter($vendorinvoices_id);
                 $vendorinvoices = Vendorinvoice::whereNotIn('id',$vendorinvoices_id)->where('is_approved','1')->where('vendor_id',$vendorId)->where('depot_id',$depot_id)->where('division_id',$division_id)->get();
-           }else{
+
+           } else {
                 $vendorinvoices_id = ParisishthaB::where('id','!=',$parisishthab->id)->pluck('vendorinvoice_id')->toArray();
                 $vendorinvoices_id = array_filter($vendorinvoices_id);
                 $vendorinvoices = Vendorinvoice::whereNotIn('id',$vendorinvoices_id)->where('is_approved','1')->where('vendor_id',$vendorId)->get();
            }
         }
 
+        if($this->userTypeId == '1'){
+            $vehicle = Vehicle::where('status', 1)->get();
+            $vendor_id = '';
+        } else {
+            if($this->userTypeId == '2'){
+                $id = auth()->user()->id;
+                $getvendorId = VendorManager::where('user_id', $id)->first();
+                $vendor_id = $getvendorId['vendor_id'];
+                $vehicle = Vehicle::where('status', 1)->where('vendor_id', $vendor_id)->get();
+            }
+            else if($this->userTypeId == '3')
+            {
+                $id = auth()->user()->id;
+                $getAccoutantId = VendorAccountant::where('user_id', $id)->first();
+                $vendor_id = $getAccoutantId['vendor_id'];
+                $vehicle = Vehicle::where('status', 1)->where('vendor_id', $vendor_id)->get();
+            }
+        }
+
         $default_diseal = Charge::first();
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-        $getdata='getinvoice';
-        $getinvoicedata='getinvoicedata';
-        $checkinvoice='checkinvoice';
-        $checkvoucher ='checkvoucher';
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','depots','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','schduleKm', 'default_diseal'));
+
+
+        return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal'));
     }
 
 
@@ -534,14 +535,12 @@ class VendorinvoicesController extends Controller
             $status=1;
         }
 
+
        $vendorinvoice=Vendorinvoice::findorfail($request->id);
        $vendorinvoice->route_id = $request->route_id;
-        $vendorinvoice->depot_id=$request->depot_id;
-        $vendorinvoice->division_id=$request->division_id;
         $vendorinvoice->billing_period=$billing_period;
         $vendorinvoice->vendor_id=$request->vendor_id;
         $vendorinvoice->invoice_no=$request->invoice_no;
-        $vendorinvoice->vehicle_id_reff = $request->vehicle_id_reff;
         $vendorinvoice->vehicle_id=$vehicle_id;
         $vendorinvoice->date=$date;
         $vendorinvoice->kms=$kms;
@@ -631,6 +630,7 @@ class VendorinvoicesController extends Controller
             echo json_encode(true);
         }
     }
+
     public function checkvoucher(Request $request)
     {
         if($request->id=='')
@@ -650,6 +650,7 @@ class VendorinvoicesController extends Controller
             echo json_encode(true);
         }
     }
+
     public function checkCityName(Request $request){
         $name = trim($request->name);
         $checkCity = CityMaster::where('name',$name)->get();
@@ -659,6 +660,7 @@ class VendorinvoicesController extends Controller
             echo json_encode(false);
         }
     }
+
     public function addCityName(Request $request){
         $name = ucwords(trim($request->name));
         $city = new CityMaster();
@@ -670,6 +672,7 @@ class VendorinvoicesController extends Controller
         echo json_encode($res);
         exit;
     }
+
     public function printInvoice($id)
     {
          $data = Vendorinvoice::find(decrypt($id))->toArray();
@@ -685,6 +688,7 @@ class VendorinvoicesController extends Controller
          $pdf = PDF::loadView($this->view.'/print',$data);
         return $pdf->stream();
     }
+
     public function confirmvendorinvoice(Request $request)
     {
 
@@ -692,7 +696,7 @@ class VendorinvoicesController extends Controller
         $vendor->is_approved=1;
         $vendor->save();
 
-        $checkParishisthb = ParisishthaB::where('vendor_id',$vendor->vendor_id)->where('vehicle_id_reff',$vendor->vehicle_id_reff)->where('billing_period',$vendor->billing_period)->get();
+        $checkParishisthb = ParisishthaB::where('vendor_id',$vendor->vendor_id)->where('route_id',$vendor->route_id)->where('billing_period',$vendor->billing_period)->get();
 
 
         if(! $checkParishisthb->isEmpty()){
@@ -706,6 +710,7 @@ class VendorinvoicesController extends Controller
         session()->flash('msg',$this->msgName.' Approved Successfully');
         return redirect(url($this->route));
     }
+
     public function checkDuplicateInvoice(Request $req)
     {
         $action = $req->action;
@@ -720,12 +725,12 @@ class VendorinvoicesController extends Controller
             echo json_encode(true);
         }
     }
+
     public function printVendorinvoice($id)
     {
-    	  $id = Crypt::decryptString($id);
+    	$id = Crypt::decryptString($id);
         $vendorinvoice_data = Vendorinvoice::findorfail($id);
         $vendors = Vendor::get();
-       // $vendorinvoices = Vendorinvoice::get();
         $depots = Depot::get();
         $cities = CityMaster::get();
         $division = Division::get();
@@ -739,9 +744,10 @@ class VendorinvoicesController extends Controller
         $pdf = PDF::loadHTML($html)->setPaper('a4', 'landscape')->setWarnings(false);
         return $pdf->stream('vendorinvoice','compress');
     }
+
     public function checkInvoiceDateVehicle(Request $request) {
 
-        $vahicleId = $request->vahicleId;
+        $routeId = $request->routeId;
         $fromDate = date("Y-m-d", strtotime($request->fromDate));
         $toDate = date("Y-m-d", strtotime($request->toDate));
         $action = $request->action;
@@ -750,9 +756,9 @@ class VendorinvoicesController extends Controller
         $billingPeriod = $fromDate.",".$toDate;
 
         if ($action == 'insert') {
-            $checkInvoice = Vendorinvoice::where('vehicle_id_reff', $vahicleId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         } else {
-            $checkInvoice = Vendorinvoice::where('id', '!=', $id)->where('vehicle_id_reff', $vahicleId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('id', '!=', $id)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         }
 
         if ($checkInvoice > 0) {
