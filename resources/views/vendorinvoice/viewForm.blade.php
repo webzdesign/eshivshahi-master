@@ -43,7 +43,7 @@ overflow-x: scroll; overflow-y:hidden;}
 					<div class="x_content">
 
 					<form id="frm_single" method="post" autocomplete="off" action ="{{$route}}"   class="form-horizontal form-label-left">
-							@method('PUT')
+
                             @csrf
 
 							<input type="hidden" name="id" id="id" value="{{isset($parisishthab->id)?$parisishthab->id:''}}">
@@ -75,7 +75,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <select disabled id="division_id" name="division_id"  class="form-control select2_single col-md-7 col-xs-12 division_id" style="width:100%;">
                                         <option value=""></option>
                                         @foreach($division as $key=>$val)
-                                            <option @if($action == 'update'){{ ($val->id == $parisishthab->division_id) ? 'selected' : '' }} @else {{ ($val->id == $userdivision) ? 'selected' : '' }}  @endif value="{{ $val->id }}">{{ $val->name }}</option>
+                                            <option @if($action == 'view'){{ ($val->id == $parisishthab->division_id) ? 'selected' : '' }} @else {{ ($val->id == $userdivision) ? 'selected' : '' }}  @endif value="{{ $val->id }}">{{ $val->name }}</option>
                                         @endforeach
                                     <select>
 								</div>
@@ -92,7 +92,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <select disabled id="depot_id" name="depot_id"  class="form-control select2_single col-md-7 col-xs-12 depot_id" style="width:100%;">
                                         <option value=""></option>
                                         @foreach($depots as $key=>$val)
-                                            <option @if($action == 'update' ){{ ($val->id == $parisishthab->depot_id) ? 'selected' : '' }} @else {{ ($val->id == $userdepo) ? 'selected' : '' }} @endif value="{{ $val->id }}">{{ $val->name }}</option>
+                                            <option @if($action == 'view' ){{ ($val->id == $parisishthab->depot_id) ? 'selected' : '' }} @else {{ ($val->id == $userdepo) ? 'selected' : '' }} @endif value="{{ $val->id }}">{{ $val->name }}</option>
                                         @endforeach
                                     <select>
 								</div>
@@ -111,7 +111,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                     <select>
                                 </div>
-                                <label id="sch_km" class="btn btn-danger">Min. Schedule KM : @if($action == 'update') {{ $schduleKm }} @endif</label>
+                                <label id="sch_km" class="btn btn-danger">Min. Schedule KM : @if($action == 'view') {{ $schduleKm }} @endif</label>
                             </div>
 
 							<div class="form-group">
@@ -501,7 +501,7 @@ jQuery(document).ready(function($){
             data:
             {
                 action:'{{$action}}',
-                id: @if($action=='update') {{$parisishthab->id}} @else 0 @endif,
+                id: {{$parisishthab->id}},
                 invoice_no: function()
                 {
                     return $('#frm_single :input[name="invoice_no"]').val();
@@ -1174,7 +1174,6 @@ jQuery(document).ready(function($){
             }
             calculatekms();
             var total_kms = $('#total_kms').val();
-
             var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
 
 
@@ -1711,7 +1710,7 @@ jQuery(document).ready(function($){
                         fromDate:fromDate,
                         toDate:toDate,
                         action:'{{$action}}',
-                        id:@if($action=='update') {{$parisishthab->id}} @else 0 @endif,
+                        id:{{$parisishthab->id}} ,
                     },
                     success:function(result) {
                         if (result==false) {
@@ -1740,6 +1739,8 @@ jQuery(document).ready(function($){
     $(".parking_exp").trigger('keyup');
     $(".other_exp").trigger('keyup');
     $("input[name='gov_diesel']").trigger('keyup');
+    $(".kms").trigger('keyup');
+
 
 
     $('input').prop('readonly',true);

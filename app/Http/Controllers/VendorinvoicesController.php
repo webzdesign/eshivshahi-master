@@ -127,7 +127,7 @@ class VendorinvoicesController extends Controller
                 ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
                 ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -143,7 +143,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->where('vendorinvoices.vendor_id',$vendor_id)
-                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -159,7 +159,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
 				->where('vendorinvoices.vendor_id',$vendor_id)
                 ->select('vendorinvoices.*', 'vendors.vendor_name',
-                'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
+                'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -173,7 +173,7 @@ class VendorinvoicesController extends Controller
                     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.depot_id',$depotId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
@@ -188,7 +188,7 @@ class VendorinvoicesController extends Controller
                     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.division_id',$divisionId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
@@ -200,7 +200,7 @@ class VendorinvoicesController extends Controller
         return DataTables::of($vendorinvoice)
 				->addIndexColumn('id')
                 ->addColumn('route', function ($vendorinvoice){
-                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.' ('.$vendorinvoice->scheduled_time.')';
+                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.'('.$vendorinvoice->scheduled_time.')';
                 })
                 ->editColumn('billing_period', function($vendorinvoice) {
                     $billing_period=explode(",",$vendorinvoice->billing_period);
@@ -236,8 +236,7 @@ class VendorinvoicesController extends Controller
                         if($vendorinvoice->is_approved==0)
                         {
                             if($vendorinvoice->publish_flag == 1){
-                                $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                                $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
                             }else{
                                 $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
                                 '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
@@ -651,28 +650,6 @@ class VendorinvoicesController extends Controller
         }
     }
 
-    public function checkCityName(Request $request){
-        $name = trim($request->name);
-        $checkCity = CityMaster::where('name',$name)->get();
-        if($checkCity->isEmpty()){
-            echo json_encode(true);
-        }else{
-            echo json_encode(false);
-        }
-    }
-
-    public function addCityName(Request $request){
-        $name = ucwords(trim($request->name));
-        $city = new CityMaster();
-        $city->name = $name;
-        $city->save();
-
-        $res[1] = $city->id;
-        $res[2] = $name;
-        echo json_encode($res);
-        exit;
-    }
-
     public function printInvoice($id)
     {
          $data = Vendorinvoice::find(decrypt($id))->toArray();
@@ -734,7 +711,7 @@ class VendorinvoicesController extends Controller
         $depots = Depot::get();
         $cities = CityMaster::get();
         $division = Division::get();
-        $vehicle = Vehicle::where('status',1)->get();
+        $vehicle = Vehicle::where('status',1)->pluck('vehicle_no', 'id')->toArray();
         $routes = DB::table('route_masters')
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')

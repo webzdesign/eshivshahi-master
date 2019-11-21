@@ -100,21 +100,13 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     From: {{date("d-m-Y",strtotime($dates[0]))}}
                     To :{{date("d-m-Y",strtotime($dates[1]))}}
                     </td>
-                    <td class="lt" colspan="3">Vehicle</td>
+                    <td class="lt" colspan="3">Route</td>
                     <td class="lt" colspan="4">
-                        @foreach($vehicle as $key=>$val)
-                            <label> {{ ($val->id == $vendorinvoice_data->vehicle_id_reff) ? $val->vehicle_no : '' }} </label>
+                        @foreach($routes as $rout)
+                            <label >{{$vendorinvoice_data->route_id == $rout->id ? $rout->from_depot.' - '.$rout->to_depot.' ('.$rout->scheduled_time.')' : ''}}</label>
                         @endforeach
                     </td>
 
-                </tr>
-                <tr>
-                <td class="lt" colspan="3">Route</td>
-                    <td class="lt" colspan="11">
-                        @foreach($routes as $rout)
-                            <label >{{$vendorinvoice_data->route_id == $rout->id?$rout->from_depot.' - '.$rout->to_depot:''}}</label>
-                        @endforeach
-                    </td>
                 </tr>
 				<tr>
     				<!-- <td style="width:8%;">Date/<span class="abc">दिनांक</span></td>
@@ -180,7 +172,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     <td style="width:8%;" class="parishish_size">{{$hault_tax[$i]}}</td>
                     <td style="width:5%;" class="parishish_size">{{ $wash_exp[$i] }}</td>
                     <td style="width:8%;" class="parishish_size">{{$other_exp[$i]}}</td>
-                    <td style="width:10%;" class="parishish_size">{{$vehicleArr[$i]}}</td>
+                    <td style="width:10%;" class="parishish_size">{{$vehicle[$vehicleArr[$i]]}}</td>
                     <td style="width:8%; font-size:10px;" class="parishish_size">{{ $remarks[$i] }}</td>
                 </tr>
             @endfor
