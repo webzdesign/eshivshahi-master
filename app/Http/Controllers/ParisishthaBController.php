@@ -421,7 +421,6 @@ class ParisishthaBController extends Controller
 
             'route_id'=>$request->route_id,
 
-            'scheduled_time'=>implode("*++*",$request->s_time),
 
             'depot_id'=>$depot_id,
 
