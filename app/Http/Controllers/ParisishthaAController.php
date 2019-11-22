@@ -59,10 +59,10 @@ class ParisishthaAController extends Controller
         $id = Crypt::decryptString($id);
         $parisishthabCheck = ParisishthaB::findorfail($id);
         if($parisishthabCheck->vendorinvoice_id == ''){
-            $parisishthab = ParisishthaB::with(['depot','vendor','vendorinvoice','vehicle', 'route'])->findorfail($id);
+            $parisishthab = ParisishthaB::with(['depot','vendor','vendorinvoice','route'])->findorfail($id);
             $vendorInvoiceFlag = 0;
         }else{
-            $parisishthab = ParisishthaB::with(['depot','vendor','vehicle', 'route'])->findorfail($id);
+            $parisishthab = ParisishthaB::with(['depot','vendor','route'])->findorfail($id);
             $vendorInvoiceFlag = 1;
         }
         /*get schedule kms */
@@ -78,9 +78,9 @@ class ParisishthaAController extends Controller
         $year = date("Y", strtotime($dates));
         $new_date = date($year.'-'.$month.'-'.'01');
         $previous_date='';
-        if(date("d", strtotime($dates)) ==16 )
+        if(date("d", strtotime($dates)) == 16 )
         {
-            $previous_data = ParisishthaB::with('depot','vendor','vendorinvoice','vehicle')->where('vehicle_id_reff',$parisishthab->vehicle_id_reff)->where('id','!=',$id)->where('from_date',$new_date)->first();
+            $previous_data = ParisishthaB::with('depot','vendor','vendorinvoice','route')->where('route_id',$parisishthab->route_id)->where('id','!=',$id)->where('from_date',$new_date)->first();
             $firstDays = 0;
         } else{
             $firstDays = 1;

@@ -76,7 +76,7 @@ $route = url("/$route");
                             <label class=" col-md-2 col-sm-3 col-xs-12" >मार्ग (वेळापत्रक) :
                             </label>
                             <div class="col-md-4 col-sm-6 col-xs-12">
-                                <input type="text" readonly value="{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_time }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
+                                <input type="text" readonly value="{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_time.')' }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
                             </div>
 
                             <label class=" col-md-2 col-sm-3 col-xs-12" >महामंडळाचा देयक क्र :</label>
@@ -132,8 +132,8 @@ $route = url("/$route");
                                         }
 
                                         $avgKm = $totalKm/$cntdays;
-                                        $vehicle_id = $parisishthab->vehicle_id_reff;
-                                        $rate = Helper::getRate($avgKm,$vehicle_id);
+                                        $vehicle_id = explode("*++*",$parisishthab->vehicle_id);
+                                        $rate = Helper::getRate($avgKm,$vehicle_id[0]);
 
                                         if ($previous_data) {
 
@@ -158,10 +158,24 @@ $route = url("/$route");
 
                                             $prevavgKm = $prevtotalKm/$prevcntdays;
                                             $prevvehicle_id = $previous_data->vehicle_id_reff;
-                                            $prevrate = Helper::getRate($prevavgKm,$prevvehicle_id);
+                                            $vehicle_id = explode("*++*",$previous_data->vehicle_id);
+                                            $prevrate = Helper::getRate($prevavgKm,$vehicle_id[0]);
 
                                             $actualRate = $rate - $prevrate;
 
+
+                                            $totalKms = ($prevtotalKm) + (array_sum(explode(",",$parisishthab->kms)));
+                                            $totalDays = $prevcntdays + $cntdays;
+                                            $totalAvg = $totalKms / $totalDays;
+
+                                            $totalRate = Helper::getRate($prevavgKm,$vehicle_id[0]);
+
+                                            if ($totalRate == $rate) {
+                                                $preDeducation = 0;
+                                                $prevRate = 0;
+                                            } else {
+                                                $preDeducation = 1;
+                                            }
                                         }
                                     @endphp
                                     <th style="text-align:center;"><input readonly type="text" name="averageKm" id="averageKm" value="{{ number_format((float)$avgKm,2,'.','') }}" class="form-control decimalonly " /></th>
@@ -175,9 +189,9 @@ $route = url("/$route");
                                 <tr>
                                     <th style="text-align:center;">२</th>
                                     <th style="text-align:center;">मासिक सरासरी वजावट / प्रतिपूर्ती</th>
-                                    <th style="text-align:center;"><input type="text" name="pActualKm" id="pActualKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $prevtotalKm }}" readonly/></th>
+                                    <th style="text-align:center;"><input type="text" name="pActualKm" id="pActualKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $totalKms }}" readonly/></th>
                                     <th style="text-align:center;"><input type="text" name="pAverageKm" id="pAverageKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : '0' }}"  readonly/></th>
-                                    <th style="text-align:center;"><input type="text" name="pRate" id="pRate" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : $actualRate }}"  readonly/></th>
+                                    <th style="text-align:center;"><input type="text" name="pRate" id="pRate" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : $prevRate }}"  readonly/></th>
                                     <th style="text-align:center;"><input type="text" name="pAmount" id="pAmount" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : '1' }}" readonly/></th>
                                     <th style="text-align:center;"><input type="text" name="pFinalAmount" id="pFinalAmount" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : '1' }}"  readonly/></th>
                                 </tr>
