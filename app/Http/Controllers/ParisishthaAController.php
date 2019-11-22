@@ -136,9 +136,11 @@ class ParisishthaAController extends Controller
         if($this->userTypeId == '1'){
             $parisishthabs = DB::table('parisishtha_bs')
             ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-            ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+            ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+            ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+            ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->leftjoin('parisishtha_as','parisishtha_as.parisishtha_b_id','=','parisishtha_bs.id')
-            ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable')
+            ->select('parisishtha_bs.*','vendors.vendor_name','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
             ->where('parisishtha_bs.status',1)
             ->whereNull('parisishtha_bs.deleted_at')
             ->orderBy('parisishtha_bs.id', 'desc')
@@ -149,9 +151,11 @@ class ParisishthaAController extends Controller
             if($accessTypeId == '3'){
                 $parisishthabs = DB::table('parisishtha_bs')
                 ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-                ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+                ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+                ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->leftjoin('parisishtha_as','parisishtha_as.parisishtha_b_id','=','parisishtha_bs.id')
-                ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable')
+                ->select('parisishtha_bs.*','vendors.vendor_name','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                 ->where('parisishtha_bs.depot_id',$depotId)
                 ->where('parisishtha_bs.status',1)
                 ->whereNull('parisishtha_bs.deleted_at')
@@ -160,9 +164,11 @@ class ParisishthaAController extends Controller
             }else{
                 $parisishthabs = DB::table('parisishtha_bs')
                 ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-                ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+                ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+                ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+                ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->leftjoin('parisishtha_as','parisishtha_as.parisishtha_b_id','=','parisishtha_bs.id')
-                ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable')
+                ->select('parisishtha_bs.*','vendors.vendor_name','parisishtha_as.status as parisisthaaStatus','parisishtha_as.id as pria_id','parisishtha_as.amount_payable','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
                 ->where('parisishtha_bs.division_id',$divisionId)
                 ->where('parisishtha_bs.status',1)
                 ->whereNull('parisishtha_bs.deleted_at')
@@ -229,6 +235,9 @@ class ParisishthaAController extends Controller
             ->editColumn('voucher_date', function($parisishthabs){
                 $voucher_date = date("d-m-Y",strtotime($parisishthabs->voucher_date));
                 return  $voucher_date;
+            })
+            ->editColumn('route_id', function($parisishthabs){
+                return $parisishthabs->from_depot.'-'.$parisishthabs->to_depot.'('.$parisishthabs->scheduled_time.')';
             })
             ->editColumn('billing_period', function($parisishthabs) {
                 $billing_period=explode(",",$parisishthabs->billing_period);
