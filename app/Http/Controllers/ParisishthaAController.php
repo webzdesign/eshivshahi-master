@@ -59,16 +59,15 @@ class ParisishthaAController extends Controller
         $id = Crypt::decryptString($id);
         $parisishthabCheck = ParisishthaB::findorfail($id);
         if($parisishthabCheck->vendorinvoice_id == ''){
-            $parisishthab = ParisishthaB::with('depot','vendor','vendorinvoice','vehicle')->findorfail($id);
+            $parisishthab = ParisishthaB::with(['depot','vendor','vendorinvoice','vehicle', 'route'])->findorfail($id);
             $vendorInvoiceFlag = 0;
         }else{
-            $parisishthab = ParisishthaB::with('depot','vendor','vehicle')->findorfail($id);
+            $parisishthab = ParisishthaB::with(['depot','vendor','vehicle', 'route'])->findorfail($id);
             $vendorInvoiceFlag = 1;
         }
         /*get schedule kms */
         $route_id = $parisishthab->route_id;
         $scheduleKm = RouteMaster::where('id',$route_id)->first();
-
         $scheduleKm = $scheduleKm->scheduled_km;
         $dates = $parisishthab->from_date;
         $dayOfWeek = date("d", strtotime($dates));
@@ -110,6 +109,7 @@ class ParisishthaAController extends Controller
                 }
             }
         }
+        
 
        /* foreach($kmsAll as $key=>$kms){
             if($kms != ''){
