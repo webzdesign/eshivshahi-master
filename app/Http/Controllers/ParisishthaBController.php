@@ -605,7 +605,7 @@ class ParisishthaBController extends Controller
 
         $checkvoucher ='checkvoucher';
 
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','data','schedule_time','edit_ideal_min', 'default_diseal', 'schduleKm'));
+        return view($this->view.'/viewForm',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','data','schedule_time','edit_ideal_min', 'default_diseal', 'schduleKm'));
 
     }
 
@@ -1332,7 +1332,7 @@ class ParisishthaBController extends Controller
 
         $vendors = Vendor::get();
 
-        $vehicle = Vehicle::where('status',1)->get();
+        $vehicle = Vehicle::where('status',1)->pluck('vehicle_no', 'id')->toArray();
 
         $division = Division::get();
 

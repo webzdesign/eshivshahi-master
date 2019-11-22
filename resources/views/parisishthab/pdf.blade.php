@@ -176,9 +176,9 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                     <td class="lt" colspan="4">
 
-                    @foreach($vehicle as $key=>$val)
+                    @foreach($routes as $rout)
 
-                        <label> {{ ($val->id == $parisishthab->vehicle_id_reff) ? $val->vehicle_no : '' }} </label>
+                        <label >{{$parisishthab->route_id == $rout->id?$rout->from_depot.' - '.$rout->to_depot.' ('.$rout->scheduled_time.')' : ''}}</label>
 
                     @endforeach
 
@@ -218,7 +218,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
 				</tr>
 
-                <tr>
+                {{--  <tr>
 
             <td class="lt" colspan="3">Route</td>
 
@@ -232,7 +232,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                 </td>
 
-            </tr>
+            </tr>  --}}
 
     				<!-- <td style="width:8%;">Date/<span class="abc">दिनांक</span></td>
 
@@ -380,7 +380,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                     <td style="width:5%;">{{$other_exp[$i]}}</td>
 
-                    <td style="width:12%;">{{$vehicleArr[$i]}}</td>
+                    <td style="width:12%;">{{$vehicle[$vehicleArr[$i]]}}</td>
 
                     <td style="width:4%;">{{$idling_minutes[$i]}}</td>
 

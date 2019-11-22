@@ -3343,9 +3343,6 @@ jQuery(document).ready(function($){
 
 
 
-    if('{{$action}}'=='update' || '{{$action}}'=='view')
-
-    {
 
         $(".kms").trigger('keyup');
 
@@ -3365,27 +3362,8 @@ jQuery(document).ready(function($){
 
             required: true,
 
-            /*vehiclevalidate:true*/
-
         });
 
-        getTotal();
-
-    }
-
-    if('{{$action}}'=='view')
-
-    {
-
-        $('textarea').prop('readonly',true);
-
-        $('input').prop('readonly',true);
-
-        $('select').prop('disabled',true);
-
-        $(".breakModelAdd").text('View');
-
-    }
 
 });
 
