@@ -47,7 +47,7 @@
                           <th>Sr no.</th>
                           <th>Vendor</th>
                           <th>Invoice No</th>
-                          <th>Vehicle No</th>
+                          <th>Route(Schedule Time)</th>
                           <th>Voucher No</th>
                           <th>Voucher Date</th>
                           <th>Amount</th>
@@ -77,24 +77,14 @@ var form=$("#frm");
 docdatatable=$('#datatable-responsive').DataTable({
 
   processing: true,
-
   serverSide: true,
-
-  ajax:{
-
-        "url": "{{ url($dataurl) }}",
-
-        "dataType": "json",
-
-        "type": "get",
-
-        },
+  ajax: "{{url('getparisishthab') }}",
 
   columns: [
         { data: 'DT_Row_Index',searchable: false, orderable: false},
         { data: 'vendor_name',  orderable: false },
         { data: 'invoice_no',  orderable: false },
-        { data: 'vehicle_no', orderable: false },
+        { data: 'route', orderable: false },
         { data: 'voucher_no', orderable: false },
         { data: 'voucher_date', orderable: false },
         { data: 'amount', orderable: false },

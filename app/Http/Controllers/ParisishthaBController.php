@@ -1,10 +1,6 @@
 <?php
 
-
-
 namespace App\Http\Controllers;
-
-
 
 use App\Model\ParisishthaB;
 
@@ -40,35 +36,19 @@ use Illuminate\Support\Facades\Crypt;
 
 use DB,Helper,PDF;
 
-
-
-
-
 class ParisishthaBController extends Controller
-
 {
 
     public $route = 'parisishthab';
-
     public $view = 'parisishthab';
-
 	public $primaryid = 'id';
-
     public $modulename = 'Parisishtha B';
-
     public $msgName = 'Parisishtha B';
 
-
-
     public $userTypeId;
-
     public $depotId;
-
     public $divisionId;
-
     public $accessTypeId;
-
-
 
     public function __construct(){
 
@@ -83,15 +63,10 @@ class ParisishthaBController extends Controller
             $this->accessTypeId = auth()->user()->accesstype_id;
 
             return $next($request);
-
         });
-
     }
 
-
-
     public function index(){
-
         if($this->userTypeId != 1){
 
             $checkPermission = Helper::getModulePermission('12',$this->userTypeId);
@@ -99,88 +74,39 @@ class ParisishthaBController extends Controller
             if($checkPermission){
 
                 return redirect('/home')->send();
-
             }
-
         }
 
         $permission = Helper::getPermission('12',$this->userTypeId);
-
         $userTypeId = $this->userTypeId;
-
         $modulename = $this->modulename;
-
         $route = $this->route;
-
         $dataurl = 'getparisishthab';
-
         return view($this->view.'/index',compact('modulename','route','dataurl','permission','userTypeId'));
-
     }
-
-
 
     public function getVehicle(Request $request)
-
 	{
-
         $vendorId = $request->vendor_id;
 
-        if($this->accessTypeId == 2)
-
-        {
-
-            $vehicleData = Vehicle::where('status',1)->where('vendor_id',$vendorId)->where('division_id',$this->divisionId)->get();
-
-        }
-
-        else if($this->accessTypeId == 3)
-
-        {
-
-            $vehicleData = Vehicle::where('status',1)->where('vendor_id',$vendorId)->where('depot_id',$this->depotId)->get();
-
-        }
-
-        else
-
-        {
-
-            $vehicleData = Vehicle::where('status',1)->where('vendor_id',$vendorId)->get();
-
-        }
+        $vehicleData = Vehicle::where('status',1)->where('vendor_id', $vendorId)->get();
 
 		if(count($vehicleData) > 0){
-
 			echo '<option value=""></option>';
-
 			foreach($vehicleData as $vehicleVal){
-
 				echo '<option value="'.$vehicleVal->id.'">'.$vehicleVal->vehicle_no.'</option>';
-
 			}
-
-		}else{
-
+		} else {
 			echo '<option value=""></option>';
-
 		}
-
     }
 
-
-
     public function getDepot(Request $request)
-
     {
 
         $division_id =  $request->division_id;
 
-
-
         $getDepot = Depot::where('division_id',$division_id)->get();
-
-
 
         if(count($getDepot) > 0){
 
@@ -189,198 +115,149 @@ class ParisishthaBController extends Controller
 			foreach($getDepot as $depo){
 
 				echo '<option value="'.$depo->id.'">'.$depo->name.'</option>';
-
 			}
-
 		}else{
-
 			echo '<option value=""></option>';
-
 		}
-
     }
 
-
-
     public function getparisishthab()
-
     {
-
         /* get Permission */
-
         $permission = Helper::getPermission('12',$this->userTypeId);
-
         $accessTypeId = $this->accessTypeId;
 
-
-
         if($this->userTypeId == '1'){
-
-            $parisishthabs = ParisishthaB::with('vendor')->orderBy('id','desc')->get();
-
+            $parisishthabs = ParisishthaB::with('vendor', 'route')->orderBy('id','desc')->get();
         }else{
 
             if($accessTypeId == '3'){
-
                 $depotId = $this->depotId;
-
-                $parisishthabs = ParisishthaB::with('vendor','vehicle')->where('depot_id',$depotId)->orderBy('id','desc')->get();
-
+                $parisishthabs = ParisishthaB::with('vendor','route')->where('depot_id',$depotId)->orderBy('id','desc')->get();
             }
-
             if($accessTypeId == '2'){
-
                 $divisionId = $this->divisionId;
-
-                $parisishthabs = ParisishthaB::with('vendor','vehicle')->where('division_id',$divisionId)->orderBy('id','desc')->get();
-
+                $parisishthabs = ParisishthaB::with('vendor','route')->where('division_id',$divisionId)->orderBy('id','desc')->get();
             }
-
         }
-
-
 
         return Datatables::of($parisishthabs)
 
-                ->editColumn('vehicle_no', function($parisishthabs){
+            ->editColumn('route', function($parisishthabs){
+                return $parisishthabs->route->fromdepot->name.'-'.$parisishthabs->route->todepot->name.' ('.$parisishthabs->route->scheduled_time.')';
+            })
 
-                    return $parisishthabs->vehicle->vehicle_no;
+            ->editColumn('invoice_no', function($parisishthabs){
+                return $parisishthabs->invoice_no->invoice_no;
+            })
 
-                })
+            ->addColumn('actions', function($parisishthabs) use($permission,$accessTypeId) {
 
-                ->editColumn('invoice_no', function($parisishthabs){
+                if($this->userTypeId != '1'){
 
-                    return $parisishthabs->invoice_no->invoice_no;
+                    if($accessTypeId == '3'){
 
-                })
+                        if($permission[0]->edit == '1'){
 
-                ->addColumn('actions', function($parisishthabs) use($permission,$accessTypeId) {
+                            if($parisishthabs->update_status==0){
 
-                    if($this->userTypeId != '1'){
-
-                        if($accessTypeId == '3'){
-
-                            if($permission[0]->edit == '1'){
-
-                                if($parisishthabs->update_status==0){
-
-                                    $editView =  "<a id='edit' href='$this->route/".Crypt::encryptString($parisishthabs->id)."/edit' class='btn  btn-warning btn-xs'><i class='fa fa-pencil'></i> Edit</a><a class='btn btn-danger btn-xs vendor pb-confirm-delete' data-id='".Crypt::encryptString($parisishthabs->id)."' ><i class='fa fa-trash'></i> Delete</a>";
-
-                                }
+                                $editView =  "<a id='edit' href='$this->route/".Crypt::encryptString($parisishthabs->id)."/edit' class='btn  btn-warning btn-xs'><i class='fa fa-pencil'></i> Edit</a><a class='btn btn-danger btn-xs vendor pb-confirm-delete' data-id='".Crypt::encryptString($parisishthabs->id)."' ><i class='fa fa-trash'></i> Delete</a>";
 
                             }
-
-                            if($permission[0]->view == '1'){
-
-                                if($permission[0]->edit == '1' && $parisishthabs->update_status==0){
-
-                                    $editView .=  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-
-                                }else{
-
-                                    $editView =  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-
-                                }
-
-                            }
-
-                            return $editView;
 
                         }
 
-                        if($accessTypeId == '2'){
+                        if($permission[0]->view == '1'){
 
-                            if($permission[0]->edit == '1'){
+                            if($permission[0]->edit == '1' && $parisishthabs->update_status==0){
 
-                                if($parisishthabs->update_status_division==0){
+                                $editView .=  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
 
-                                    $editView =  "<a id='edit' href='$this->route/".Crypt::encryptString($parisishthabs->id)."/edit' class='btn  btn-warning btn-xs'><i class='fa fa-pencil'></i> Edit</a>
+                            }else{
 
-                                    <a class='btn btn-danger btn-xs vendor pb-confirm-delete' data-id='".Crypt::encryptString($parisishthabs->id)."' ><i class='fa fa-trash'></i> Delete</a>";
-
-                                }
+                                $editView =  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
 
                             }
-
-                            if($permission[0]->view == '1'){
-
-                                if($permission[0]->edit == '1' && $parisishthabs->update_status_division==0){
-
-                                    $editView .=  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-
-                                }else{
-
-                                    $editView =  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-
-                                }
-
-                            }
-
-                            return $editView;
 
                         }
 
-                    }else{
-
-                        return "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a>&nbsp;&nbsp;<a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        return $editView;
 
                     }
 
+                    if($accessTypeId == '2'){
 
+                        if($permission[0]->edit == '1'){
+
+                            if($parisishthabs->update_status_division==0){
+
+                                $editView =  "<a id='edit' href='$this->route/".Crypt::encryptString($parisishthabs->id)."/edit' class='btn  btn-warning btn-xs'><i class='fa fa-pencil'></i> Edit</a>
+
+                                <a class='btn btn-danger btn-xs vendor pb-confirm-delete' data-id='".Crypt::encryptString($parisishthabs->id)."' ><i class='fa fa-trash'></i> Delete</a>";
+
+                            }
+
+                        }
+
+                        if($permission[0]->view == '1'){
+
+                            if($permission[0]->edit == '1' && $parisishthabs->update_status_division==0){
+
+                                $editView .=  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+
+                            }else{
+
+                                $editView =  "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a><a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+
+                            }
+
+                        }
+
+                        return $editView;
+
+                    }
+
+                }else{
+
+                    return "<a id='view' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-primary btn-xs'><i class='fa fa-eye'></i> View</a>&nbsp;&nbsp;<a id='print'  target ='_blank' href='printparisishthaB/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+
+                }
+
+
+
+            })
+
+            ->editColumn('vendor_name', function($parisishthabs) {
+
+                return  $parisishthabs['vendor']->vendor_name;
+
+            })
+
+            ->editColumn('billing_period', function($parisishthabs) {
+
+                $billing_period=explode(",",$parisishthabs->billing_period);
+
+                $from=date("d-m-Y",strtotime($billing_period[0]));
+
+                $to=date("d-m-Y",strtotime($billing_period[1]));
+
+                return  $from ." to ".$to;
 
                 })
 
-                ->editColumn('vendor_name', function($parisishthabs) {
+            ->editColumn('voucher_date', function($parisishthabs){
+                $date = date("d-m-Y",strtotime($parisishthabs->voucher_date));
+                return $date;
+            })
 
-                    return  $parisishthabs['vendor']->vendor_name;
+            ->editColumn('amount', function($parisishthabs) {
+                return  $parisishthabs->extra_diesel_charged;
+            })
 
-                })
-
-                ->editColumn('billing_period', function($parisishthabs) {
-
-                    $billing_period=explode(",",$parisishthabs->billing_period);
-
-                    $from=date("d-m-Y",strtotime($billing_period[0]));
-
-                    $to=date("d-m-Y",strtotime($billing_period[1]));
-
-                    return  $from ." to ".$to;
-
-                    })
-
-                ->editColumn('voucher_date', function($parisishthabs){
-
-                    $date = date("d-m-Y",strtotime($parisishthabs->voucher_date));
-
-                    return $date;
-
-                })
-
-                ->editColumn('amount', function($parisishthabs) {
-
-
-
-                    return  $parisishthabs->extra_diesel_charged;
-
-
-
-                })
-
-
-
-                ->addIndexColumn()
-
-                ->rawColumns(['billing_period'])
-
-                ->make(true);
-
+            ->addIndexColumn()
+            ->rawColumns(['billing_period'])
+            ->make(true);
     }
-
-
-
-
-
-
 
     public function create(){
 
@@ -391,105 +268,57 @@ class ParisishthaBController extends Controller
         }
 
         $modulename = $this->modulename;
-
         $route = $this->route;
-
         $action = 'insert';
-
         $vendors = Vendor::get();
-
         $vehicle = Vehicle::where('status',1)->get();
-
         $division = Division::get();
 
-        $cities = CityMaster::get();
-
         if($this->accessTypeId == 2)
-
         {
 
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->where('route_masters.division_id',$this->divisionId)
-
-             ->orwhere('route_masters.to_division',$this->divisionId)
-
+            ->orwhere('route_masters.to_division',$this->divisionId)
             ->get();
-
         }
-
         else if($this->accessTypeId ==3)
-
         {
-
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->where('d2.id',$this->depotId)
-
             ->orwhere('d1.id',$this->depotId)
-
             ->get();
-
         }
-
         else
-
         {
-
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->get();
-
         }
-
-
 
         $depots = Depot::where('division_id',$this->divisionId)->get();
-
         $getdata='getinvoice';
-
         $checkinvoice='checkinvoice';
-
         $checkvoucher ='checkvoucher';
-
         $getinvoicedata='getinvoicedata';
-
         $userdepo = $this->depotId;
-
         $userdivision = $this->divisionId;
-
         $userTypeId = $this->userTypeId;
-
         $route_master = RouteMaster::get();
-
         $default_diseal = Charge::first();
 
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','getdata','getinvoicedata','checkinvoice','checkvoucher','vehicle','depot','division','userdepo','userdivision','depots','cities','routes','userTypeId','route_master','default_diseal'));
-
+        return view($this->view.'/form',compact('vendors','modulename','route','action','getdata','getinvoicedata','checkinvoice','checkvoucher','vehicle','depot','division','userdepo','userdivision','depots','routes','userTypeId','route_master','default_diseal'));
     }
 
-
-
     public function getIdelingminutes(Request $request)
-
     {
 
         $route_id = $request->route_id;
@@ -625,8 +454,6 @@ class ParisishthaBController extends Controller
             'voucher_no'=>$request->voucher_no,
 
             'voucher_date'=>$voucher_date,
-
-            'vehicle_id_reff'=>$request->vehicle_id_reff,
 
             'vehicle_id'=>$vehicle_id,
 
@@ -1270,75 +1097,41 @@ class ParisishthaBController extends Controller
     {
 
         $vendor_id = $request->vendor_id;
-
-        $vehicle_id = $request->vehicle_id;
-
-
+       // $vehicle_id = $request->vehicle_id;
 
         $from = date("Y-m-d",strtotime($request->from_date));
-
         $to = date("Y-m-d",strtotime($request->to));
-
         $billing_period = $from.",".$to;
 
-
-
-        $rows = Vendorinvoice::where('vendor_id',$request->vendor_id)->where('vehicle_id_reff',$vehicle_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
-
+        $rows = Vendorinvoice::where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
         if($request->p_id !='')
-
         {
-
-            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->where('vehicle_id_reff',$vehicle_id)->where('id','!=',$request->p_id)->count();
-
+            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
         }
-
-        else{
-
-            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->where('vehicle_id_reff',$vehicle_id)->count();
-
+        else
+        {
+            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->count();
         }
-
-
-
-
 
         if(! $rows->isEmpty()){
-
             $res[0] = $rows[0]->id;
-
             $res[1] = $rows[0]->invoice_no;
-
             $res[2] = '';
-
-        }else{
-
+        } else {
             $res[0] = '';
-
             $res[1] = '';
-
             $res[2] = '';
-
         }
 
         if($count >0)
-
         {
-
             $res[3] =false;
-
         }
-
         else
-
         {
-
             $res[3]=true;
-
         }
-
         echo json_encode($res);
-
     }
 
     public function getinvoicedata(Request $request)
