@@ -9,7 +9,7 @@ error_reporting(0);
 @section('content')
 @php  $redirect = $route; @endphp
 
-if($action=='update')
+@if($action=='update')
     @php $btn = 'Update'; @endphp
     @php  $button = 'Update'; @endphp
     @php  $route=route('parisishthab.update',Crypt::encryptString($parisishthab->id)); @endphp
@@ -102,7 +102,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                 <label id="sch_km" class="btn btn-danger">Min. Schedule KM : {{ $schduleKm }}</label>
                             </div>
 
-                            <div class="form-group">
+                           <?php /* <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Select Scheduled Time <span class="required">*</span>
                                 </label>
 
@@ -119,7 +119,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                         @endforeach
                                     <select>
                                 </div>
-                            </div>
+                            </div> */ ?>
 
                             <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Select Vendor<span class="required">*</span>
@@ -343,7 +343,13 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <td><input type="text" readonly id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp"></td>
 
                                                         <td>
-                                                            <input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id">
+                                                            <?php /*<input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */?>
+                                                            <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                <option value=""></option>
+                                                                @foreach($vehicle as $key => $value)
+                                                                <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                @endforeach
+                                                            <select>
                                                         </td>
 
                                                         <td>
@@ -419,7 +425,15 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto"></td>
 
                                                         <td>
-                                                            <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto">
+                                                          <?php /* <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto">*/ ?>
+
+                                                          <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                            <option value=""></option>
+                                                            @foreach($vehicle as $key => $value)
+                                                            <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                            @endforeach
+                                                        <select>
+
                                                         </td>
 
                                                         <td>
@@ -494,7 +508,14 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto_total"></td>
 
                                                         <td>
-                                                            <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total">
+                                                           <?php /* <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total"> */ ?>
+
+                                                           <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                            <option value=""></option>
+                                                            @foreach($vehicle as $key => $value)
+                                                            <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                            @endforeach
+                                                        <select>
                                                         </td>
 
                                                         <td>
@@ -515,76 +536,52 @@ overflow-x: scroll; overflow-y:hidden;}
                                         </tbody>
 
                                         <tfoot>
-
                                             <tr>
-
                                                 <td colspan=""></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td><label id="kms_er"></label></td>
-
                                                 <td><label id="diesel_ltr_er"></label></td>
-
                                                 <td><label id="diese_per_ltr_price_er"></label></td>
-
                                                 <td></td>
-
                                                 <td></td>
-
                                                 <td></td>
-
                                                 <td></td>
-
                                                 <td><label id="parking_exp_er"></label></td>
-
                                                 <td></td>
-
                                                 <td></td>
-
                                                 <td></td>
-
                                                 <td><label id="vehicle_id_er"></label></td>
-
                                                 <td></td>
                                                 <td></td>
                                             </tr>
 
                                             <tr>
+                                                <td colspan="">Total</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="text" class="form-control"  name="total_kms" id="total_kms" value="" readonly></td>
 
-                                                    <td colspan="">Total</td>
+                                                <td><input type="text" class="form-control" name="total_diesel" id="total_diesel" value="" readonly></td>
 
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td><input type="text" class="form-control"  name="total_kms" id="total_kms" value="" readonly></td>
+                                                <td></td>
+                                                    <td><input type="text" class="form-control total_adblue" value="{{array_sum($adblue)}}" name="total_adblue" id="total_adblue" readonly></td>
+                                                <td></td>
+                                                <td><input type="text" class="form-control total_breaddown_charge" name="total_breaddown_charge" id="total_breaddown_charge" value="{{array_sum($breaddown_charge)}}" readonly></td>
 
-                                                    <td><input type="text" class="form-control" name="total_diesel" id="total_diesel" value="" readonly></td>
+                                                <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value=" {{array_sum($vor_exp)}} " id="total_vor_exp" readonly></td>
 
-                                                    <td></td>
+                                                <td><input type="text" class="form-control" name="total_parking_exp" id="total_parking_exp" readonly></td>
 
-                                                        <td><input type="text" class="form-control total_adblue" value="@if($action=='update' || $action == 'view') {{array_sum($adblue)}} @endif" name="total_adblue" id="total_adblue" readonly></td>
+                                                <td><input type="text" class="form-control total_hault_exp"  value="{{array_sum($hault_tax)}}" name="total_hault_exp" id="total_hault_exp" readonly></td>
 
-                                                    <td></td>
+                                                <td><input type="text" class="form-control total_wash_exp"  value="{{array_sum($wash_exp)}}" name="total_wash_exp" id="total_wash_exp" readonly></td>
 
-                                                    <td><input type="text" class="form-control total_breaddown_charge" name="total_breaddown_charge" id="total_breaddown_charge" value="@if($action=='update' || $action == 'view') {{array_sum($breaddown_charge)}} @endif" readonly></td>
+                                                <td><input type="text" class="form-control" name="total_other_exp" id="total_other_exp" readonly></td>
 
-                                                    <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value="@if($action=='update' || $action == 'view') {{array_sum($vor_exp)}} @endif" id="total_vor_exp" readonly></td>
-
-                                                    <td><input type="text" class="form-control" name="total_parking_exp" id="total_parking_exp" readonly></td>
-
-                                                    <td><input type="text" class="form-control total_hault_exp"  value="@if($action=='update' || $action == 'view') {{array_sum($hault_tax)}} @endif" name="total_hault_exp" id="total_hault_exp" readonly></td>
-
-
-
-                                                    <td><input type="text" class="form-control total_wash_exp"  value="@if($action=='update' || $action == 'view') {{array_sum($wash_exp)}} @endif" name="total_wash_exp" id="total_wash_exp" readonly></td>
-
-
-
-                                                    <td><input type="text" class="form-control" name="total_other_exp" id="total_other_exp" readonly></td>
-
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
 
                                         </tfoot>
@@ -593,144 +590,45 @@ overflow-x: scroll; overflow-y:hidden;}
                             </div>
 
                             <table class="table table-bordered">
-
                                 <tr>
-
                                     <th>Total Kms/ एकुण किमी</th>
-
                                     <th>Total Filled Diesel/ प्रत्यक्ष पुरविलेले डिझेल (लिटर)</th>
-
                                     <th>Diesel as per norms/ महामंडळाने पुरवावयाचे डिझेल</th>
-
                                     <th>Extra Diesel Filled/ जादा/कमी पुरविलेले डिझेल</th>
-
                                 </tr>
-
                                 <tr>
-
                                     <td><input type="text" class="form-control"  name="kms_total" id="kms_total" readonly></td>
 
                                     <td><input type="text" class="form-control"  name="diesel_total" id="diesel_total" readonly></td>
 
-                                    <td><input readonly type="text" data-precision="2" class="decimalonly form-control"  name="gov_diesel" id="gov_diesel" value="@if($action=='update' || $action=='view') {{$parisishthab->diesel_as_per_gov}} @endif" ></td>
+                                    <td><input readonly type="text" data-precision="2" class="decimalonly form-control"  name="gov_diesel" id="gov_diesel" value="{{$parisishthab->diesel_as_per_gov}}" ></td>
 
                                     <td><input type="text" class="form-control"  name="extra_diesel" id="extra_diesel" readonly></td>
-
                                 </tr>
 
                                 <tr>
+                                    <th colspan="3" style="text-align:right;">Extra Filled Diesel Charges / जादा पुरीविलेले डिझेलची वसुली</th>
 
-                                        <th colspan="3" style="text-align:right;">Extra Filled Diesel Charges / जादा पुरीविलेले डिझेलची वसुली</th>
-
-                                        <td width="10%"><input type="text" class="form-control"  name="extra_diesel_charge" id="extra_diesel_charge" readonly ></td>
-
+                                    <td width="10%"><input type="text" class="form-control"  name="extra_diesel_charge" id="extra_diesel_charge" readonly ></td>
                                 </tr>
 
                             </table>
 
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                <input type="hidden" value="" name="status" id="status" />
+                                @if($parisishthab->status == 1)
+                                    <button type="submit" onclick="setFlag(1)" id="save_submit" class="btn btn-primary"> Update And Submit </button>
+                                @else
+                                    <button type="submit" onclick="setFlag(0)" id="save" class="btn btn-primary">{{ $btn }}</button>
 
-
-                                <div class="ln_solid"></div>
-
-
-
-                                <div class="form-group">
-
-                                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-
-                                        <input type="hidden" value="" name="status" id="status" />
-
-                                        @if($action!='view')
-
-                                            @if($action=='insert')
-
-                                                    <button type="submit" onclick="setFlag(0)" id="save" class="btn btn-primary">{{ $btn }}</button>
-
-                                                    <button type="submit" onclick="setFlag(1)" id="save_submit" class="btn btn-primary"> {{ $btn }} And Submit </button>
-
-                                                @else
-
-
-
-                                                @if($parisishthab->status == 1)
-
-                                                    <button type="submit" onclick="setFlag(1)" id="save_submit" class="btn btn-primary"> Update And Submit </button>
-
-                                                @else
-
-                                                    <button type="submit" onclick="setFlag(0)" id="save" class="btn btn-primary">{{ $btn }}</button>
-
-                                                    <button type="submit" onclick="setFlag(1)" id="save_submit" class="btn btn-primary">{{ $btn }} And Submit </button>
-
-                                                @endif
-
-                                            @endif
-
-                                        @endif
-
-
-
-                                        <a href="{{url($redirect)}}"  class="btn btn-warning" >Cancel </a>
-
-
-
-                                    </div>
-
-                                </div>
-
-                        </form>
-
-                        @if($action =='view')
-                        @if(count($data)>0)
-
-                        <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-
-                            <thead>
-
-                                <tr>
-
-                                <th>Sr no.</th>
-
-                                <th>User Name</th>
-
-                                <th>Updated Date</th>
-
-                                <th>Updated Time</th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                @foreach($data as $key=>$history)
-
-                                <tr>
-
-                                    <td>{{$key+1}}</td>
-
-                                    <td>{{ $history->first_name.' '.$history->last_name}}</td>
-
-                                    <td>{{ date('d-m-Y',strtotime($history->updated_at))}}</td>
-
-                                    <td>{{ date('H:i',strtotime($history->updated_at))}}</td>
-
-                                </tr>
-
-                                @endforeach
-
-                            </tbody>
-
-                            <tfoot>
-
-                            </tfoot>
-
-                            </table>
-
-                        @endif
-
-                        @endif
-
+                                    <button type="submit" onclick="setFlag(1)" id="save_submit" class="btn btn-primary">{{ $btn }} And Submit </button>
+                                @endif
+                                <a href="{{url($redirect)}}"  class="btn btn-warning" >Cancel </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -739,145 +637,76 @@ overflow-x: scroll; overflow-y:hidden;}
 
 <!--Break Modal -->
 <div class="modal fade" id="breakModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
 	<div class="modal-dialog">
-
 		<div class="modal-content">
-
 			<!-- Modal Header -->
-
 			<div class="modal-header">
-
 				<button type="button" class="close"
-
 				   data-dismiss="modal">
-
 					   <span aria-hidden="true">&times;</span>
-
 					   <span class="sr-only">Close</span>
-
 				</button>
-
 				<h4 class="modal-title" id="myModalLabel">
-
 					Add Charges
-
 				</h4>
-
 			</div>
-
 			<!-- Modal Body -->
-
 			<div class="modal-body">
-
 				<form class="form-horizontal" id="frmBreak" autocomplete="off">
-
 					<div class="form-group">
-
 						<label  class="col-sm-5 control-label">Breakdown Charges</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="breakdown_charge" id="breakdown_charge" placeholder="Enter charge"/maxlength="5">
-
 						</div>
-
 					</div>
 
-
-
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Passenger Refund</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="passenger_refund" id="passenger_refund" placeholder="Enter charge"/maxlength="5">
-
 						</div>
-
 					</div>
 
-
-
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Mechanic Charges</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="mechanic_charge" id="mechanic_charge" placeholder="Enter charge" maxlength="5"/>
-
 						</div>
-
 					</div>
 
-
-
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Breakdown Relief bus C.C. charges</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="breakdown_relief_charge" id="breakdown_relief_charge" placeholder="Enter charge" maxlength="5" readonly/>
-
 						</div>
-
 					</div>
 
-
-
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Spare parts charges</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="spare_parts_charge" id="spare_parts_charge" placeholder="Enter charge" maxlength="5"/>
-
 						</div>
-
 					</div>
 
-
-
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Breakdown Vehicle C.C. charges</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" class="form-control amountonly" name="breakdown_vehicle_charge" id="breakdown_vehicle_charge" placeholder="Enter charge" maxlength="5" readonly/>
-
 						</div>
-
 					</div>
-
 
 
                     <div class="form-group">
-
 						<label  class="col-sm-5 control-label">Total Charge</label>
-
 						<div class="col-sm-7">
-
 							<input type="text" readonly class="form-control amountonly" name="total_breakdown_charge" id="total_breakdown_charge" />
-
 						</div>
-
 					</div>
-
-
 
 					<div class="ln_solid"></div>
-
 					<div class="form-group">
-
 						<div class="col-sm-offset-5 col-sm-9">
-
 							<button type="submit" class="btn btn-default" id="breakSubmit">Add</button>
-
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
 						</div>
@@ -885,15 +714,9 @@ overflow-x: scroll; overflow-y:hidden;}
 					</div>
 
 				</form>
-
-
-
 			</div>
-
 		</div>
-
 	</div>
-
 </div>
 @endsection
 @section('script')
@@ -1035,494 +858,87 @@ jQuery(document).ready(function($){
 
 
 	$("body").on("change","#invoice_no",function(e){
-
         var invoice_id = $(this).val();
-
         if(invoice_id == ''){
-
             $('#viewInvoice').empty();
-
-            $("#vehicle_id_reff").prop('disabled', false);
-
             $("#division_id").prop('disabled', false);
-
             $("#depot_id").prop('disabled', false);
-
-            $("#vehicle_id_reff_input").remove();
-
             $("#division_id_input").remove();
-
             $("#depot_id_input").remove();
-
             return false;
-
         }
-
         $.ajax({
-
                 type:'POST',
-
                 url:'{{url("/getinvoicedata")}}',
-
                 dataType : 'JSON',
-
                 data:{ invoice_id:invoice_id 	},
-
                 success:function(result){
 
-                $("#vehicle_id_reff").prop('disabled', false);
-
-                $("#vehicle_id_reff").val(result.vehicle_id).trigger('change');
-
-                $("#vehicle_id_reff").prop('disabled', 'disabled');
-
-                $("#vehicle_id_reff").removeAttr("name");
-
-                $("#vehicle_id_reff").remove();
-
-
-
                 $("#division_id").val(result.division_id).trigger('change');
-
                 $("#division_id").prop('disabled', 'disabled');
-
                 $("#division_id").removeAttr("name");
-
                 $("#division_id_input").remove();
 
-
-
                 setTimeout(function(){$("#depot_id").val(result.depot_id).trigger('change');},500);
-
                 $("#depot_id").prop('disabled', 'disabled');
-
                 $("#depot_id").removeAttr("name");
-
                 $("#depot_id_input").remove();
 
-
-
-
-
-                $('<input type="hidden" name="vehicle_id_reff" id="vehicle_id_reff_input" value="'+result.vehicle_id+'">').insertAfter("#vehicle_id");
-
-
+               // $('<input type="hidden" name="vehicle_id_reff" id="vehicle_id_reff_input" value="'+result.vehicle_id+'">').insertAfter("#vehicle_id");
 
                 $('<input type="hidden" name="division_id" id="division_id_input" value="'+result.division_id+'">').insertAfter("#division_id");
 
-
-
                 $('<input type="hidden" name="depot_id" id="depot_id_input" value="'+result.depot_id+'">').insertAfter("#depot_id");
 
-
-
                 $('#viewInvoice').empty().html('<a target="_blank" href="'+result.viewInvoice+'" class="btn btn-success"><i class="fa fa-eye"></i> View Invoice</a>');
-
             }
-
         });
-
-
-
 	});
-
 });
 
 /* End To get vehicle on invoice selection by sneha doso on 15-09-2018 */
 
-
-
 jQuery(document).ready(function($){
 
+	$("body").on("change","#vendor_id,#from_date,#to",function(e){
 
+        var vendor_id = $('#vendor_id').val();
+        var from_date = $('#from_date').val();
+        var to = $('#to').val();
+        var p_id = $("#id").val();
 
-    /* var ht = $('.dttable').dataTable({
-
-        "paging": false,
-
-        'aaSorting':false,
-
-        "searching": false,
-
-        'autoWidth': false,
-
-
-
-    }); */
-
-
-
-
-
-
-
-
-
-
-
-    $('body').on('change','#vehicle_id_reff',function(){
-
-        var vehicleId = $('#vehicle_id_reff option:selected').text();
-
-        if(vehicleId != ''){
-
-            $('#parishishtha_b').find('.vehicle_id_auto').val(vehicleId);
-
-        }
-
-    });
-
-
-
-    /* check source and destination */
-
-    /* $('body').on('change','#source_id,#destination_id',function(){
-
-        var source_id = $('#source_id').val();
-
-        var destination_id = $('#destination_id').val();
-
-
-
-        if(source_id != '' && destination_id != ''){
-
-            if(source_id == destination_id){
-
-                $(this).val('').trigger('change');
-
-            }
-
-        }
-
-    }); */
-
-
-
-    /* add City model submit */
-
-    $('#frmCity').validate({
-
-        onkeyup: function(element) {$(element).valid()},
-
-        rules:{
-
-            name:{required: true,
-
-                remote: {
-
-                    url:'{{url("/checkcityname")}}',
-
-                    type: "post",
-
-                    data:
-
-                    {
-
-                        name: function()
-
-                        {
-
-                            return $('#frmCity :input[name="name"]').val();
-
-                        },
-
-                    },
-
-                },
-
-            },
-
-        },
-
-        messages:{
-
-            name:{
-
-                required: "Please Enter City Name.",
-
-                remote:"City Name Already Exist.",
-
-            },
-
-        },
-
-        errorPlacement: function(error, element) {
-
-            error.appendTo(element.parent("div"));
-
-        }
-
-    });
-
-
-
-    $('body').on('click','#citySubmit',function(e){
-
-        e.preventDefault();
-
-        if($("#frmCity").valid()){
-
-            $(':button[type="submit"]').prop('disabled', true);
-
-            $.ajax({
-
-                type: "POST",
-
-                url:'{{url("/addcityname")}}',
-
-                data: $('#frmCity').serialize(),
-
-                dataType: "json",
-
-                success: function(res){
-
-                    $(':button[type="submit"]').prop('disabled', false);
-
-                    swal({
-
-                        title: "Success",
-
-                        text: "City Insert Successful.",
-
-                        type: "success",
-
-                    });
-
-                    $('#frmCity').find(':input').val('');
-
-                    $("#cityModal").modal('hide');
-
-                    /*$('#source_id').append($('<option>', {
-
-                    value: res[1],
-
-                    text: res[2]
-
-                    }));
-
-                    $('#destination_id').append($('<option>', {
-
-                    value: res[1],
-
-                    text: res[2]
-
-                    }));*/
-
-                }
-
-            });
-
-        }else{
-
+        if(vendor_id == '' || from_date == '' || to == ''){
             return false;
-
-        }
-
-    });
-
-    /* auto fill start from pratik donga on 17-09-2018 */
-
-
-
-    /* $('body').on('change',".vehicle_id_auto",function(){
-
-        $(this).removeClass('vehicle_id_auto_total');
-
-        var vehicle_id =  $(this).closest('tr').find('.vehicle_id_auto').val();
-
-        $(".vehicle_id_auto_total").val(vehicle_id);
-
-    }); */
-
-
-
-    /* $('body').on('change',".kms_auto",function(){
-
-        var kms =  $(this).closest('tr').find('.kms_auto').val();
-
-        $(".kms_auto_total").val(kms);
-
-        $(".kms").trigger('keyup');
-
-        calculatekms();
-
-    }); */
-
-
-
-    /*$('body').on('change',".diesel_ltr_auto",function(){
-
-        var diesel_ltr =  $(this).closest('tr').find('.diesel_ltr_auto').val();
-
-        $(".diesel_ltr_auto_total").val(diesel_ltr);
-
-        $(".diesel_ltr").trigger('keyup');
-
-    }); */
-
-    // $('body').on('change',".diese_per_ltr_price_auto",function(){
-
-    //     var diese_per_ltr_price =  $(this).closest('tr').find('.diese_per_ltr_price_auto').val();
-
-    //     $(".diese_per_ltr_price_auto_total").val(diese_per_ltr_price);
-
-    // });
-
-    // $('body').on('change',".adblue_auto",function(){
-
-    //     var adblue =  $(this).closest('tr').find('.adblue_auto').val();
-
-    //     $(".adblue_auto_total").val(adblue);
-
-    //     getTotal();
-
-    // });
-
-    // $('body').on('change',".adblue_price_auto",function(){
-
-    //     var adblue_price =  $(this).closest('tr').find('.adblue_price_auto').val();
-
-    //     $(".adblue_price_auto_total").val(adblue_price);
-
-    // });
-
-    /* $('body').on('change',".breaddown_charge_auto",function(){
-
-        var breaddown_charge =  $(this).closest('tr').find('.breaddown_charge_auto').val();
-
-        $(".breaddown_charge_auto_total").val(breaddown_charge);
-
-        getTotal();
-
-    }); */
-
-    /* $('body').on('change',".vor_exp_auto",function(){
-
-        var vor_exp =  $(this).closest('tr').find('.vor_exp_auto').val();
-
-        $(".vor_exp_auto_total").val(vor_exp);
-
-        getTotal();
-
-    }); */
-
-    /*$('body').on('change',".parking_exp_auto",function(){
-
-        var parking_exp =  $(this).closest('tr').find('.parking_exp_auto').val();
-
-        $(".parking_exp_auto_total").val(parking_exp);
-
-        $(".parking_exp").trigger('keyup');
-
-    });*/
-
-    /* $('body').on('change',".wash_exp_auto",function(){
-
-        var wash_exp =  $(this).closest('tr').find('.wash_exp_auto').val();
-
-        $(".wash_exp_auto_total").val(wash_exp);
-
-        getTotal();
-
-    }); */
-
-    /* $('body').on('change',".hault_exp_auto",function(){
-
-        var hault_exp =  $(this).closest('tr').find('.hault_exp_auto').val();
-
-        $(".hault_exp_auto_total").val(hault_exp);
-
-        getTotal();
-
-    }); */
-
-    /* $('body').on('change',".other_exp_auto",function(){
-
-        var other_exp =  $(this).closest('tr').find('.other_exp_auto').val();
-
-        $(".other_exp_auto_total").val(other_exp);
-
-        $(".other_exp").trigger('keyup');
-
-    }); */
-
-    /* auto fill end from pratik donga on 17-09-2018 */
-
-
-
-
-
-	$("body").on("change","#vendor_id,#vehicle_id_reff,#from_date,#to",function(e){
-
-            var vendor_id = $('#vendor_id').val();
-
-            var vehicle_id = $('#vehicle_id_reff').val();
-
-            var from_date = $('#from_date').val();
-
-            var to = $('#to').val();
-
-            var p_id = $("#id").val();
-
-            if(vendor_id == '' || vehicle_id == '' || from_date == '' || to == ''){
-
-                return false;
-
-            }else{
-
-                $.ajax({
-
-                    type:'POST',
-
-                    dataType:'json',
-
-                    url:'{{url('/getinvoice')}}',
-
-                    data:{
-
-                        vendor_id:vendor_id,vehicle_id:vehicle_id,from_date:from_date,to:to,p_id:p_id
-
-                    },
-
-                    success:function(result){
-
-                        $("#invoiceNo").val(result[1]);
-
-                        $("#invoice_no").val(result[0]);
-
-                        if(result[2] != ''){
-
-                            $('#viewInvoice').empty().html('<a target="_blank" href="'+result[2]+'" class="btn btn-success"><i class="fa fa-eye"></i> View Invoice</a>');
-
-                        }else{
-
-                            $('#viewInvoice').empty();
-
-                        }
-
-                        if(result[3] ==false)
-
-                        {
-
-                            $('#from_date').val('');
-
-                            $('#to').val('');
-
-                            $(".clonedTr").remove();
-
-                            swal("Cancelled", "Invoice for selected bus and period already exists.", "error");
-
-                        }
-
-
-
+        } else {
+            $.ajax({
+                type:'POST',
+                dataType:'json',
+                url:'{{url('/getinvoice')}}',
+                data:{
+                    vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
+                },
+                success:function(result){
+                    $("#invoiceNo").val(result[1]);
+                    $("#invoice_no").val(result[0]);
+
+                    if(result[2] != ''){
+                        $('#viewInvoice').empty().html('<a target="_blank" href="'+result[2]+'" class="btn btn-success"><i class="fa fa-eye"></i> View Invoice</a>');
+                    }else{
+                        $('#viewInvoice').empty();
                     }
 
-                });
-
-            }
-
+                    if(result[3] ==false)
+                    {
+                        $('#from_date').val('');
+                        $('#to').val('');
+                        $(".clonedTr").remove();
+                        swal("Cancelled", "Invoice for selected bus and period already exists.", "error");
+                    }
+                }
+            });
+        }
     });
+
     /* Diesel rate Not more than admin charges/rate */
     $('body').on('keyup', '.diese_per_ltr_price', function(e){
         var diese_per_ltr_price = $(this).closest('tr').find(".diese_per_ltr_price").val();
@@ -1548,247 +964,123 @@ jQuery(document).ready(function($){
 	});
 
 	/* For Calc Total */
-
 	function getTotal()
-
 	{
-
         /* total for wash_exp */
-
         var washExp =$(".wash_exp").map(function(){return $(this).val();}).get().join(",");
-
 		var washExpVal = washExp;
-
 		arrWashExp = washExpVal.split(',');
-
 		var totalWashExp=0;
-
 		for(i=0; i < arrWashExp.length; i++)
-
 		{
-
 			if(arrWashExp[i]!='')
-
 			{
-
 				totalWashExp += parseFloat(arrWashExp[i]);
-
-
-
 			}
-
-
-
 		}
 
 		if(isNaN(totalWashExp) || totalWashExp == '')
-
-			{
-
-				totalWashExp=0;
-
-			}
-
-            $('.table tfoot').find('#total_wash_exp').val(totalWashExp.toFixed(2));
-
-
-
-
+        {
+            totalWashExp=0;
+        }
+        $('.table tfoot').find('#total_wash_exp').val(totalWashExp.toFixed(2));
 
 		var adblue =$(".adblue").map(function(){return $(this).val();}).get().join(",");
-
 		var adblueVal = adblue;
-
 		arr1 = adblueVal.split(',');
-
 		var totalAddBlue=0;
-
 		for(i=0; i < arr1.length; i++)
-
 		{
-
 			if(arr1[i]!='')
-
 			{
-
 				totalAddBlue += parseFloat(arr1[i]);
-
-
-
 			}
-
-
-
 		}
 
 		if(isNaN(totalAddBlue))
-
-			{
-
-				totalAddBlue=0;
-
-			}
-
-            $('.table tfoot').find('#total_adblue').val(totalAddBlue.toFixed(2));
-
-
-
-
+        {
+            totalAddBlue=0;
+        }
+        $('.table tfoot').find('#total_adblue').val(totalAddBlue.toFixed(2));
 
 		var breaddown_charge =$(".breaddown_charge").map(function(){return $(this).val();}).get().join(",");
-
 		var breaddown_chargeVal = breaddown_charge;
-
 		arr2 = breaddown_chargeVal.split(',');
-
 		var totalbreaddown=0;
 
 		for(i=0; i < arr2.length; i++)
-
 		{
-
 			if(arr2[i]!='')
-
 			{
-
 				totalbreaddown += parseFloat(arr2[i]);
-
-
-
 			}
-
-
-
 		}
 
 		if(isNaN(totalbreaddown))
-
-			{
-
-				totalbreaddown=0;
-
-			}
-
-            $('.table tfoot').find('#total_breaddown_charge').val(totalbreaddown.toFixed(2));
-
-
-
-
+        {
+            totalbreaddown=0;
+        }
+        $('.table tfoot').find('#total_breaddown_charge').val(totalbreaddown.toFixed(2));
 
 		var vor_exp =$(".vor_exp").map(function(){return $(this).val();}).get().join(",");
-
 		var vor_expVal = vor_exp;
-
 		arr3 = vor_expVal.split(',');
-
 		var totalvorexp=0;
-
 		for(i=0; i < arr3.length; i++)
-
 		{
-
 			if(arr3[i]!='')
-
 			{
-
 				totalvorexp += parseFloat(arr3[i]);
-
 			}
-
 		}
 
 		if(isNaN(totalvorexp))
-
         {
-
             totalvorexp=0;
-
         }
 
 		$('.table tfoot').find('#total_vor_exp').val(totalvorexp.toFixed(2));
 
-
-
-
-
 		var hault_exp =$(".hault_exp").map(function(){return $(this).val();}).get().join(",");
-
 		var hault_expVal = hault_exp;
-
 		arr4 = hault_expVal.split(',');
-
 		var totalhaultexp=0;
-
 		for(i=0; i < arr4.length; i++)
-
 		{
-
 			if(arr4[i]!='')
-
 			{
-
 				totalhaultexp += parseFloat(arr4[i]);
-
 			}
-
-
-
 		}
 
 		if(isNaN(totalhaultexp))
+        {
+            totalhaultexp=0;
+        }
+        $('.table tfoot').find('#total_hault_exp').val(totalhaultexp.toFixed(2));
 
-			{
-
-				totalhaultexp=0;
-
-			}
-
-            $('.table tfoot').find('#total_hault_exp').val(totalhaultexp.toFixed(2));
-
-
-
-         /* total for wash_exp */
-
-         var parkingExp =$(".parking_exp").map(function(){return $(this).val();}).get().join(",");
-
+        /* total for wash_exp */
+        var parkingExp =$(".parking_exp").map(function(){return $(this).val();}).get().join(",");
 		var parkingExpVal = parkingExp;
-
 		arrParkingExp = parkingExpVal.split(',');
-
 		var totalParkingExp=0;
 
 		for(i=0; i < arrParkingExp.length; i++)
-
 		{
-
 			if(arrParkingExp[i]!='')
-
 			{
-
 				totalParkingExp += parseFloat(arrParkingExp[i]);
-
 			}
-
 		}
 
 		if(isNaN(totalParkingExp) || totalParkingExp == '')
-
         {
-
             totalParkingExp=0;
-
         }
-
         $('.table tfoot').find('#total_parking_exp').val(totalParkingExp.toFixed(2));
-
-
-
     }
 
-
-
     function IdlingMinutes()
-
     {
 
         var DisealTotal = $("#diesel_total").val();
@@ -1843,10 +1135,7 @@ jQuery(document).ready(function($){
 
     }
 
-
-
-    /*Idling Minutes Calculation start */
-
+   /*Idling Minutes Calculation start */
     $("body").on("change",".idling_minutes",function(){
 
         calculatediesel();
@@ -1854,89 +1143,47 @@ jQuery(document).ready(function($){
         IdlingMinutes();
 
 	});
-
     /*Idling Minutes Calculation end */
 
-
-
-
-
 	/* Ad Blue Cal Event */
-
 	$("body").on("change",".adblue",function(){
-
 		getTotal();
-
 	});
-
-
 
 	$("body").on("change",".breaddown_charge",function(){
-
 		getTotal();
-
 	});
 
-
-
 	$("body").on("change",".vor_exp",function(){
-
 		getTotal();
-
     });
 
     $("body").on("change",".parking_exp",function(){
-
 		getTotal();
-
     });
 
     $("body").on("change",".wash_exp",function(){
-
 		getTotal();
-
 	});
-
-
 
 	$("body").on("change",".hault_exp",function(){
-
 		getTotal();
-
     });
 
-
-
     $("body").on("keyup",".wash_exp",function(){
-
 		getTotal();
-
 	});
 
-
-
 	var d = new Date();
-
 	$('#voucher_date').datepicker({
-
-			format:'dd-mm-yyyy',
-
-			autoclose:true,
-
+        format:'dd-mm-yyyy',
+        autoclose:true,
 	}).datepicker('setDate',d);
 
-
-
-
-
     var datevalidate =true;
-
 	var date = new Date();
-
 	var y = date.getFullYear();
-
 	var m = date.getMonth();
-
 	var lastDay = new Date(y, m + 1, 0);
 
 	//form date and to date on change
@@ -2416,14 +1663,7 @@ jQuery(document).ready(function($){
 
 
 
-                }else{
-
-                    var vehiclereff = $('#vehicle_id_reff option:selected').text();
-
-                    $clone.find(".vehicle_id").val(vehiclereff);
-
                 }
-
 
 
                 $("#parishishtha_b tbody").children().last().after($clone);
@@ -3299,11 +2539,6 @@ jQuery(document).ready(function($){
 
                     },
 
-                    vehicle_id_reff:{
-
-                        required:true,
-
-                    },
 
                     "parking_exp[0]":{
 
@@ -3391,11 +2626,7 @@ jQuery(document).ready(function($){
 
                     },
 
-                    vehicle_id_reff:{
 
-                        required:"Please Select Vehicle",
-
-                    },
 
                     "parking_exp[0]":{
 
@@ -3457,8 +2688,6 @@ jQuery(document).ready(function($){
 
                     var vendor_id = $('#vendor_id').val();
 
-                    var vehicle_id = $('#vehicle_id_reff').val();
-
                     var from_date = $('#from_date').val();
 
                     var to = $('#to').val();
@@ -3477,7 +2706,7 @@ jQuery(document).ready(function($){
 
                         data:{
 
-                            vendor_id:vendor_id,vehicle_id:vehicle_id,from_date:from_date,to:to,p_id:p_id
+                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
 
                         },
 
@@ -3605,11 +2834,6 @@ jQuery(document).ready(function($){
 
                     },
 
-                    vehicle_id_reff:{
-
-                        required:true,
-
-                    },
 
                     gov_diesel:{
 
@@ -3659,11 +2883,6 @@ jQuery(document).ready(function($){
 
                     },
 
-                    vehicle_id_reff:{
-
-                        required:"Please Enter Vehicle",
-
-                    },
 
                    /* depot_id:{
 
@@ -3765,8 +2984,6 @@ jQuery(document).ready(function($){
 
                     var vendor_id = $('#vendor_id').val();
 
-                    var vehicle_id = $('#vehicle_id_reff').val();
-
                     var from_date = $('#from_date').val();
 
                     var to = $('#to').val();
@@ -3785,7 +3002,7 @@ jQuery(document).ready(function($){
 
                         data:{
 
-                            vendor_id:vendor_id,vehicle_id:vehicle_id,from_date:from_date,to:to,p_id:p_id
+                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
 
                         },
 
@@ -3858,71 +3075,6 @@ jQuery(document).ready(function($){
             e.preventDefault();
 
          });
-
-    //      $("body").on("click","#save_submit",function(e){
-
-
-
-    //             e.preventDefault();
-
-    //             var vendor_id = $('#vendor_id').val();
-
-    //                 var vehicle_id = $('#vehicle_id_reff').val();
-
-    //                 var from_date = $('#from_date').val();
-
-    //                 var to = $('#to').val();
-
-    //                 var p_id = $("#id").val();
-
-    //                 $.ajax({
-
-    //                     type: 'POST',
-
-    //                     url:'{{url('/getinvoice')}}',
-
-    //                     dataType:'json',
-
-    //                     data:{
-
-    //                         vendor_id:vendor_id,vehicle_id:vehicle_id,from_date:from_date,to:to,p_id:p_id
-
-    //                     },
-
-    //                     success: function(res){
-
-    //                         if(res[3] == false)
-
-    //                         {
-
-    //                             //e.preventDefault();
-
-    //                             swal("Cancelled", "Duplicate entry", "error");
-
-    //                             $(':input[type="submit"]').prop('disabled', false);
-
-    //                             return false;
-
-    //                         }
-
-    //                         else{
-
-    //             if($("#frm_single").valid())
-
-    //             {
-
-
-
-    //             }
-
-    //         }
-
-    //     },
-
-    // });
-
-    //      });
-
 
 
           /* Hardik */
@@ -4088,29 +3240,15 @@ jQuery(document).ready(function($){
 		$("body").on("change","#vendor_id",function(e){
 
             var vendor_id = $(this).val();
-
             $.ajax({
-
                 type:'POST',
-
                 url:'{{url('/getVehicleVendorWise')}}',
-
                 data:{
-
-                vendor_id:vendor_id
-
-                },
-
+                vendor_id:vendor_id},
                 success:function(result){
-
-                    $(".vehicle_id_reff").empty().html(result);
-
                     $(".vehicle_id").empty().html(result);
-
                 }
-
             });
-
         });
 
         $('body').on('change','#destination_id',function(e){
@@ -4179,7 +3317,7 @@ jQuery(document).ready(function($){
 
 
 
-        $("select[name='route_id']").on("change",function(){
+       /* $("select[name='route_id']").on("change",function(){
 
             $.ajax({
 
@@ -4201,7 +3339,7 @@ jQuery(document).ready(function($){
 
             });
 
-        });
+        });*/
 
 
 

@@ -327,10 +327,6 @@ class ParisishthaBController extends Controller
 
         $idealing_minutes = ($getminutes[0]->maximum_ideling_minutes)/5;
 
-
-
-        //$option = '<option value=""></option>';
-
         $option = '<option value="0">0</option>';
 
         $cnt = 0;
@@ -349,13 +345,8 @@ class ParisishthaBController extends Controller
 
     }
 
-
-
     public function store(Request $request)
-
     {
-
-
 
         $from = date("Y-m-d",strtotime($request->from_date));
 
@@ -370,14 +361,9 @@ class ParisishthaBController extends Controller
         $datearray = array();
 
         foreach($dates as $date)
-
         {
-
              $datearray[] = date("Y-m-d",strtotime($date));
-
         }
-
-
 
         $date =  implode(",",$datearray);
 
@@ -413,8 +399,6 @@ class ParisishthaBController extends Controller
 
         $remarks = implode("*++*",$request->remarks);
 
-
-
        if($this->userTypeId == '1'){
 
            $depot_id = $request->depot_id;
@@ -432,8 +416,6 @@ class ParisishthaBController extends Controller
        }
 
         $breaddown_charge_value = implode("*++*",$request->breaddown_charge_value);
-
-
 
         ParisishthaB::create([
 
@@ -510,13 +492,9 @@ class ParisishthaBController extends Controller
         ]);
 
         return redirect($this->route)->with('msg', 'Parisishtha B Inserted Successfully');
-
     }
 
-
-
     public function show($id)
-
     {
 
         $id = Crypt::decryptString($id);
@@ -632,13 +610,7 @@ class ParisishthaBController extends Controller
 
     }
 
-
-
-
-
     public function edit($id){
-
-
 
         //if (auth()->user()->usertype_id=='1') {
 
@@ -647,22 +619,11 @@ class ParisishthaBController extends Controller
         //}
 
         $id = Crypt::decryptString($id);
-
-
-
         $parisishthab = ParisishthaB::with('depot')->findorfail($id);
-
-        //echo "<pre>"; print_r($parisishthab); exit();
-
         $modulename = $this->modulename;
-
         $route = $this->route;
-
         $action = 'update';
-
         $vendors = Vendor::get();
-
-
 
         // $routes = DB::table('route_masters')
 
@@ -675,112 +636,58 @@ class ParisishthaBController extends Controller
         // ->get();
 
         if($this->accessTypeId == 2)
-
         {
-
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->where('route_masters.division_id',$this->divisionId)
-
              ->orwhere('route_masters.to_division',$this->divisionId)
-
             ->get();
-
         }
-
         else if($this->accessTypeId ==3)
-
         {
-
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->where('d2.id',$this->depotId)
-
             ->orwhere('d1.id',$this->depotId)
-
             ->get();
-
         }
-
         else
-
         {
-
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->get();
-
         }
-
         $schedule_time =RouteMaster::select('scheduled_time')->findorfail($parisishthab->route_id);
-
-
-
         $schedule_time = explode("*++*",$schedule_time->scheduled_time);
-
-
-
         $depots = Depot::get();
-
         $division = Division::get();
-
         $vendorId = $parisishthab->vendor_id;
-
         $vendorInvoiceId = $parisishthab->vendorinvoice_id;
 
         if($vendorInvoiceId != ''){
-
             $vendorinNo = Vendorinvoice::where('id',$vendorInvoiceId)->get();
-
             $invoiceNo = $vendorinNo[0]->invoice_no;
 
-
-
             $chekBill = Billsummary::where('vendorinvoice_id',$vendorInvoiceId)->get();
-
             if(! $chekBill->isEmpty()){
-
                 $chekBill = 'yes';
-
             }else{
-
                 $chekBill = 'no';
-
             }
 
         }else{
-
             $invoiceNo = '';
-
             $chekBill = 'no';
-
         }
 
-
-
         $cities = CityMaster::get();
-
         $vehicle = Vehicle::where('status',1)->where('vendor_id',$vendorId)->get();
-
-
 
         if($this->userTypeId == '1'){
 
@@ -811,39 +718,21 @@ class ParisishthaBController extends Controller
                 $vendorinvoices_id = array_filter($vendorinvoices_id);
 
                 $vendorinvoices = Vendorinvoice::whereNotIn('id',$vendorinvoices_id)->where('is_approved','1')->where('vendor_id',$vendorId)->get();
-
-
-
            }
 
         }
 
-
-
-
-
         $getminutes = Routemaster::where('id',$parisishthab->route_id)->first();
-
         $idealing_minutes = ($getminutes->maximum_ideling_minutes)/5;
 
-
-
         $edit_ideal_min = array();
-
         $cnt = 0;
-
         $edit_ideal_min[]  = 0;
-
         for($i = 0; $i<$idealing_minutes; $i++)
-
         {
-
           $cnt = $cnt+5;
-
           $edit_ideal_min[] = $cnt;
-
         }
-
 
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
@@ -858,16 +747,11 @@ class ParisishthaBController extends Controller
         $checkvoucher ='checkvoucher';
 
 
-        return view($this->view.'/form',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','schedule_time', 'edit_ideal_min', 'default_diseal', 'schduleKm'));
+        return view($this->view.'/_form',compact('user','vendors','modulename','route','action','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','schedule_time', 'edit_ideal_min', 'default_diseal', 'schduleKm'));
 
     }
 
-
-
-
-
     public function update(Request $request, ParisishthaB $parisishthaB)
-
     {
 
         $voucher_date =  date("Y-m-d");
@@ -949,7 +833,6 @@ class ParisishthaBController extends Controller
 
        $parisishthaB->route_id = $request->route_id;
 
-       $parisishthaB->scheduled_time = implode("*++*",$request->s_time);
 
         $parisishthaB->depot_id=$request->depot_id;
 
@@ -964,8 +847,6 @@ class ParisishthaBController extends Controller
         $parisishthaB->voucher_no=$request->voucher_no;
 
         $parisishthaB->voucher_date=$voucher_date;
-
-        $parisishthaB->vehicle_id_reff = $request->vehicle_id_reff;
 
         $parisishthaB->vehicle_id=$vehicle_id;
 
@@ -1266,27 +1147,27 @@ class ParisishthaBController extends Controller
 
     }
 
-    public function getScheduledtime(Request $request)
+    // public function getScheduledtime(Request $request)
 
-    {
+    // {
 
-        $routedata = RouteMaster::findorfail($request->route_id);
+    //     $routedata = RouteMaster::findorfail($request->route_id);
 
-        $s_time = explode("*++*",$routedata->scheduled_time);
+    //     $s_time = explode("*++*",$routedata->scheduled_time);
 
-        $option = '<option></option>';
+    //     $option = '<option></option>';
 
-        foreach($s_time as $time)
+    //     foreach($s_time as $time)
 
-        {
+    //     {
 
-            $option .="<option value='$time'>$time</option>";
+    //         $option .="<option value='$time'>$time</option>";
 
-        }
+    //     }
 
-        return $option;
+    //     return $option;
 
-    }
+    // }
 
     public function checkperiod(Request $request)
 
