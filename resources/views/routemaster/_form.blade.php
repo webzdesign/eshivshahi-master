@@ -121,10 +121,10 @@
 							<div class="col-md-6 col-sm-6 col-xs-12">
 								<div class="radio">
 									<label style="margin-right:20px;">
-										<input type="radio" name="status" id="status" value="1" checked {{($result->status == 1) ? 'checked' : '' }}> Active
+										<input type="radio" name="status" id="status" value="1" {{($routemaster->status == 1) ? 'checked' : '' }}> Active
 									</label>
 									<label>
-										<input type="radio" name="status" id="status" value="0" {{($result->status == 0) ? 'checked' : '' }}> Deactive
+										<input type="radio" name="status" id="status" value="0" {{($routemaster->status == 0) ? 'checked' : '' }}> Deactive
 									</label>
 									<div id="errorClass">
 									</div>

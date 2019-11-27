@@ -27,6 +27,28 @@ class RouteMasterController extends Controller
         $module ='modal';
         $route = $this->route;
         $depot = Depot::get();
+
+        /*$getRoute = DB::table('route_masters_old')->get();
+        foreach($getRoute as $key => $val) {
+
+            $scheduleTime = explode("*++*", $val->scheduled_time);
+
+            foreach($scheduleTime as $k => $v) {
+                RouteMaster::create([
+                    'division_id'   => $val->division_id,
+                    'from_depot'    => $val->from_depot,
+                    'to_division'   => $val->to_division,
+                    'to_depot'      => $val->to_depot,
+                    'scheduled_km'  => abs($val->scheduled_km),
+                    'trip_hrs'      => abs($val->trip_hr),
+                    'trip_min'      => abs($val->trip_min),
+                    'scheduled_time'=> $v,
+                    'maximum_ideling_minutes' => $val->maximum_ideling_minutes,
+                    'status'        => 1,
+                    ]);
+            }
+        } */
+
         return view($this->view.'/index',compact('title', 'route', 'module', 'depot'));
     }
 
