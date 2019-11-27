@@ -245,6 +245,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 	Route::post('checkmaxIdelingMinutes','RouteMasterController@checkmaxIdelingMinutes');
 	Route::get('routeActiveInactive/{type}/{id}', 'RouteMasterController@routeActiveInactive');
 	Route::post('checkScheduledTiming','RouteMasterController@checkScheduledTiming');
+	Route::post('checkScheduledNumber','RouteMasterController@checkScheduledNumber');
 	Route::resource('routemaster','RouteMasterController');
 
 

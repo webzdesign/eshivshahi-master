@@ -69,13 +69,7 @@ class RouteMasterController extends Controller
                 return  $routeMaster->trip_hrs.":".$routeMaster->trip_min;
             })
             ->editColumn('scheduled_time',function($routeMaster){
-                $a= explode("*++*",$routeMaster->scheduled_time);
-                $s_time='';
-                foreach($a as $time)
-                {
-                    $s_time .=$time."<br />";
-                }
-                return $s_time;
+                return $routeMaster->scheduled_time.' - '.$routeMaster->scheduled_number;
             })
 
             ->addColumn('action', function($routeMaster) {
@@ -129,7 +123,7 @@ class RouteMasterController extends Controller
     }
 
     public function store(Request $request){
-
+        $cnt = 0;
         foreach ($request->s_time as $s_time){
             RouteMaster::create([
                 'division_id'   => $request->division_id,
@@ -140,10 +134,13 @@ class RouteMasterController extends Controller
                 'trip_hrs'      => abs($request->trip_hr),
                 'trip_min'      => abs($request->trip_min),
                 'scheduled_time'=> $s_time,
+                'scheduled_number' => $request->schedule_number[$cnt],
                 'maximum_ideling_minutes' => $request->maximum_ideling_minutes,
                 'status'        => $request->status,
                 ]);
+                $cnt++;
         }
+
         return redirect($this->route)->with('msg', 'Route Inserted Successfully');
     }
 
@@ -172,6 +169,7 @@ class RouteMasterController extends Controller
         $route->trip_hrs            =   $request->trip_hr;
         $route->trip_min            =   $request->trip_min;
         $route->scheduled_time      =   $request->s_time;
+        $route->scheduled_number    =   $request->schedule_number;
         $route->maximum_ideling_minutes = $request->maximum_ideling_minutes;
         $route->status              =   $request->status;
         $route->save();
@@ -214,6 +212,21 @@ class RouteMasterController extends Controller
             $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->where('id', '!=', $request->id)->first();
         }
         if($checkTime)
+        {
+            echo json_encode(false);
+        } else {
+            echo json_encode(true);
+        }
+    }
+
+    public function checkScheduledNumber(Request $request){
+
+        if (!isset($request->id)) {
+            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $request->schedule_number)->first();
+        } else {
+            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $request->schedule_number)->where('id', '!=', $request->id)->first();
+        }
+        if($checkNumber)
         {
             echo json_encode(false);
         } else {

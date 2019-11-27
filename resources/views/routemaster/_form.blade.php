@@ -102,16 +102,20 @@
 						<div class="form-group">
 							<label  class=" col-md-3 col-sm-3 col-xs-12">Scheduled Timing<span class=" required"> *</span></label>
 							<div class="col-md-6 col-sm-6 col-xs-12">
-								<table class="table" id="scheduled_time">
-									<tbody>
-										<tr>
-										    <td>
-											    <input type="text" class="form-control numberonly s_time" name="s_time" id="s_time" value="{{date('H:i',strtotime($routemaster->scheduled_time)) }}" placeholder="Timing" readonly/>
-										    </td>
-									    </tr>
-									</tbody>
-								</table>
+
+								<input type="text" class="form-control numberonly s_time" name="s_time" id="s_time" value="{{date('H:i',strtotime($routemaster->scheduled_time)) }}" placeholder="Timing" readonly/>
+
 								<label id="s_time_server_error" class="server_time_label" name="server_s_time"></label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label  class=" col-md-3 col-sm-3 col-xs-12">Scheduled Number<span class=" required"> *</span></label>
+							<div class="col-md-6 col-sm-6 col-xs-12">
+
+								<input type="text" class="form-control numberonly schedule_number" name="schedule_number" id="schedule_number" value="{{$routemaster->scheduled_number}}" placeholder="Schedule Number" />
+
+								<label id="schedule_number_server_error" class="server_schNumber_label" name="server_schedule_number"></label>
 							</div>
 						</div>
 
@@ -184,6 +188,7 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	/* check Schedule time server side start */
 	function checkvalidtime(s_time){
 		var id = $('#id').val();
 		var division_id = $('#division_id').val();
@@ -213,28 +218,40 @@ jQuery(document).ready(function() {
 		var s_time = $(this).val();
 		checkvalidtime(s_time);
 	});
+	/* check Schedule time server side End */
 
-/*	function validationCheck() {
-		var timeVals = [];
-		var submitStatus = 0;
-		$('.s_time').each(function (){
-			if($(this).val() !=''){
-				var val = $(this).val();
-				if (jQuery.inArray( val,timeVals ) !== -1) {
-					submitStatus = 1;
-						var str = 'Scheduled Time Already Exists.';
-						var result = str.fontcolor("red");
-						$('body').find('.time_label').html(result);
 
-				} else{
-					submitStatus = 0;
-					$('body').find('.time_label').html('');
-					timeVals.push(val);
+	/* check Schedule Number server side start */
+	function checkvalidSchNumber(schedule_number){
+		var division_id = $('#division_id').val();
+		var from_depot = $('#from_depot').val();
+		var to_division = $('#to_division').val();
+		var to_depot = $('#to_depot').val();
+
+		$.ajax({
+			url: "{{url('/checkScheduledNumber')}}",
+			type: "POST",
+			dataType:'json',
+			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
+			success:function(data){
+				if(data == false){
+					serverNumberStatus = 1;
+					var str = 'This Schedule Number is already used this Route';
+					var result = str.fontcolor("red");
+					$('body').find('.server_schNumber_label').html(result);
+				} else {
+					serverNumberStatus = 0;
 				}
-			}
+			},
 		});
-		return submitStatus;
-	}*/
+	}
+
+	$("body").on('keyup','.schedule_number' ,function(e){
+		var schedule_number = $(this).val();
+		checkvalidSchNumber(schedule_number);
+	});
+	/* check Schedule Number server side end */
+
 
 	$('#frm').validate({
 
@@ -252,6 +269,7 @@ jQuery(document).ready(function() {
 			'scheduled_hr[0]':{required:true,},
 			'scheduled_min[0]':{required:true,},
 			's_time[0]':{required:true,},
+            'schedule_number[0]':{required:true,},
 			'trip_hr':{required:true,jquerynumber:true},
 			'trip_min':{required:true,jquerynumber:true},
 			status:{required:true,},
@@ -268,6 +286,7 @@ jQuery(document).ready(function() {
 				jquerynumber:"Please Enter Positive Numbers",
 				},
 			's_time[0]':{required:"Please Enter Sheduled Timing",},
+			'schedule_number[0]':{required:"Please Enter Sheduled Number",},
 			'trip_hr':{required:"Please Enter Trip Hours",jquerynumber:"Please Enter Positive Numbers"},
 			'trip_min':{required:"Please Enter Trip Minutes",jquerynumber:"Please Enter Positive Numbers"},
 			status:{required:"Please Enter Status"},

@@ -124,25 +124,49 @@
 								</div>
 							</div>
 
-							<div class="form-group">
-								<label  class=" col-md-3 col-sm-3 col-xs-12">Scheduled Timing<span class=" required"> *</span></label>
-								<div class="col-md-6 col-sm-6 col-xs-12">
-									<table class="table" id="scheduled_time">
+
+							<div class="row">
+								<table class="table table-bordered" id="scheduled_time" cellspacing="0">
+									<thead>
+										<tr>
+											<th>SrNo</th>
+											<th>Schedule Timing</th>
+											<th>Schedule Number</th>
+											<th>Action</th>
+										</tr>
+									<thead>
 									<tbody>
 										<tr class="scheduled_time">
+
+											<td><label class="sr_no">1 </label></td>
+
 											<td>
-												<input  type="text" class="form-control  s_time" name="s_time[0]" id="s_time[0]" value="" placeholder="Timing" readonly/>
+												<input  type="text" class="form-control  s_time" name="s_time[]" id="s_time" value="" placeholder="Timing" readonly/>
+											</td>
+											<td>
+												<input  type="text" class="form-control  schedule_number numberonly" name="schedule_number[]" id="schedule_number" value="" placeholder="Schedule Number"/>
 											</td>
 											<td>
 												<button type="button" class="add-row btn btn-success">+</button>
 												<button type="button" class="delete-row btn btn-danger">-</button>
 											</td>
 										</tr>
+										<tr>
+											<td></td>
+                                            <td>
+												<label id="stime_id_err" name="s_time"></label></br>
+												<label class="server_time_label" name="s_time"></label></br>
+												<label id="s_time_error" class="time_label" name="s_time"></label>
+											</td>
+											<td>
+												<label id="snumber_id_err" name="server_num"></label></br>
+												<label class="sch_number_label" name="server_num"></label></br>
+												<label class="server_schNumber_label" name="server_num"></label>
+											</td>
+											<td></td>
+										</tr>
 									</tbody>
-									</table>
-									<label id="s_time_server_error" class="server_time_label" name="server_s_time"></label>
-									<label id="s_time_error" class="time_label" name="s_time"></label>
-								</div>
+								</table>
 							</div>
 
 							<div class="form-group">
@@ -184,6 +208,7 @@
 
 jQuery(document).ready(function() {
 	var serverStatus = 0;
+	var serverNumberStatus = 0;
 	$('.s_time').datetimepicker({
 		format: 'HH:mm',
 		ignoreReadonly: true
@@ -217,6 +242,7 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	/* check Schedule time server side start */
 	function checkvalidtime(s_time){
 		var division_id = $('#division_id').val();
 		var from_depot = $('#from_depot').val();
@@ -245,10 +271,70 @@ jQuery(document).ready(function() {
 		var s_time = $(this).val();
 		checkvalidtime(s_time);
 	});
+	/* check Schedule time server side end */
 
+	/* check Schedule Number server side start */
+	function checkvalidSchNumber(schedule_number){
+		var division_id = $('#division_id').val();
+		var from_depot = $('#from_depot').val();
+		var to_division = $('#to_division').val();
+		var to_depot = $('#to_depot').val();
+
+		$.ajax({
+			url: "{{url('/checkScheduledNumber')}}",
+			type: "POST",
+			dataType:'json',
+			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
+			success:function(data){
+				if(data == false){
+					serverNumberStatus = 1;
+					var str = 'This Schedule Number is already used this Route';
+					var result = str.fontcolor("red");
+					$('body').find('.server_schNumber_label').html(result);
+				} else {
+					serverNumberStatus = 0;
+				}
+			},
+		});
+	}
+
+	$("body").on('keyup','.schedule_number' ,function(e){
+		var schedule_number = $(this).val();
+		checkvalidSchNumber(schedule_number);
+	});
+	/* check Schedule Number server side end */
+
+
+	/* auto increment number in clone method start*/
+    function sr_change(){
+      var count= $('.scheduled_time').length;
+      for(var i=0; i< count; i++){
+        var cnt = i+1;
+        $("label.sr_no").eq(i).text(cnt);
+      }
+	}
+	/* auto increment number in clone method end*/
 
   $(document).on('click','.add-row' ,function(event){
-	var num = $('.scheduled_time').length;
+
+	var $tr = $(this).closest('.scheduled_time');
+	var $clone = $tr.clone();
+
+	$clone.find('input').val('');
+	$clone.find('span:nth-child(3)').remove();
+
+	$clone.find(".s_time").datetimepicker({
+		format: 'HH:mm',
+		ignoreReadonly: true
+	});
+
+	$tr.after($clone);
+	sr_change();
+
+	//$clone.find(".s_time").rules('add', time_hr);
+
+
+	/*var num = $('.scheduled_time').length;
 	var t=$(this).closest('.scheduled_time');
 
 	t.find('.s_time').datetimepicker('destroy');
@@ -280,21 +366,79 @@ jQuery(document).ready(function() {
 	});
 	t.find(".s_time").datetimepicker({ format: 'HH:mm',ignoreReadonly: true});
 	clone.find(".s_time").rules('add', time_hr);
+	sr_change();*/
   });
 
-    var time_hr =  {
+    /*var time_hr =  {
         required: true,
         messages: {
       		required: "Please Enter Scheduled Time",
         	}
- 		}
+		 }*/
 
-  	$(document).on('click','.delete-row' ,function(event){
+	$(document).on('click','.delete-row' ,function(event){
 		if($(".scheduled_time").length>1){
 			$(this).closest(".scheduled_time").remove();
+			sr_change();
 		}
 	});
 
+	$('body').on('click','.minus' ,function(event){
+		if($(".scheduled_time").length > 1){
+			$(this).closest(".scheduled_time").remove();
+			sr_change();
+		}
+	});
+
+	/* Required Fields Schedule Time and Number start*/
+	function validSchduledCheck()
+	{
+		var stimeCheck = [];
+		var snumberCheck = [];
+		var errorStatus = 0;
+
+		$('.s_time').each(function () {
+				if ($(this).val() == '' ) {
+					stimeCheck.push(0);
+				} else  {
+					stimeCheck.push(1);
+				}
+		});
+
+		$('.schedule_number').each(function () {
+				if ($(this).val() == '' ) {
+					snumberCheck.push(0);
+				} else  {
+					snumberCheck.push(1);
+				}
+		});
+
+		var stime_err = stimeCheck.indexOf(0);
+		var snumber_err = snumberCheck.indexOf(0);
+
+		if (stime_err != '-1') {
+				var str = "Select Schedule Time";
+				var result = str.fontcolor("red");
+				document.getElementById('stime_id_err').innerHTML = result;
+				errorStatus = 1;
+		} else {
+				document.getElementById('stime_id_err').innerHTML = '';
+		}
+
+		if (snumber_err != '-1') {
+				var str = "Please Enter Schedule Number";
+				var result = str.fontcolor("red");
+				document.getElementById('snumber_id_err').innerHTML = result;
+				errorStatus = 1;
+		} else {
+				document.getElementById('snumber_id_err').innerHTML = '';
+		}
+
+		return errorStatus;
+	}
+	/* Required Fields Schedule Time and Number end*/
+
+	/* Check Schedule Time and number at a time not same insert Start*/
 	function validationCheck() {
 		var timeVals = [];
 		var submitStatus = 0;
@@ -314,8 +458,28 @@ jQuery(document).ready(function() {
 				}
 			}
 		});
+
+		var scheduleNumberVals = [];
+
+		$('.schedule_number').each(function (){
+			if($(this).val() !=''){
+				var val = $(this).val();
+				if (jQuery.inArray( val,scheduleNumberVals ) !== -1) {
+					submitStatus = 1;
+						var str = 'Scheduled Number Already Exists.';
+						var result = str.fontcolor("red");
+						$('body').find('.sch_number_label').html(result);
+
+				} else{
+					submitStatus = 0;
+					$('body').find('.sch_number_label').html('');
+					scheduleNumberVals.push(val);
+				}
+			}
+		});
 		return submitStatus;
 	}
+	/* Check Schedule Time and number at a time not same insert End*/
 
 	$('#frm').validate({
 
@@ -368,11 +532,13 @@ jQuery(document).ready(function() {
 
 	$("body").on("click","#form_btn",function(e){
         e.preventDefault();
-        validationCheck();
+		validationCheck();
+		validSchduledCheck();
         if ($("#frm").valid()) {
 			var submitStatus = validationCheck();
+			var reqStatus = validSchduledCheck();
 
-            if (submitStatus == 0 && serverStatus == 0) {
+            if (submitStatus == 0 && serverStatus == 0 && serverNumberStatus == 0 && reqStatus == 0) {
 				$(':input[type="submit"]').prop('disabled', true);
                 $("#frm").submit();
             } else {
