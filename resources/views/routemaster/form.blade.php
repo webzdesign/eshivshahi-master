@@ -440,7 +440,7 @@ jQuery(document).ready(function() {
 
 	/* Check Schedule Time and number at a time not same insert Start*/
 	function validationCheck() {
-		var timeVals = [];
+        var timeVals = [];
 		var submitStatus = 0;
 		$('.s_time').each(function (){
 			if($(this).val() !=''){
@@ -538,7 +538,7 @@ jQuery(document).ready(function() {
 			var submitStatus = validationCheck();
 			var reqStatus = validSchduledCheck();
 
-            if (submitStatus == 0 && serverStatus == 0 && serverNumberStatus == 0 && reqStatus == 0) {
+        if (submitStatus == 0 && serverStatus == 0 && serverNumberStatus == 0 && reqStatus == 0) {
 				$(':input[type="submit"]').prop('disabled', true);
                 $("#frm").submit();
             } else {

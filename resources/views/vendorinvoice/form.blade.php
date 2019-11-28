@@ -104,6 +104,14 @@ overflow-x: scroll; overflow-y:hidden;}
                         </div>
 
                         <div class="form-group">
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number"  readonly/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class=" col-md-3 col-sm-3 col-xs-12" >Invoice No<span class="error">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -1087,6 +1095,21 @@ jQuery(document).ready(function($){
         }
 
         $('.kms').trigger('change');
+
+        if(route_id ==''){
+            $('#schedule_number').val('');
+            return false;
+        }else{
+            $.ajax({
+                url:'{{url('/getScheduleNumber')}}',
+                type:'POST',
+                dataType:'json',
+                data:{route_id:route_id},
+                success:function(result){
+                    $('#schedule_number').val(result);
+                }
+            });
+        }
     });
 
     $(document).on('click','.minus' ,function(event){

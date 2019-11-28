@@ -246,6 +246,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 	Route::get('routeActiveInactive/{type}/{id}', 'RouteMasterController@routeActiveInactive');
 	Route::post('checkScheduledTiming','RouteMasterController@checkScheduledTiming');
 	Route::post('checkScheduledNumber','RouteMasterController@checkScheduledNumber');
+	Route::post('getScheduleNumber','RouteMasterController@getScheduleNumber');
 	Route::resource('routemaster','RouteMasterController');
 
 
