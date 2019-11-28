@@ -108,21 +108,11 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     </td>
 
                 </tr>
+                <tr>
+                    <td class="lt" colspan="7">Schedule Time - Schedule Number</td>
+                    <td class="lt" colspan="7">{{ $routes[0]->scheduled_time.' - '.$routes[0]->scheduled_number }}</td>
+                </tr>
 				<tr>
-    				<!-- <td style="width:8%;">Date/<span class="abc">दिनांक</span></td>
-					<td style="width:5%;">Kms/<span class="abc">सार्थ किमी</span></td>
-    				<td style="width:5%;">Diesel Ltr/<span class="abc">पुरविलेले डिझेल (लिटर)</span></td>
-    				<td style="width:6%;" >Diesel Rate/<span class="abc">डिझेल दर प्रति लिटर रू</td>
-        			<td style="width:8%;" >Ad Blue</td>
-					<td style="width:8%;">AdBlue Price</td>
-					<td style="width:8%;">Break Down Charges/<span class="abc">वाहन बिघाड रक्कम</span></td>
-					<td style="width:8%;">Vor. Exp/<span class="abc">मार्ग बंद वाहने वसुली</span></td>
-					<td style="width:5%;">Parking Exp. /<span class="abc">पार्किंग वीज इ. रक्कम</span></td>
-					<td style="width:8%;">Hotel Halt/<span class="abc">थांबा वसुली रक्कम</span></td>
-                    <td style="width:5%;">Washing Charges</td>
-					<td style="width:8%;">Other Exp./<span class="abc">इतर वसुली रक्कम</span><span class="required"></span></td>
-                    <td style="width:10%;">VehicleNumber</td>
-					<td style="width:8%;">Remarks</td> -->
                     <td style="width:8%;" class="parishish_size">Date</td>
 					<td style="width:5%;" class="parishish_size">Kms</td>
     				<td style="width:5%;" class="parishish_size">Diesel Ltr</td>

@@ -195,28 +195,23 @@ header( 'Content-Type: text/html; charset=utf-8' );
             </tr>
 
             <tr>
-
-             <td class="lt"  colspan="3">Billing Period</td>
-
+                <td class="lt"  colspan="3">Billing Period</td>
                 <td class="lt" colspan="4">
-
-                @php	$dates = explode(",",$parisishthab->billing_period) @endphp
-
-                  From: {{date("d-m-Y",strtotime($dates[0]))}} &nbsp;&nbsp;
-
-                  To :{{date("d-m-Y",strtotime($dates[1]))}}
-
+                @php	
+                    $dates = explode(",",$parisishthab->billing_period) 
+                @endphp
+                    From: {{date("d-m-Y",strtotime($dates[0]))}} &nbsp;&nbsp;
+                    To :{{date("d-m-Y",strtotime($dates[1]))}}
                 </td>
-
                 <td class="lt" colspan="3">Voucher Date</td>
-
                 <td class="lt" colspan="7">
-
-                {{ date('d-m-Y',strtotime($parisishthab->voucher_date)) }}
-
+                    {{ date('d-m-Y',strtotime($parisishthab->voucher_date)) }}
                 </td>
-
-				</tr>
+            </tr>
+            <tr>
+                <td class="lt" colspan="7">Schedule Time - Schedule Number</td>
+                <td class="lt" colspan="10">{{ $routes[0]->scheduled_time.' - '.$routes[0]->scheduled_number }}</td>
+            </tr>
 
                 {{--  <tr>
 
@@ -268,9 +263,9 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                     	<td style="width:10%;">Date</td>
 
-                        <td style="width:3%">Relevant Agreement</td>
+                        <td style="width:3%;font-size:12px;">Relevant Agreement</td>
 
-                        <td style="width:3%">Schedule Complete</td>
+                        <td style="width:3%;font-size:12px;">Schedule Complete</td>
 
 					    <td style="width:5%;">Kms</td>
 
@@ -296,7 +291,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                         <td style="width:12%;">VehicleNumber</td>
 
-                        <td style="width:4%;">Idling Minutes</td>
+                        <td style="width:4%;font-size:12px;">Idling Minutes</td>
 
 					    <td style="width:13%;">Remarks</td>
 

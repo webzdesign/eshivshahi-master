@@ -93,7 +93,7 @@ overflow-x: scroll; overflow-y:hidden;}
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" >Select Route (Schedule Time)<span class="required">*</span>
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Select Route<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <select  id="route_id" name="route_id" class="form-control select2_single col-md-7 col-xs-12 route_id" style="width:100%;">
@@ -104,7 +104,7 @@ overflow-x: scroll; overflow-y:hidden;}
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number<span class="required">*</span>
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number"  readonly/>
@@ -115,7 +115,7 @@ overflow-x: scroll; overflow-y:hidden;}
                             <label class=" col-md-3 col-sm-3 col-xs-12" >Invoice No<span class="error">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input  type="text" id="invoice_no" name="invoice_no"  class="form-control col-md-7 col-xs-12 invoice_no" value="{{old('invoice_no') }}">
+                                <input  type="text" id="invoice_no" name="invoice_no" placeholder="Enter Invoice No"  class="form-control col-md-7 col-xs-12 invoice_no" value="{{old('invoice_no') }}">
                                 @if ($errors->has('invoice_no'))
                                 <span class="error">
                                     <b>{{ $errors->first('invoice_no') }}</b>
@@ -1092,14 +1092,7 @@ jQuery(document).ready(function($){
                     $('#sch_km').text("Min. Schedule KM : "+result);
                 }
             });
-        }
 
-        $('.kms').trigger('change');
-
-        if(route_id ==''){
-            $('#schedule_number').val('');
-            return false;
-        }else{
             $.ajax({
                 url:'{{url('/getScheduleNumber')}}',
                 type:'POST',
@@ -1110,6 +1103,9 @@ jQuery(document).ready(function($){
                 }
             });
         }
+
+        $('.kms').trigger('change');
+
     });
 
     $(document).on('click','.minus' ,function(event){
@@ -1600,7 +1596,7 @@ jQuery(document).ready(function($){
                         $('#from_date').val('');
                         $('#to').val('');
                         $(".clonedTr").remove();
-                        swal('Invoice for selected bus and period already exists.', "", "error");
+                        swal('Invoice for selected Route and period already exists.', "", "error");
                         $(".blockUI").hide();
                         $("#save").prop("disabled",true);
                         var res = result;

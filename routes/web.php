@@ -125,6 +125,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 		Route::post('getavgrate','VendorinvoicesController@getavgrate');
 		Route::get('printVendorinvoice/{id}','VendorinvoicesController@printVendorinvoice');
 		Route::post('checkInvoiceDateVehicle','VendorinvoicesController@checkInvoiceDateVehicle');
+		Route::post('getScheduleNumber','VendorinvoicesController@getScheduleNumber');
 		Route::resource('vendorinvoice','VendorinvoicesController');
 
 
@@ -246,7 +247,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 	Route::get('routeActiveInactive/{type}/{id}', 'RouteMasterController@routeActiveInactive');
 	Route::post('checkScheduledTiming','RouteMasterController@checkScheduledTiming');
 	Route::post('checkScheduledNumber','RouteMasterController@checkScheduledNumber');
-	Route::post('getScheduleNumber','RouteMasterController@getScheduleNumber');
+	
 	Route::resource('routemaster','RouteMasterController');
 
 

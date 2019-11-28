@@ -114,6 +114,14 @@ overflow-x: scroll; overflow-y:hidden;}
                                 <label id="sch_km" class="btn btn-danger">Min. Schedule KM : @if($action == 'view') {{ $schduleKm }} @endif</label>
                             </div>
 
+                            <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum }}" readonly/>
+                                </div>
+                            </div>
+
 							<div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Invoice No<span class="error">*</span>
                                 </label>

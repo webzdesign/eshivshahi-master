@@ -156,6 +156,8 @@
 
 jQuery(document).ready(function() {
 	var serverStatus = 0;
+	var serverNumberStatus = 0;
+
     $('.s_time').datetimepicker({
 	  format: 'HH:mm',
 	  ignoreReadonly: true
@@ -189,12 +191,13 @@ jQuery(document).ready(function() {
 	});
 
 	/* check Schedule time server side start */
-	function checkvalidtime(s_time){
+	function checkvalidtime(){
 		var id = $('#id').val();
 		var division_id = $('#division_id').val();
 		var from_depot = $('#from_depot').val();
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
+		var s_time = $('.s_time').val();
 
 		$.ajax({
 			url: "{{url('/checkScheduledTiming')}}",
@@ -209,30 +212,33 @@ jQuery(document).ready(function() {
 					$('body').find('.server_time_label').html(result);
 				} else {
 					serverStatus = 0;
+					$('body').find('.server_time_label').html('');
 				}
 			},
 		});
 	}
 
 	$('.s_time').on('dp.change', function(e){
-		var s_time = $(this).val();
-		checkvalidtime(s_time);
+		checkvalidtime();
 	});
 	/* check Schedule time server side End */
 
 
 	/* check Schedule Number server side start */
-	function checkvalidSchNumber(schedule_number){
+	function checkvalidSchNumber(){
+		var id = $('#id').val();
 		var division_id = $('#division_id').val();
 		var from_depot = $('#from_depot').val();
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
+		var schedule_number = $('.schedule_number').val();
+		
 
 		$.ajax({
 			url: "{{url('/checkScheduledNumber')}}",
 			type: "POST",
 			dataType:'json',
-			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
+			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
 			success:function(data){
 				if(data == false){
 					serverNumberStatus = 1;
@@ -241,14 +247,19 @@ jQuery(document).ready(function() {
 					$('body').find('.server_schNumber_label').html(result);
 				} else {
 					serverNumberStatus = 0;
+					$('body').find('.server_schNumber_label').html('');
 				}
 			},
 		});
 	}
 
 	$("body").on('keyup','.schedule_number' ,function(e){
-		var schedule_number = $(this).val();
-		checkvalidSchNumber(schedule_number);
+		checkvalidSchNumber();
+	});
+
+	$("body").on('change', '#division_id, #from_depot, #to_division, #to_depot', function(e){
+		checkvalidSchNumber();
+		checkvalidtime();
 	});
 	/* check Schedule Number server side end */
 
@@ -269,7 +280,7 @@ jQuery(document).ready(function() {
 			'scheduled_hr[0]':{required:true,},
 			'scheduled_min[0]':{required:true,},
 			's_time[0]':{required:true,},
-            'schedule_number[0]':{required:true,},
+            schedule_number:{required:true,},
 			'trip_hr':{required:true,jquerynumber:true},
 			'trip_min':{required:true,jquerynumber:true},
 			status:{required:true,},
@@ -286,7 +297,7 @@ jQuery(document).ready(function() {
 				jquerynumber:"Please Enter Positive Numbers",
 				},
 			's_time[0]':{required:"Please Enter Sheduled Timing",},
-			'schedule_number[0]':{required:"Please Enter Sheduled Number",},
+			schedule_number:{required:"Please Enter Sheduled Number",},
 			'trip_hr':{required:"Please Enter Trip Hours",jquerynumber:"Please Enter Positive Numbers"},
 			'trip_min':{required:"Please Enter Trip Minutes",jquerynumber:"Please Enter Positive Numbers"},
 			status:{required:"Please Enter Status"},
@@ -313,7 +324,7 @@ jQuery(document).ready(function() {
         e.preventDefault();
 
         if ($("#frm").valid()) {
-            if (serverStatus == 0) {
+            if (serverStatus == 0 && serverNumberStatus == 0) {
 				$(':input[type="submit"]').prop('disabled', true);
                 $("#frm").submit();
             } else {

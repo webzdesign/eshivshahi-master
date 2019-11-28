@@ -105,7 +105,7 @@ overflow-x: scroll; overflow-y:hidden;}
 						    @php $dates = explode(",",$parisishthab->billing_period) @endphp
 
                             <div class="form-group">
-								<label class=" col-md-3 col-sm-3 col-xs-12" >Select Route <span class="required">*</span>
+								<label class=" col-md-3 col-sm-3 col-xs-12" >Select Route<span class="required">*</span>
 								</label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
                                     <select  id="route_id" name="route_id" class="form-control select2_single col-md-7 col-xs-12 route_id" style="width:100%;">
@@ -113,6 +113,14 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <select>
                                 </div>
                                 <label id="sch_km" class="btn btn-danger">Min. Schedule KM : @if($action == 'update') {{ $schduleKm }} @endif</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum }}" readonly/>
+                                </div>
                             </div>
 
 							<div class="form-group">
@@ -1221,6 +1229,16 @@ jQuery(document).ready(function($){
                         $('#sch_km').text("Min. Schedule KM : "+result);
                     }
                 });
+
+                $.ajax({
+                url:'{{url('/getScheduleNumber')}}',
+                    type:'POST',
+                    dataType:'json',
+                    data:{route_id:route_id},
+                    success:function(result){
+                        $('#schedule_number').val(result);
+                    }
+                });
             }
 
             $('.kms').trigger('change');
@@ -1721,7 +1739,7 @@ jQuery(document).ready(function($){
                             $('#from_date').val('');
                             $('#to').val('');
                             $(".clonedTr").remove();
-                            swal('Invoice for selected bus and period already exists.', "", "error");
+                            swal('Invoice for selected Route and period already exists.', "", "error");
                             $(".blockUI").hide();
                             $("#save").prop("disabled",true);
                             var res = result;

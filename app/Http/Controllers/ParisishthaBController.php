@@ -144,7 +144,7 @@ class ParisishthaBController extends Controller
         return Datatables::of($parisishthabs)
 
             ->editColumn('route', function($parisishthabs){
-                return $parisishthabs->route->fromdepot->name.'-'.$parisishthabs->route->todepot->name.' ('.$parisishthabs->route->scheduled_time.')';
+                return $parisishthabs->route->fromdepot->name.'-'.$parisishthabs->route->todepot->name.' ('.$parisishthabs->route->scheduled_time.' - '.$parisishthabs->route->scheduled_number.')';
             })
 
             ->editColumn('invoice_no', function($parisishthabs){
@@ -594,7 +594,7 @@ class ParisishthaBController extends Controller
 
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-
+        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
         $default_diseal = Charge::first();
 
         $getdata='getinvoice';
@@ -605,7 +605,7 @@ class ParisishthaBController extends Controller
 
         $checkvoucher ='checkvoucher';
 
-        return view($this->view.'/viewForm',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','data','schedule_time','edit_ideal_min', 'default_diseal', 'schduleKm'));
+        return view($this->view.'/viewForm',compact('user','vendors','modulename','route','action','dataurl','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','data','schedule_time','edit_ideal_min', 'default_diseal', 'schduleKm', 'schTimeNum'));
 
     }
 
@@ -735,6 +735,7 @@ class ParisishthaBController extends Controller
 
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
+        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
         $default_diseal = Charge::first();
 
         $getdata='getinvoice';
@@ -746,7 +747,7 @@ class ParisishthaBController extends Controller
         $checkvoucher ='checkvoucher';
 
 
-        return view($this->view.'/_form',compact('user','vendors','modulename','route','action','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','schedule_time', 'edit_ideal_min', 'default_diseal', 'schduleKm'));
+        return view($this->view.'/_form',compact('user','vendors','modulename','route','action','depots','vehicle','getdata','getinvoicedata','parisishthab','checkinvoice','checkvoucher','vendorinvoices','division','cities','routes','invoiceNo','chekBill','schedule_time', 'edit_ideal_min', 'default_diseal', 'schduleKm', 'schTimeNum'));
 
     }
 

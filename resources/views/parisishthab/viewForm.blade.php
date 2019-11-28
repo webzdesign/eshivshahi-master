@@ -45,6 +45,20 @@ overflow-x: scroll; overflow-y:hidden;}
                             @csrf
                                 <input type="hidden" name="userTypeId" id="userTypeId" value="{{isset($userTypeId)?$userTypeId:''}}">
                                 <input type="hidden" name="id" id="id" value="{{isset($parisishthab->id)?$parisishthab->id:''}}">                         <input type="hidden" name="route_km" value="{{ $schduleKm }}" id="route_km" />
+                            
+                            
+                            <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Select Vendor<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select  id="vendor_id" name="vendor_id"  class="form-control select2_single col-md-7 col-xs-12 vendor_id" style="width:100%;">
+                                        <option value=""></option>
+                                        @foreach($vendors as $vendor)
+                                            <option value="{{$vendor->id}}" @if(isset($parisishthab->vendor_id)){{$parisishthab->vendor_id==$vendor->id?'selected':''}}@endif>{{$vendor->vendor_name}}</option>
+                                        @endforeach
+                                    <select>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Division<span class="required">*</span>
@@ -100,6 +114,14 @@ overflow-x: scroll; overflow-y:hidden;}
                                 <label id="sch_km" class="btn btn-danger">Min. Schedule KM : {{ $schduleKm }}</label>
                             </div>
 
+                            <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum  }}" readonly/>
+                                </div>
+                            </div>
+
                            <?php /* <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Select Scheduled Time <span class="required">*</span>
                                 </label>
@@ -119,18 +141,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                 </div>
                             </div> */ ?>
 
-                            <div class="form-group">
-                                <label class=" col-md-3 col-sm-3 col-xs-12" >Select Vendor<span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select  id="vendor_id" name="vendor_id"  class="form-control select2_single col-md-7 col-xs-12 vendor_id" style="width:100%;">
-                                        <option value=""></option>
-                                        @foreach($vendors as $vendor)
-                                            <option value="{{$vendor->id}}" @if(isset($parisishthab->vendor_id)){{$parisishthab->vendor_id==$vendor->id?'selected':''}}@endif>{{$vendor->vendor_name}}</option>
-                                        @endforeach
-                                    <select>
-                                </div>
-                            </div>
+                            
 
                                 @php $dates = explode(",",$parisishthab->billing_period) @endphp
                             <div class="form-group">

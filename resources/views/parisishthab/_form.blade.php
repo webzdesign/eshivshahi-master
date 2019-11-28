@@ -49,6 +49,19 @@ overflow-x: scroll; overflow-y:hidden;}
                                 <input type="hidden" name="id" id="id" value="{{isset($parisishthab->id)?$parisishthab->id:''}}">                         <input type="hidden" name="route_km" value="{{ $schduleKm }}" id="route_km" />
 
                             <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Select Vendor<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select  id="vendor_id" name="vendor_id"  class="form-control select2_single col-md-7 col-xs-12 vendor_id" style="width:100%;">
+                                        <option value=""></option>
+                                        @foreach($vendors as $vendor)
+                                            <option value="{{$vendor->id}}" @if(isset($parisishthab->vendor_id)){{$parisishthab->vendor_id==$vendor->id?'selected':''}}@endif>{{$vendor->vendor_name}}</option>
+                                        @endforeach
+                                    <select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Division<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -88,6 +101,8 @@ overflow-x: scroll; overflow-y:hidden;}
                             <input type="hidden" name="depot_id" id="depot_id_input" value="{{ $parisishthab->depot_id }}">
                             @endif
 
+                            
+
                             <div class="form-group">
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Select Route <span class="required">*</span>
                                 </label>
@@ -95,11 +110,19 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <select  id="destination_id" name="route_id"  class="form-control select2_single col-md-7 col-xs-12 route_id" style="width:100%;">
                                         <option value=""></option>
                                         @foreach($routes as $rout)
-                                            <option value="{{$rout->id}}" @if(isset($parisishthab->route_id)){{$parisishthab->route_id == $rout->id?'selected':''}}@endif>{{$rout->from_depot.' - '.$rout->to_depot}}</option>
+                                            <option value="{{$rout->id}}" @if(isset($parisishthab->route_id)){{$parisishthab->route_id == $rout->id?'selected':''}}@endif>{{$rout->from_depot.' - '.$rout->to_depot.' ('.$rout->scheduled_time.')'}}</option>
                                         @endforeach
                                     <select>
                                 </div>
                                 <label id="sch_km" class="btn btn-danger">Min. Schedule KM : {{ $schduleKm }}</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum }}" readonly/>
+                                </div>
                             </div>
 
                            <?php /* <div class="form-group">
@@ -121,18 +144,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                 </div>
                             </div> */ ?>
 
-                            <div class="form-group">
-                                <label class=" col-md-3 col-sm-3 col-xs-12" >Select Vendor<span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select  id="vendor_id" name="vendor_id"  class="form-control select2_single col-md-7 col-xs-12 vendor_id" style="width:100%;">
-                                        <option value=""></option>
-                                        @foreach($vendors as $vendor)
-                                            <option value="{{$vendor->id}}" @if(isset($parisishthab->vendor_id)){{$parisishthab->vendor_id==$vendor->id?'selected':''}}@endif>{{$vendor->vendor_name}}</option>
-                                        @endforeach
-                                    <select>
-                                </div>
-                            </div>
+                            
 
                                 @php $dates = explode(",",$parisishthab->billing_period) @endphp
                             <div class="form-group">
@@ -749,6 +761,16 @@ jQuery(document).ready(function($){
 
             }
 
+        });
+
+        $.ajax({
+            url:'{{url('getScheduleNumber')}}',
+            type:'POST',
+            dataType:'json',
+            data:{route_id:route_id},
+            success:function(result){
+                $('#schedule_number').val(result);
+            }
         });
 
     });

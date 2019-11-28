@@ -76,7 +76,7 @@ $route = url("/$route");
                             <label class=" col-md-2 col-sm-3 col-xs-12" >मार्ग (वेळापत्रक) :
                             </label>
                             <div class="col-md-4 col-sm-6 col-xs-12">
-                                <input type="text" readonly value="{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_time.')' }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
+                                <input type="text" readonly value="{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_time.' - '.$parisishthab->route->scheduled_number.')' }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
                             </div>
 
                             <label class=" col-md-2 col-sm-3 col-xs-12" >महामंडळाचा देयक क्र :</label>

@@ -105,7 +105,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->where('route_masters.division_id', $division_id)
                 ->where('route_masters.from_depot', $depot_id)
-                ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
+                ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_number')
                 ->get();
 
             $return['status'] = true;
@@ -127,7 +127,7 @@ class VendorinvoicesController extends Controller
                 ->join('route_masters', 'vendorinvoices.route_id', '=', 'route_masters.id')
                 ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -143,7 +143,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->where('vendorinvoices.vendor_id',$vendor_id)
-                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
+                ->select('vendorinvoices.*', 'vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -159,7 +159,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
 				->where('vendorinvoices.vendor_id',$vendor_id)
                 ->select('vendorinvoices.*', 'vendors.vendor_name',
-                'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
+                'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
                 ->orderBy('vendorinvoices.id', 'desc')
                 ->whereNull('vendorinvoices.deleted_at')
 				->get();
@@ -173,10 +173,11 @@ class VendorinvoicesController extends Controller
                     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.depot_id',$depotId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
+
                 }
                 if($this->accessTypeId == '2'){
                     $divisionId = $this->divisionId;
@@ -188,7 +189,7 @@ class VendorinvoicesController extends Controller
                     ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
                     ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                     ->where('vendorinvoices.division_id',$divisionId)
-                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time')
+                    ->select('vendorinvoices.*', 'vendors.vendor_name','parisishtha_bs.vendorinvoice_id', 'parisishtha_bs.vendorinvoice_id', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
                     ->orderBy('vendorinvoices.id', 'desc')
                     ->whereNull('vendorinvoices.deleted_at')
                     ->get();
@@ -200,7 +201,7 @@ class VendorinvoicesController extends Controller
         return DataTables::of($vendorinvoice)
 				->addIndexColumn('id')
                 ->addColumn('route', function ($vendorinvoice){
-                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.'('.$vendorinvoice->scheduled_time.')';
+                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.'('.$vendorinvoice->scheduled_time.' - '.$vendorinvoice->scheduled_number.')';
                 })
                 ->editColumn('billing_period', function($vendorinvoice) {
                     $billing_period=explode(",",$vendorinvoice->billing_period);
@@ -393,19 +394,19 @@ class VendorinvoicesController extends Controller
 
         /* connect invoice to parishistha B,A and Bill Summary */
 
-        /* $vendor_id = $request->vendor_id;
-        $vehicle_id = $request->vehicle_id_reff;
+        $vendor_id = $request->vendor_id;
+        $route_id = $request->route_id;
         $billingPeriod = $billing_period;
 
         $lastInsertedId = $vendorInvoice->id;
 
-        $getParisishthaB = ParisishthaB::where('vendor_id', $vendor_id)->where('vehicle_id_reff', $vehicle_id)->where('billing_period', $billingPeriod)->first();
+        $getParisishthaB = ParisishthaB::where('vendor_id', $vendor_id)->where('route_id', $route_id)->where('billing_period', $billingPeriod)->first();
 
         if($getParisishthaB){
             ParisishthaB::where('id', $getParisishthaB->id)->update(['vendorinvoice_id'=>$lastInsertedId]);
             ParisishthaA::where('parisishtha_b_id', $getParisishthaB->id)->update(['vendorinvoice_id'=>$lastInsertedId]);
             Billsummary::where('parisishtha_b_id', $getParisishthaB->id)->update(['vendorinvoice_id'=>$lastInsertedId]);
-        } */
+        }
 
         return redirect($this->route)->with('msg','Vendor Invoice Inserted Successfully');
     }
@@ -429,8 +430,9 @@ class VendorinvoicesController extends Controller
         $confirmvendorinvoice='confirmvendorinvoice';
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
+        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
         $default_diseal = Charge::first();
-        return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal'));
+        return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal', 'schTimeNum'));
     }
 
 
@@ -492,9 +494,10 @@ class VendorinvoicesController extends Controller
         $default_diseal = Charge::first();
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
+        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
 
 
-        return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal'));
+        return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal', 'schTimeNum'));
     }
 
 
@@ -748,8 +751,6 @@ class VendorinvoicesController extends Controller
 
     public function invoiceCheckdate(Request $request)
     {
-        $from_dt = date_create(date_format($request->from_date),'Y-m-d');
-        $to_dt = date_create(date_format($request->to_date),'Y-m-d');
         $from_date = strtotime($request->from_date);
         $to_date = strtotime($request->to_date);
         $current_date = strtotime(date('d-m-Y'));
@@ -1065,9 +1066,16 @@ class VendorinvoicesController extends Controller
         echo json_encode($res);
     }
 
-    public function getScheduleNumber(Request $request) {
-        echo "hii hihi"; exit;
-
+    public function getScheduleNumber(Request $request) 
+    {
+        $routeData = RouteMaster::where('id', $request->route_id)->first();
+        if ($routeData) {
+            $route = $routeData->scheduled_time.' - '.$routeData->scheduled_number;
+        } else {
+            $route = '-';
+        }
+       
+        echo json_encode($route);
     }
 
 }

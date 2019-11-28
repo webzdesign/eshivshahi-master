@@ -47,7 +47,7 @@
                           <th>Sr no.</th>
                           <th>Vendor</th>
                           <th>Invoice No</th>
-                          <th>Route(Schedule Time)</th>
+                          <th>Route(Schedule Time - Number)</th>
                           <th>Voucher No</th>
                           <th>Voucher Date</th>
                           <th>Amount</th>
