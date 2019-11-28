@@ -1065,4 +1065,9 @@ class VendorinvoicesController extends Controller
         echo json_encode($res);
     }
 
+    public function getScheduleNumber(Request $request) {
+        echo "hii hihi"; exit;
+
+    }
+
 }
