@@ -130,8 +130,8 @@
 									<thead>
 										<tr>
 											<th>SrNo</th>
-											<th>Schedule Timing</th>
-											<th>Schedule Number</th>
+											<th width="30%">Schedule Timing</th>
+											<th width="40%">Schedule Number</th>
 											<th>Action</th>
 										</tr>
 									<thead>
@@ -141,7 +141,7 @@
 											<td><label class="sr_no">1 </label></td>
 
 											<td>
-												<input  type="text" class="form-control  s_time" name="s_time[]" id="s_time" value="" placeholder="Timing" readonly/>
+												<input  type="text" class="form-control s_time" name="s_time[]" id="s_time" value="" placeholder="Timing" readonly/>
 											</td>
 											<td>
 												<input  type="text" class="form-control  schedule_number numberonly" name="schedule_number[]" id="schedule_number" value="" placeholder="Schedule Number"/>
@@ -154,14 +154,15 @@
 										<tr>
 											<td></td>
                                             <td>
-												<label id="stime_id_err" name="s_time"></label></br>
-												<label class="server_time_label" name="s_time"></label></br>
-												<label id="s_time_error" class="time_label" name="s_time"></label>
+												<label id="stime_required_err" ></label></br>
+												<label id="server_time_label" ></label></br>
+												<label id="stime_duplicate_err" ></label>
 											</td>
 											<td>
-												<label id="snumber_id_err" name="server_num"></label></br>
-												<label class="sch_number_label" name="server_num"></label></br>
-												<label class="server_schNumber_label" name="server_num"></label>
+												<label id="snumber_required_err" name="server_num"></label></br>
+												<label id="server_schNumber_label" name="server_num"></label></br>
+												<label id="snumber_duplicate_err" name="server_num"></label>
+												
 											</td>
 											<td></td>
 										</tr>
@@ -207,12 +208,16 @@
 <script>
 
 jQuery(document).ready(function() {
-	var serverStatus = 0;
+	var serverTimeStatus = 0;
 	var serverNumberStatus = 0;
+
 	$('.s_time').datetimepicker({
 		format: 'HH:mm',
 		ignoreReadonly: true
+	}).on('dp.change', function (event) {
+		checkvalidtime();
 	});
+
 	var form=$("#frm");
 
     $(document).on('change', '.division_id' ,function(){
@@ -243,11 +248,13 @@ jQuery(document).ready(function() {
 	});
 
 	/* check Schedule time server side start */
-	function checkvalidtime(s_time){
+	function checkvalidtime()
+	{
 		var division_id = $('#division_id').val();
 		var from_depot = $('#from_depot').val();
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
+		var s_time = $(".s_time").map(function(){return $(this).val();}).get().join(",");
 
 		$.ajax({
 			url: "{{url('/checkScheduledTiming')}}",
@@ -256,29 +263,26 @@ jQuery(document).ready(function() {
 			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time },
 			success:function(data){
 				if(data == false){
-					serverStatus = 1;
+					serverTimeStatus = 1;
 					var str = 'This Schedule Time is already used this Route';
 					var result = str.fontcolor("red");
-					$('body').find('.server_time_label').html(result);
+					$('body').find('#server_time_label').html(result);
 				} else {
-					serverStatus = 0;
+					$('body').find('#server_time_label').html('');
+					serverTimeStatus = 0;
 				}
 			},
 		});
 	}
-
-	$('.s_time').on('dp.change', function(e){
-		var s_time = $(this).val();
-		checkvalidtime(s_time);
-	});
 	/* check Schedule time server side end */
 
 	/* check Schedule Number server side start */
-	function checkvalidSchNumber(schedule_number){
+	function checkvalidSchNumber(){
 		var division_id = $('#division_id').val();
 		var from_depot = $('#from_depot').val();
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
+		var schedule_number =$(".schedule_number").map(function(){return $(this).val();}).get().join(",");
 
 		$.ajax({
 			url: "{{url('/checkScheduledNumber')}}",
@@ -290,8 +294,9 @@ jQuery(document).ready(function() {
 					serverNumberStatus = 1;
 					var str = 'This Schedule Number is already used this Route';
 					var result = str.fontcolor("red");
-					$('body').find('.server_schNumber_label').html(result);
+					$('body').find('#server_schNumber_label').html(result);
 				} else {
+					$('body').find('#server_schNumber_label').html('');
 					serverNumberStatus = 0;
 				}
 			},
@@ -299,8 +304,12 @@ jQuery(document).ready(function() {
 	}
 
 	$("body").on('keyup','.schedule_number' ,function(e){
-		var schedule_number = $(this).val();
-		checkvalidSchNumber(schedule_number);
+		checkvalidSchNumber();
+	});
+
+	$("body").on('change', '#division_id, #from_depot, #to_division, #to_depot', function(e){
+		checkvalidSchNumber();
+		checkvalidtime();
 	});
 	/* check Schedule Number server side end */
 
@@ -322,10 +331,12 @@ jQuery(document).ready(function() {
 
 	$clone.find('input').val('');
 	$clone.find('span:nth-child(3)').remove();
-
+	
 	$clone.find(".s_time").datetimepicker({
 		format: 'HH:mm',
 		ignoreReadonly: true
+	}).on('dp.change', function (event) {
+		checkvalidtime();
 	});
 
 	$tr.after($clone);
@@ -391,47 +402,48 @@ jQuery(document).ready(function() {
 	});
 
 	/* Required Fields Schedule Time and Number start*/
-	function validSchduledCheck()
+	function requiredCheck()
 	{
 		var stimeCheck = [];
 		var snumberCheck = [];
+
 		var errorStatus = 0;
 
 		$('.s_time').each(function () {
-				if ($(this).val() == '' ) {
-					stimeCheck.push(0);
-				} else  {
-					stimeCheck.push(1);
-				}
+			if ($(this).val() == '' ) {
+				stimeCheck.push(0);
+			} else  {
+				stimeCheck.push(1);
+			}
 		});
 
 		$('.schedule_number').each(function () {
-				if ($(this).val() == '' ) {
-					snumberCheck.push(0);
-				} else  {
-					snumberCheck.push(1);
-				}
+			if ($(this).val() == '' ) {
+				snumberCheck.push(0);
+			} else  {
+				snumberCheck.push(1);
+			}
 		});
 
 		var stime_err = stimeCheck.indexOf(0);
 		var snumber_err = snumberCheck.indexOf(0);
 
 		if (stime_err != '-1') {
-				var str = "Select Schedule Time";
-				var result = str.fontcolor("red");
-				document.getElementById('stime_id_err').innerHTML = result;
-				errorStatus = 1;
+			var str = "Select Schedule Time";
+			var result = str.fontcolor("red");
+			document.getElementById('stime_required_err').innerHTML = result;
+			errorStatus = 1;
 		} else {
-				document.getElementById('stime_id_err').innerHTML = '';
+			document.getElementById('stime_required_err').innerHTML = '';
 		}
 
 		if (snumber_err != '-1') {
-				var str = "Please Enter Schedule Number";
-				var result = str.fontcolor("red");
-				document.getElementById('snumber_id_err').innerHTML = result;
-				errorStatus = 1;
+			var str = "Please Enter Schedule Number";
+			var result = str.fontcolor("red");
+			document.getElementById('snumber_required_err').innerHTML = result;
+			errorStatus = 1;
 		} else {
-				document.getElementById('snumber_id_err').innerHTML = '';
+			document.getElementById('snumber_required_err').innerHTML = '';
 		}
 
 		return errorStatus;
@@ -439,7 +451,7 @@ jQuery(document).ready(function() {
 	/* Required Fields Schedule Time and Number end*/
 
 	/* Check Schedule Time and number at a time not same insert Start*/
-	function validationCheck() {
+	function DuplicateCheck() {
 		var timeVals = [];
 		var submitStatus = 0;
 		$('.s_time').each(function (){
@@ -449,11 +461,10 @@ jQuery(document).ready(function() {
 					submitStatus = 1;
 						var str = 'Scheduled Time Already Exists.';
 						var result = str.fontcolor("red");
-						$('body').find('.time_label').html(result);
+						$('body').find('#stime_duplicate_err').html(result);
 
 				} else{
-					submitStatus = 0;
-					$('body').find('.time_label').html('');
+					$('body').find('#stime_duplicate_err').html('');
 					timeVals.push(val);
 				}
 			}
@@ -466,13 +477,11 @@ jQuery(document).ready(function() {
 				var val = $(this).val();
 				if (jQuery.inArray( val,scheduleNumberVals ) !== -1) {
 					submitStatus = 1;
-						var str = 'Scheduled Number Already Exists.';
-						var result = str.fontcolor("red");
-						$('body').find('.sch_number_label').html(result);
-
+					var str = 'Scheduled Number Already Exists.';
+					var result = str.fontcolor("red");
+					$('body').find('#snumber_duplicate_err').html(result);
 				} else{
-					submitStatus = 0;
-					$('body').find('.sch_number_label').html('');
+					$('body').find('#snumber_duplicate_err').html('');
 					scheduleNumberVals.push(val);
 				}
 			}
@@ -532,13 +541,13 @@ jQuery(document).ready(function() {
 
 	$("body").on("click","#form_btn",function(e){
         e.preventDefault();
-		validationCheck();
-		validSchduledCheck();
+		DuplicateCheck();
+		requiredCheck();
         if ($("#frm").valid()) {
-			var submitStatus = validationCheck();
-			var reqStatus = validSchduledCheck();
+			var duplicateStatus = DuplicateCheck();
+			var reqStatus = requiredCheck();
 
-            if (submitStatus == 0 && serverStatus == 0 && serverNumberStatus == 0 && reqStatus == 0) {
+            if (serverTimeStatus == 0 && serverNumberStatus == 0 && reqStatus == 0 && duplicateStatus == 0) {
 				$(':input[type="submit"]').prop('disabled', true);
                 $("#frm").submit();
             } else {

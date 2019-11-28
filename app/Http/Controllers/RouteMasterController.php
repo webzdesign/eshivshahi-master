@@ -206,10 +206,12 @@ class RouteMasterController extends Controller
 
     public function checkScheduledTiming(Request $request){
 
+        $scheduleNum = explode(",", $request->s_time);
+
         if (!isset($request->id)) {
-            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->first();
+            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_time', $scheduleNum)->first();
         } else {
-            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $request->s_time)->where('id', '!=', $request->id)->first();
+            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_time', $scheduleNum)->where('id', '!=', $request->id)->first();
         }
         if($checkTime)
         {
@@ -219,12 +221,13 @@ class RouteMasterController extends Controller
         }
     }
 
-    public function checkScheduledNumber(Request $request){
-
+    public function checkScheduledNumber(Request $request)
+    {
+        $scheduleNumber = explode(",",$request->schedule_number);   
         if (!isset($request->id)) {
-            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $request->schedule_number)->first();
+            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_number', $scheduleNumber)->first();
         } else {
-            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $request->schedule_number)->where('id', '!=', $request->id)->first();
+            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_number', $scheduleNumber)->where('id', '!=', $request->id)->first();
         }
         if($checkNumber)
         {
