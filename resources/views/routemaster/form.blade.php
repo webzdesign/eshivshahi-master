@@ -130,8 +130,9 @@
 									<thead>
 										<tr>
 											<th>SrNo</th>
-											<th width="30%">Schedule Timing</th>
-											<th width="40%">Schedule Number</th>
+											<th width="25%">Schedule Timing</th>
+											<th width="25%">Schedule Number</th>
+											<th width="25%">Bus Type</th>
 											<th>Action</th>
 										</tr>
 									<thead>
@@ -145,6 +146,13 @@
 											</td>
 											<td>
 												<input  type="text" class="form-control  schedule_number numberonly" name="schedule_number[]" id="schedule_number" value="" placeholder="Schedule Number"/>
+											</td>
+											<td>
+												<select name="bus_type[]" id="bus_type" class="form-control bus_type select2_single" style="width:100%;">
+													<option value="">Select</option>
+													<option value="seater">Seater</option>
+													<option value="sleeper">Sleeper</option>
+												</select>
 											</td>
 											<td>
 												<button type="button" class="add-row btn btn-success">+</button>
@@ -163,6 +171,9 @@
 												<label id="server_schNumber_label" name="server_num"></label></br>
 												<label id="snumber_duplicate_err" name="server_num"></label>
 												
+											</td>
+											<td>
+												<label id="bus_type_err"></label>
 											</td>
 											<td></td>
 										</tr>
@@ -331,6 +342,12 @@ jQuery(document).ready(function() {
 
 	$clone.find('input').val('');
 	$clone.find('span:nth-child(3)').remove();
+	$clone.find("span").remove();
+
+	$clone.find(".select2_single").select2({
+        placeholder: "Select",
+        allowClear: true
+    });
 	
 	$clone.find(".s_time").datetimepicker({
 		format: 'HH:mm',
@@ -406,6 +423,7 @@ jQuery(document).ready(function() {
 	{
 		var stimeCheck = [];
 		var snumberCheck = [];
+		var busTypeCheck = [];
 
 		var errorStatus = 0;
 
@@ -425,8 +443,17 @@ jQuery(document).ready(function() {
 			}
 		});
 
+		$('.bus_type').each(function () {
+			if ($(this).val() == '' ) {
+				busTypeCheck.push(0);
+			} else  {
+				busTypeCheck.push(1);
+			}
+		});
+
 		var stime_err = stimeCheck.indexOf(0);
 		var snumber_err = snumberCheck.indexOf(0);
+		var busType_err = busTypeCheck.indexOf(0);
 
 		if (stime_err != '-1') {
 			var str = "Select Schedule Time";
@@ -444,6 +471,15 @@ jQuery(document).ready(function() {
 			errorStatus = 1;
 		} else {
 			document.getElementById('snumber_required_err').innerHTML = '';
+		}
+
+		if (busType_err != '-1') {
+			var str = "Please Select Bus Type";
+			var result = str.fontcolor("red");
+			document.getElementById('bus_type_err').innerHTML = result;
+			errorStatus = 1;
+		} else {
+			document.getElementById('bus_type_err').innerHTML = '';
 		}
 
 		return errorStatus;

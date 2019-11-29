@@ -346,6 +346,7 @@ class VendorinvoicesController extends Controller
         }
         $date =  implode(",",$datearray);
         $vehicle_id = implode("*++*",$request->vehicle_id);
+        $schedule_complete = implode("*++*",$request->s_c_v);
         $kms =  implode(",",$request->kms);
         $diesel_ltr =  implode(",",$request->diesel_ltr);
         $diese_per_ltr_price= implode(",",$request->diese_per_ltr_price);
@@ -370,6 +371,7 @@ class VendorinvoicesController extends Controller
             'vehicle_id'=>$vehicle_id,
             'date'=>$date,
             'kms'=>$kms,
+            'schedule_complete'=>$schedule_complete,
             'diesel_ltr'=>$diesel_ltr,
             'diese_per_ltr_price'=>$diese_per_ltr_price,
             'adblue'=>$adblue,
@@ -515,6 +517,7 @@ class VendorinvoicesController extends Controller
         $billing_period = $from.",".$to;
         $date =  implode(",",$datearray);
         $vehicle_id = implode("*++*",$request->vehicle_id);
+        $schedule_complete = implode("*++*",$request->s_c_v);
         $kms =  implode(",",$request->kms);
         $diesel_ltr =  implode(",",$request->diesel_ltr);
         $diese_per_ltr_price= implode(",",$request->diese_per_ltr_price);
@@ -545,6 +548,7 @@ class VendorinvoicesController extends Controller
         $vendorinvoice->invoice_no=$request->invoice_no;
         $vendorinvoice->vehicle_id=$vehicle_id;
         $vendorinvoice->date=$date;
+        $vendorinvoice->schedule_complete=$schedule_complete;
         $vendorinvoice->kms=$kms;
         $vendorinvoice->diesel_ltr=$diesel_ltr;
         $vendorinvoice->diese_per_ltr_price=$diese_per_ltr_price;

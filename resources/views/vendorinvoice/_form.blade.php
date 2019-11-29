@@ -161,6 +161,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                         <thead>
                                             <tr>
                                                 <th width="120px !important;">Date/दिनांक<span class="required">*</span></th>
+                                                <th width="50px !important;">Schedule Complete</th>
                                                 <th width="100px !important;">Kms/सार्थ किमी<span class="required">*</span></th>
                                                 <th width="100px !important;">Diesel Ltr/पुरविलेले डिझेल (लिटर)<span class="required">*</span></th>
                                                 <th width="100px !important;">Diesel Rate/डिझेल दर प्रति लिटर रू<span class="required">*</span></th>
@@ -181,6 +182,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                     $date = explode(",",$parisishthab->date);
                                                     $vehicleArr = explode("*++*",$parisishthab->vehicle_id);
                                                     $kms = explode(",",$parisishthab->kms);
+                                                    $schedule_complete = explode("*++*",$parisishthab->schedule_complete);
                                                     $diesel_ltr = explode(",",$parisishthab->diesel_ltr);
                                                     $diese_per_ltr_price = explode(",",$parisishthab->diese_per_ltr_price);
                                                     $adblue = explode(",",$parisishthab->adblue);
@@ -245,16 +247,16 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                             <td><input type="text" readonly id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp"></td>
 
-                                            <td>
-                                            <?php /*  <input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */ ?>
+                                                            <td>
+                                                            <?php /*  <input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */ ?>
 
-                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                                    <option value=""></option>
-                                                    @foreach($vehicle as $key => $value)
-                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                                    @endforeach
-                                                <select>
-                                            </td>
+                                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                    <option value=""></option>
+                                                                    @foreach($vehicle as $key => $value)
+                                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                    @endforeach
+                                                                <select>
+                                                            </td>
 
                                                             <td><textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea></td>
                                                         </tr>
@@ -262,6 +264,8 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         @if($i == '0')
                                                         <tr class="parishishtha_b">
                                                             <td><input type="text" readonly id="date_pb[{{$i}}]" name="date_pb[{{$i}}]"  class="date_pb form-control" value="{{date("d-m-Y",strtotime($date[$i])) }}"></td>
+
+                                                            <td align="center"><input type="checkbox" name="schedule_complete[{{$i}}]" class="schedule_complete" id="schedule_complete[{{$i}}]" value="1" style="height:25px;width:25px;" {{($schedule_complete[$i]==1)?'checked':'' }}><input type="hidden" name="s_c_v[{{$i}}]" class="s_c_v" id="s_c_V[{{$i}}]" value="{{ $schedule_complete[$i]}}"></td>
 
                                                             <td ><input type="text" id="kms[{{$i}}]" name="kms[{{$i}}]"  class="decimalonly kms form-control kms_auto" value="{{$kms[$i]}}" /></td>
 
@@ -306,13 +310,13 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                             <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto"></td>
                                                             <td>
-                                                          <?php /* <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto"> */ ?>
-                                        <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                            <option value=""></option>
-                                            @foreach($vehicle as $key => $value)
-                                            <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                            @endforeach
-                                        <select>
+                                                            <?php /* <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto"> */ ?>
+                                                            <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                <option value=""></option>
+                                                                @foreach($vehicle as $key => $value)
+                                                                <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                @endforeach
+                                                            <select>
                                                             </td>
                                                             <td>
                                                                 <textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea>
@@ -321,6 +325,8 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         @else
                                                         <tr class="parishishtha_b">
                                                             <td ><input type="text" readonly id="date_pb[{{$i}}]" name="date_pb[{{$i}}]"  class="date_pb form-control" value="{{date("d-m-Y",strtotime($date[$i])) }}"></td>
+
+                                                            <td align="center"><input type="checkbox" name="schedule_complete[{{$i}}]" class="schedule_complete" id="schedule_complete[{{$i}}]" value="1" style="height:25px;width:25px;" {{($schedule_complete[$i]==1)?'checked':'' }}><input type="hidden" name="s_c_v[{{$i}}]" class="s_c_v" id="s_c_V[{{$i}}]" value="{{ $schedule_complete[$i]}}"></td>
 
                                                             <td><input type="text" id="kms[{{$i}}]" name="kms[{{$i}}]"  class="decimalonly kms form-control kms_auto_total" value="{{$kms[$i]}}" /></td>
 
@@ -365,16 +371,16 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                             <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto_total"></td>
 
-                                            <td>
-                                                <?php /*<input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total"> */ ?>
+                                                            <td>
+                                                                <?php /*<input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total"> */ ?>
 
-                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                                    <option value=""></option>
-                                                    @foreach($vehicle as $key => $value)
-                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                                    @endforeach
-                                                <select>
-                                            </td>
+                                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                    <option value=""></option>
+                                                                    @foreach($vehicle as $key => $value)
+                                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                    @endforeach
+                                                                <select>
+                                                            </td>
 
                                                             <td>
                                                                 <textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea>
@@ -387,6 +393,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                <td></td>
                                                 <td></td>
                                                 <td><label id="kms_er"></label></td>
                                                 <td><label id="diesel_ltr_er"></label></td>
@@ -403,7 +410,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td></td>
                                             </tr>
                                             <tr>
-                                                <td>Total</td>
+                                                <td colspan="2">Total</td>
 
                                                 <td><input type="text" class="form-control"  name="total_kms" id="total_kms" value="" readonly></td>
                                                 <td><input type="text" class="form-control" name="total_diesel" id="total_diesel" value="" readonly></td>

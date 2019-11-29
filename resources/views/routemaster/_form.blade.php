@@ -120,6 +120,17 @@
 						</div>
 
 						<div class="form-group">
+							<label  class=" col-md-3 col-sm-3 col-xs-12">Bus Type<span class=" required"> *</span></label>
+							<div class="col-md-6 col-sm-6 col-xs-12">
+								<select name="bus_type" id="bus_type" class="form-control bus_type select2_single" style="width:100%;">
+									<option value="">Select</option>
+									<option {{ ($routemaster->bus_type == 'seater') ? 'selected' : '' }} value="seater">Seater</option>
+									<option {{ ($routemaster->bus_type == 'sleeper') ? 'selected' : '' }} value="sleeper">Sleeper</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
 							<label class=" col-md-3 col-sm-3 col-xs-12" >Status<span class="error">*</span>
 							</label>
 							<div class="col-md-6 col-sm-6 col-xs-12">
@@ -136,13 +147,15 @@
 							</div>
 						</div>
 
-							<div class="form-group">
-								<label  class="col-sm-3 control-label"></label>
-								<div class="col-sm-9">
-									<input type="submit" id="form_btn" value="Update" class="btn  btn-primary"/>
-									<a href="{{url('routemaster')}}" class="btn btn-warning" >Cancel </a>
-								</div>
+						<div class="ln_solid"></div>
+
+						<div class="form-group">
+							<label  class="col-sm-3 control-label"></label>
+							<div class="col-sm-9">
+								<input type="submit" id="form_btn" value="Update" class="btn  btn-primary"/>
+								<a href="{{url('routemaster')}}" class="btn btn-warning" >Cancel </a>
 							</div>
+						</div>
 						</form>
 					</div>
 				</div>
@@ -277,10 +290,9 @@ jQuery(document).ready(function() {
 				required:true,
 				jquerynumber:true,
 			},
-			'scheduled_hr[0]':{required:true,},
-			'scheduled_min[0]':{required:true,},
 			's_time[0]':{required:true,},
             schedule_number:{required:true,},
+			bus_type:{required:true,},
 			'trip_hr':{required:true,jquerynumber:true},
 			'trip_min':{required:true,jquerynumber:true},
 			status:{required:true,},
@@ -298,6 +310,7 @@ jQuery(document).ready(function() {
 				},
 			's_time[0]':{required:"Please Enter Sheduled Timing",},
 			schedule_number:{required:"Please Enter Sheduled Number",},
+			bus_type:{required:"Please Select Bus Type",},
 			'trip_hr':{required:"Please Enter Trip Hours",jquerynumber:"Please Enter Positive Numbers"},
 			'trip_min':{required:"Please Enter Trip Minutes",jquerynumber:"Please Enter Positive Numbers"},
 			status:{required:"Please Enter Status"},

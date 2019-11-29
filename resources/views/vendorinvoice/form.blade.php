@@ -149,6 +149,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <thead>
                                         <tr>
                                             <th width="120px !important;">Date/दिनांक<span class="required">*</span></th>
+                                            <th width="50px !important;">Schedule Complete</th>
                                             <th width="100px !important;">Kms/सार्थ किमी<span class="required">*</span></th>
                                             <th width="100px !important;">Diesel Ltr/पुरविलेले डिझेल (लिटर)<span class="required">*</span></th>
                                             <th width="100px !important;">Diesel Rate/डिझेल दर प्रति लिटर रू<span class="required">*</span></th>
@@ -167,6 +168,10 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <tbody style="">
                                         <tr class="parishishtha_b">
                                             <td><input type="text" id="date_pb[0]" name="date_pb[0]" class="date_pb form-control date_pb_auto">
+                                            </td>
+
+                                            <td align="center">
+                                                <input type="checkbox" name="schedule_complete[0]" class="schedule_complete" id="schedule_complete[0]" value="1" style="height:25px;width:25px;"><input type="hidden" name="s_c_v[0]" class="s_c_v" id="s_c_V[0]" >
                                             </td>
 
                                             <td><input type="text" id="kms[0]" name="kms[0]"  class="decimalonly kms form-control kms_auto" />
@@ -241,6 +246,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                     <tfoot>
                                         <tr>
                                             <td></td>
+                                            <td></td>
                                             <td><label id="kms_er"></label></td>
                                             <td><label id="diesel_ltr_er"></label></td>
                                             <td><label id="diese_per_ltr_price_er"></label></td>
@@ -256,7 +262,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                             <td></td>
                                         </tr>
                                         <tr>
-                                            <td>Total</td>
+                                            <td colspan="2">Total</td>
 
                                             <td><input type="text" class="form-control"  name="total_kms" id="total_kms" value="" readonly></td>
                                             <td><input type="text" class="form-control" name="total_diesel" id="total_diesel" value="" readonly></td>
@@ -788,6 +794,7 @@ jQuery(document).ready(function($){
                 if(currentDate >= toDayDate){
                     $clone.find(".date_pb").attr('readonly','readonly');
                     $clone.find(".vehicle_id").attr('disabled','disabled').removeClass('vehicle_id_auto_total');
+                    $clone.find(".schedule_complete").attr('disabled','disabled');
                     $clone.find(".kms").attr('readonly','readonly').removeClass('kms_auto_total');
                     $clone.find(".diesel_ltr").attr('readonly','readonly').removeClass('diesel_ltr_auto_total');
                     $clone.find(".diese_per_ltr_price").attr('readonly','readonly').removeClass('diese_per_ltr_price_auto_total');
@@ -808,6 +815,8 @@ jQuery(document).ready(function($){
                 $clone.find("span").remove();
                 $clone.find("select").select2({placeholder: "Select",
                 alowClear:true});
+                $clone.find(".schedule_complete").attr('id', 'schedule_complete['+num+']').attr('name', 'schedule_complete['+num+']');
+                $clone.find(".s_c_v").attr('id', 's_c_v['+num+']').attr('name', 's_c_v['+num+']');
                 $clone.find(".kms").attr('id', 'kms['+num+']').attr('name', 'kms['+num+']').removeClass('kms_auto');
                 $clone.find(".vehicle_id").attr('id', 'vehicle_id['+num+']').attr('name', 'vehicle_id['+num+']').removeClass('vehicle_id_auto');
                 $clone.find(".diesel_ltr").attr('id', 'diesel_ltr['+num+']').attr('name', 'diesel_ltr['+num+']').removeClass('diesel_ltr_auto');
@@ -1005,6 +1014,7 @@ jQuery(document).ready(function($){
         {
         $(".parishishtha_b").each(function(){
             $(this).find('.date').attr('name','date['+i+']');
+            $(this).find('.schedule_complete').attr('name','schedule_complete['+i+']').attr('id','schedule_complete['+i+']');
             $(this).find('.kms').attr('name','kms['+i+']').attr('id','kms['+i+']');
             $(this).find('.vehicle_id').attr('name','vehicle_id['+i+']').attr('id','vehicle_id['+i+']');
             $(this).find('.diesel_ltr').attr('name','diesel_ltr['+i+']').attr('id','diesel_ltr['+i+']');
@@ -1028,7 +1038,7 @@ jQuery(document).ready(function($){
         var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
 
         if(route_id == ''){
-        $('.kms').val('');
+            $('.kms').val('');
         }
         var route_km = $('#route_km').val();
         var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
@@ -1570,6 +1580,18 @@ jQuery(document).ready(function($){
                 $(".vehicle_id").empty().html(result);
             }
         });
+    });
+
+    $("body").on("change",'.schedule_complete',function() {
+        if($(this).is(":checked")) {
+            $tr = $(this).closest('tr');
+            $tr.find('.s_c_v').val('1');
+        }
+        else
+        {
+            $tr = $(this).closest('tr');
+            $tr.find('.s_c_v').val('0');
+        }
     });
 
     function checkVehicleValidate()

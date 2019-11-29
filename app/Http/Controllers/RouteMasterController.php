@@ -69,9 +69,8 @@ class RouteMasterController extends Controller
                 return  $routeMaster->trip_hrs.":".$routeMaster->trip_min;
             })
             ->editColumn('scheduled_time',function($routeMaster){
-                return $routeMaster->scheduled_time.' - '.$routeMaster->scheduled_number;
+                return $routeMaster->scheduled_number.' - '.$routeMaster->scheduled_time;
             })
-
             ->addColumn('action', function($routeMaster) {
                 $activeUrl = url('routeActiveInactive/active/'.$routeMaster->id);
                 $deactiveUrl = url('routeActiveInactive/deactive/'.$routeMaster->id);
@@ -135,6 +134,7 @@ class RouteMasterController extends Controller
                 'trip_min'      => abs($request->trip_min),
                 'scheduled_time'=> $s_time,
                 'scheduled_number' => $request->schedule_number[$cnt],
+                'bus_type'      => $request->bus_type[$cnt],
                 'maximum_ideling_minutes' => $request->maximum_ideling_minutes,
                 'status'        => $request->status,
                 ]);
@@ -170,6 +170,7 @@ class RouteMasterController extends Controller
         $route->trip_min            =   $request->trip_min;
         $route->scheduled_time      =   $request->s_time;
         $route->scheduled_number    =   $request->schedule_number;
+        $route->bus_type            =   $request->bus_type;
         $route->maximum_ideling_minutes = $request->maximum_ideling_minutes;
         $route->status              =   $request->status;
         $route->save();
