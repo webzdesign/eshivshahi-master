@@ -146,8 +146,6 @@ class ParisishthaAController extends Controller
             ->orderBy('parisishtha_bs.id', 'desc')
             ->get();
         }else{
-
-
             if($accessTypeId == '3'){
                 $parisishthabs = DB::table('parisishtha_bs')
                 ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')

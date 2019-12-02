@@ -115,7 +115,7 @@ overflow-x: scroll; overflow-y:hidden;}
                             </div>
 
                             <div class="form-group">
-                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number - Time<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum  }}" readonly/>

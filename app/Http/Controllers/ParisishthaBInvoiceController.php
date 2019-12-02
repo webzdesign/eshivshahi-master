@@ -13,6 +13,8 @@ use App\Model\Division;
 use App\Model\Vehicle;
 use App\Model\RouteMaster;
 use App\Model\ParisishthaBConfirm;
+use App\Model\Billsummary;
+
 use Illuminate\Http\Request;
 use DB;
 use DataTables;
@@ -49,9 +51,11 @@ class ParisishthaBInvoiceController extends Controller
         if($this->userTypeId == '1'){
             $parisishthabs = DB::table('parisishtha_bs')
             ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-            ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+            ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+            ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+            ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->where('is_vendor_confirm',0)
-            ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no')
+            ->select('parisishtha_bs.*','vendors.vendor_name', 'route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
             ->orderBy('parisishtha_bs.id', 'desc')
             ->get();
         }else if($this->userTypeId == '2'){
@@ -60,10 +64,12 @@ class ParisishthaBInvoiceController extends Controller
 			$vendor_id = $getvendorId['vendor_id'];
             $parisishthabs = DB::table('parisishtha_bs')
             ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-            ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+            ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+            ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+            ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->where('is_vendor_confirm',0)
             ->where('parisishtha_bs.vendor_id',$vendor_id)
-            ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no')
+            ->select('parisishtha_bs.*','vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
             ->orderBy('parisishtha_bs.id', 'desc')
             ->get();
         }else{
@@ -72,10 +78,12 @@ class ParisishthaBInvoiceController extends Controller
 			$vendor_id = $getvendorId['vendor_id'];
             $parisishthabs = DB::table('parisishtha_bs')
             ->join('vendors', 'vendors.id', '=', 'parisishtha_bs.vendor_id')
-            ->join('vehicles', 'vehicles.id', '=', 'parisishtha_bs.vehicle_id_reff')
+            ->join('route_masters', 'parisishtha_bs.route_id', '=', 'route_masters.id')
+            ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
+            ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->where('is_vendor_confirm',0)
             ->where('parisishtha_bs.vendor_id',$vendor_id)
-            ->select('parisishtha_bs.*','vendors.vendor_name','vehicles.vehicle_no')
+            ->select('parisishtha_bs.*','vendors.vendor_name','route_masters.from_depot','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_time', 'route_masters.scheduled_number')
             ->orderBy('parisishtha_bs.id', 'desc')
             ->get();
         }
@@ -84,6 +92,9 @@ class ParisishthaBInvoiceController extends Controller
 		return Datatables::of($parisishthabs)
             ->addColumn('actions', function($parisishthabs){
                 return "<a id='edit' href='$this->route/".Crypt::encryptString($parisishthabs->id)."' class='btn  btn-info btn-xs'><i class='fa fa-eye'></i> View </a>";
+            })
+            ->editColumn('route_id', function ($parisishthabs){
+                return $parisishthabs->from_depot.'-'.$parisishthabs->to_depot.'('.$parisishthabs->scheduled_number.' - '.$parisishthabs->scheduled_time.')';
             })
 
             ->editColumn('billing_period', function($parisishthabs){
@@ -115,12 +126,33 @@ class ParisishthaBInvoiceController extends Controller
         $schedule_time =RouteMaster::select('scheduled_time')->findorfail($parisishthab->route_id);
 
         $schedule_time = explode("*++*",$schedule_time->scheduled_time);
+        $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
+        $schduleKm = $getSchKm->scheduled_km;
+        $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
+
         $vehicle = Vehicle::where('status',1)->get();
         $division = Division::get();
         $getdata='getinvoice';
         $getinvoicedata='getinvoicedata';
         $parisishthabsId = $id;
-        return view($this->view.'/show',compact('user','routes','vendors','modulename','route','action','dataurl','depots','getdata','getinvoicedata','parisishthab','vendorinvoices','parisishthabsId','division','vehicle','schedule_time'));
+
+        $vendorInvoiceId = $parisishthab->vendorinvoice_id;
+        if($vendorInvoiceId != ''){
+            $vendorinNo = Vendorinvoice::where('id',$vendorInvoiceId)->get();
+            $invoiceNo = $vendorinNo[0]->invoice_no;
+
+            $chekBill = Billsummary::where('vendorinvoice_id',$vendorInvoiceId)->get();
+            if(! $chekBill->isEmpty()){
+                $chekBill = 'yes';
+            }else{
+                $chekBill = 'no';
+            }
+        }else{
+            $invoiceNo = '';
+            $chekBill = 'no';
+        }
+
+        return view($this->view.'/show',compact('user','routes','vendors','modulename','route','action','dataurl','depots','getdata','getinvoicedata','parisishthab','vendorinvoices','parisishthabsId','division','vehicle','schedule_time', 'schduleKm', 'schTimeNum', 'invoiceNo', 'chekBill'));
     }
 
 

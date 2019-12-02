@@ -38,7 +38,7 @@
                           <th>Sr no.</th>
                           <th>Vendor Name</th>
                           <th>Invoice No</th>
-                          <th>Route (Scheduled Time - Number)</th>
+                          <th>Route (Number - Scheduled Time)</th>
                           <th>Invoice Date</th>
                           <th>Amount</th>
                           <th>Billing Period</th>

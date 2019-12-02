@@ -36,7 +36,7 @@
                           <th>Sr no.</th>
                           <th>Vendor</th>
                           <th>Voucher No</th>
-                          <th>Vehicle No</th>
+                          <th>Route(Schedule Time - Number)</th>
                           <th>Billing Period</th>
                           <th>Action</th>
                         </tr>
@@ -83,7 +83,7 @@ docdatatable=$('#datatable-responsive').DataTable({
         { data: 'DT_Row_Index'},
         { data: 'vendor_name' },
         { data: 'voucher_no'},
-        { data: 'vehicle_no'},
+        { data: 'route_id'},
         { data: 'billing_period'},
         { data: 'actions' },
       ],

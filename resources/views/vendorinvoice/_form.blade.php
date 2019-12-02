@@ -116,7 +116,7 @@ overflow-x: scroll; overflow-y:hidden;}
                             </div>
 
                             <div class="form-group">
-                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number - Time<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum }}" readonly/>
@@ -204,6 +204,8 @@ overflow-x: scroll; overflow-y:hidden;}
                                                     @if($date[$i] > date('Y-m-d'))
                                                         <tr class="parishishtha_b">
                                                             <td ><input type="text" readonly id="date_pb[{{$i}}]" name="date_pb[{{$i}}]"  class="date_pb form-control" value="{{date("d-m-Y",strtotime($date[$i])) }}"></td>
+
+                                                            <td align="center"><input type="checkbox" name="schedule_complete[{{$i}}]" class="schedule_complete" id="schedule_complete[{{$i}}]" value="1" disabled style="height:25px;width:25px;" {{($schedule_complete[$i]==1)?'checked':'' }}><input type="hidden" name="s_c_v[{{$i}}]" class="s_c_v" id="s_c_V[{{$i}}]" value="{{ $schedule_complete[$i]}}"></td>
 
                                                             <td><input type="text" readonly id="kms[{{$i}}]" name="kms[{{$i}}]"  class="decimalonly kms form-control" value="{{$kms[$i]}}" /></td>
 
@@ -931,6 +933,7 @@ jQuery(document).ready(function($){
             if(currentDate >= toDayDate){
                 $clone.find(".date_pb").attr('readonly','readonly');
                 $clone.find(".vehicle_id").attr('disabled','disabled').removeClass('vehicle_id_auto_total');
+                $clone.find(".schedule_complete").attr('disabled','disabled');
                 $clone.find(".kms").attr('readonly','readonly').removeClass('kms_auto_total');
                 $clone.find(".diesel_ltr").attr('readonly','readonly').removeClass('diesel_ltr_auto_total');
                 $clone.find(".diese_per_ltr_price").attr('readonly','readonly').removeClass('diese_per_ltr_price_auto_total');
@@ -951,6 +954,8 @@ jQuery(document).ready(function($){
             $clone.find("span").remove();
             $clone.find("select").select2({placeholder: "Select",
             alowClear:true});
+            $clone.find(".schedule_complete").attr('id', 'schedule_complete['+num+']').attr('name', 'schedule_complete['+num+']');
+            $clone.find(".s_c_v").attr('id', 's_c_v['+num+']').attr('name', 's_c_v['+num+']');
             $clone.find(".kms").attr('id', 'kms['+num+']').attr('name', 'kms['+num+']').removeClass('kms_auto');
             $clone.find(".vehicle_id").attr('id', 'vehicle_id['+num+']').attr('name', 'vehicle_id['+num+']').removeClass('vehicle_id_auto');
             $clone.find(".diesel_ltr").attr('id', 'diesel_ltr['+num+']').attr('name', 'diesel_ltr['+num+']').removeClass('diesel_ltr_auto');
@@ -1150,6 +1155,7 @@ jQuery(document).ready(function($){
             {
             $(".parishishtha_b").each(function(){
                 $(this).find('.date').attr('name','date['+i+']');
+                $(this).find('.schedule_complete').attr('name','schedule_complete['+i+']').attr('id','schedule_complete['+i+']');
                 $(this).find('.kms').attr('name','kms['+i+']').attr('id','kms['+i+']');
                 $(this).find('.vehicle_id').attr('name','vehicle_id['+i+']').attr('id','vehicle_id['+i+']');
                 $(this).find('.diesel_ltr').attr('name','diesel_ltr['+i+']').attr('id','diesel_ltr['+i+']');
@@ -1169,24 +1175,33 @@ jQuery(document).ready(function($){
         }
 
         $('body').on('keyup','.kms',function(e){
-             var route_id = $('#route_id').val();
-             var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
-             if(route_id == ''){
+            var route_id = $('#route_id').val();
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            if(route_id == ''){
                 $('.kms').val('');
-             }
-             var route_km = $('#route_km').val();
+            }
+            var route_km = $('#route_km').val();
             var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
 
             var kmsVal = kms;
             kmsarr = kmsVal.split(',');
             var totalDays = 0;
             for(i=0; i < kmsarr.length; i++){
-                if(kmsarr[i]!=''){
-                    if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
-                        totalDays += parseFloat(1);
+                if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                    kmsarr[i] = 0;
+                }
+                
+                if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                    totalDays += parseFloat(1);
+                } else {
+                    var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                    
+                    if (checkedCustomer.length > 0) {
+                        totalDays++;
                     }
                 }
             }
+            
             if(isNaN(totalDays) || totalDays == ''){
                 totalDays = 0;
             }
@@ -1195,8 +1210,7 @@ jQuery(document).ready(function($){
 
             var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
 
-
-            if(avgKm != '' && vehicle_id != ''){
+            if(avgKm != '' && route_id != ''){
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1205,7 +1219,7 @@ jQuery(document).ready(function($){
                     type:'POST',
                     dataType:'json',
                     async:false,
-                    data:{avgKm:avgKm,vehicle_id:vehicle_id},
+                    data:{avgKm:avgKm,route_id:route_id},
                     success:function(result){
                         var totalAmount = total_kms*result;
                         if(isNaN(totalAmount) && totalAmount == ''){
@@ -1216,7 +1230,64 @@ jQuery(document).ready(function($){
                 });
             }
             getTotal();
+        });
 
+        $('body').on('click', '.schedule_complete', function(e){
+            var route_id = $('#route_id').val();
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            if(route_id == ''){
+                $('.kms').val('');
+            }
+            var route_km = $('#route_km').val();
+            var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
+
+            var kmsVal = kms;
+            kmsarr = kmsVal.split(',');
+            var totalDays = 0;
+            for(i=0; i < kmsarr.length; i++){
+                if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                    kmsarr[i] = 0;
+                }
+                
+                if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                    totalDays += parseFloat(1);
+                } else {
+                    var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                    
+                    if (checkedCustomer.length > 0) {
+                        totalDays++;
+                    }
+                }
+            }
+            
+            if(isNaN(totalDays) || totalDays == ''){
+                totalDays = 0;
+            }
+            calculatekms();
+            var total_kms = $('#total_kms').val();
+
+            var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
+
+            if(avgKm != '' && route_id != ''){
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url:'{{url('/getavgrate')}}',
+                    type:'POST',
+                    dataType:'json',
+                    async:false,
+                    data:{avgKm:avgKm,route_id:route_id},
+                    success:function(result){
+                        var totalAmount = total_kms*result;
+                        if(isNaN(totalAmount) && totalAmount == ''){
+                            totalAmount = 0;
+                        }
+                        $('body').find('#total_amount').val(totalAmount.toFixed(2));
+                    }
+                });
+            }
+            getTotal();
         });
 
         $('body').on('change','#route_id',function(e){
@@ -1557,6 +1628,18 @@ jQuery(document).ready(function($){
                 }
             },
         });
+        });
+
+        $("body").on("change",'.schedule_complete',function() {
+            if($(this).is(":checked")) {
+                $tr = $(this).closest('tr');
+                $tr.find('.s_c_v').val('1');
+            }
+            else
+            {
+                $tr = $(this).closest('tr');
+                $tr.find('.s_c_v').val('0');
+            }
         });
 
 

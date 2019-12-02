@@ -172,7 +172,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
               <tr>
 
-                <td class="lt" colspan="3">Vehicle</td>
+                <td class="lt" colspan="3">Route</td>
 
                     <td class="lt" colspan="4">
 
@@ -209,8 +209,8 @@ header( 'Content-Type: text/html; charset=utf-8' );
                 </td>
             </tr>
             <tr>
-                <td class="lt" colspan="7">Schedule Time - Schedule Number</td>
-                <td class="lt" colspan="10">{{ $routes[0]->scheduled_time.' - '.$routes[0]->scheduled_number }}</td>
+                <td class="lt" colspan="7">Schedule Number - Schedule Time </td>
+                <td class="lt" colspan="10">{{ $routes[0]->scheduled_number.' - '.$routes[0]->scheduled_time }}</td>
             </tr>
 
                 {{--  <tr>

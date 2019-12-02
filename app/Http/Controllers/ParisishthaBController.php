@@ -281,8 +281,10 @@ class ParisishthaBController extends Controller
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-            ->where('route_masters.division_id',$this->divisionId)
-            ->orwhere('route_masters.to_division',$this->divisionId)
+            ->where(function ($query){
+                $query->where('route_masters.division_id',$this->divisionId)->orwhere('route_masters.to_division',$this->divisionId);
+            })
+            ->where('route_masters.status', 1)
             ->get();
         }
         else if($this->accessTypeId ==3)
@@ -291,8 +293,10 @@ class ParisishthaBController extends Controller
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-            ->where('d2.id',$this->depotId)
-            ->orwhere('d1.id',$this->depotId)
+            ->where(function ($query){
+                $query->where('d2.id',$this->depotId)->orwhere('d1.id',$this->depotId);
+            })
+            ->where('route_masters.status', 1)
             ->get();
         }
         else
@@ -300,6 +304,7 @@ class ParisishthaBController extends Controller
             $routes = DB::table('route_masters')
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
+            ->where('route_masters.status', 1)
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
             ->get();
         }
@@ -529,6 +534,7 @@ class ParisishthaBController extends Controller
         ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
 
         ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
+        ->where('route_masters.status', 1)
 
         ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
 
@@ -594,7 +600,7 @@ class ParisishthaBController extends Controller
 
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
+        $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
         $default_diseal = Charge::first();
 
         $getdata='getinvoice';
@@ -640,8 +646,11 @@ class ParisishthaBController extends Controller
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-            ->where('route_masters.division_id',$this->divisionId)
-             ->orwhere('route_masters.to_division',$this->divisionId)
+            ->where(function ($query){
+                $query->where('route_masters.division_id',$this->divisionId)
+                ->orwhere('route_masters;.to_division',$this->divisionId);
+            })
+            ->where('route_masters.status', 1)
             ->get();
         }
         else if($this->accessTypeId ==3)
@@ -650,8 +659,11 @@ class ParisishthaBController extends Controller
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-            ->where('d2.id',$this->depotId)
-            ->orwhere('d1.id',$this->depotId)
+            ->where(function ($query){
+                $query->where('d2.id',$this->depotId)
+                ->orwhere('d1.id',$this->depotId);
+            })
+            ->where('route_masters.status', 1)
             ->get();
         }
         else
@@ -659,6 +671,7 @@ class ParisishthaBController extends Controller
             $routes = DB::table('route_masters')
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
+            ->where('route_masters.status', 1)
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
             ->get();
         }
@@ -735,7 +748,7 @@ class ParisishthaBController extends Controller
 
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
+        $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
         $default_diseal = Charge::first();
 
         $getdata='getinvoice';
@@ -987,11 +1000,11 @@ class ParisishthaBController extends Controller
         $rows = Vendorinvoice::where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
         if($request->p_id !='')
         {
-            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
+            $count = ParisishthaB::where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
         }
         else
         {
-            $count = ParisishthaB::where('from_date',$from)->where('to_date',$to)->count();
+            $count = ParisishthaB::where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->count();
         }
 
         if(! $rows->isEmpty()){
@@ -1340,13 +1353,10 @@ class ParisishthaBController extends Controller
         $cities = CityMaster::get();
 
             $routes = DB::table('route_masters')
-
             ->join('depots as d1', 'd1.id', '=', 'route_masters.from_depot')
-
             ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
-
+            ->where('route_masters.status', 1)
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
-
             ->get();
 
         $depots = Depot::get();

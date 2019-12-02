@@ -119,7 +119,7 @@ overflow-x: scroll; overflow-y:hidden;}
                         
 
                         <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number - Time<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number"  readonly/>
@@ -650,7 +650,7 @@ jQuery(document).ready(function($){
             $.ajax({
                 type:'POST',
                 dataType:'json',
-                url:'{{url('/getinvoice')}}',
+                url:'{{url('/getinvoicepb')}}',
                 data:{
                     vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
                 },
@@ -1690,7 +1690,7 @@ jQuery(document).ready(function($){
 
                 $.ajax({
                     type: 'POST',
-                    url:'{{url('/getinvoice')}}',
+                    url:'{{url('/getinvoicepb')}}',
                     dataType:'json',
                     async:false,
                     data:{
@@ -1823,7 +1823,7 @@ jQuery(document).ready(function($){
                 var p_id = $("#id").val();
                 $.ajax({
                     type: 'POST',
-                    url:'{{url('/getinvoice')}}',
+                    url:'{{url('/getinvoicepb')}}',
                     dataType:'json',
                     async:false,
                     data:{

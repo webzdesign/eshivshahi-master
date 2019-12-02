@@ -48,6 +48,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
 							<input type="hidden" name="id" id="id" value="{{isset($parisishthab->id)?$parisishthab->id:''}}">
                             <input type="hidden" name="route_km" value="{{ $schduleKm }}" id="route_km" />
+                            <input type="hidden" name="route_id_ajax" id="route_id_ajax" value="{{ $parisishthab->route_id }}"  />
 
 
                             <div class="form-group">
@@ -115,7 +116,7 @@ overflow-x: scroll; overflow-y:hidden;}
                             </div>
 
                             <div class="form-group">
-                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                                <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number - Time<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number" value="{{ $schTimeNum }}" readonly/>
@@ -160,6 +161,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                         <thead>
                                             <tr>
                                                 <th width="120px !important;">Date/दिनांक<span class="required">*</span></th>
+                                                <th width="50px !important;">Schedule Complete</th>
                                                 <th width="100px !important;">Kms/सार्थ किमी<span class="required">*</span></th>
                                                 <th width="100px !important;">Diesel Ltr/पुरविलेले डिझेल (लिटर)<span class="required">*</span></th>
                                                 <th width="100px !important;">Diesel Rate/डिझेल दर प्रति लिटर रू<span class="required">*</span></th>
@@ -179,6 +181,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 @php
                                                     $date = explode(",",$parisishthab->date);
                                                     $vehicleArr = explode("*++*",$parisishthab->vehicle_id);
+                                                    $schedule_complete = explode("*++*",$parisishthab->schedule_complete);
                                                     $kms = explode(",",$parisishthab->kms);
                                                     $diesel_ltr = explode(",",$parisishthab->diesel_ltr);
                                                     $diese_per_ltr_price = explode(",",$parisishthab->diese_per_ltr_price);
@@ -262,6 +265,8 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <tr class="parishishtha_b">
                                                             <td><input type="text" readonly id="date_pb[{{$i}}]" name="date_pb[{{$i}}]"  class="date_pb form-control" value="{{date("d-m-Y",strtotime($date[$i])) }}"></td>
 
+                                                            <td align="center"><input type="checkbox" name="schedule_complete[{{$i}}]" class="schedule_complete" id="schedule_complete[{{$i}}]" value="1" style="height:25px;width:25px;" {{($schedule_complete[$i]==1)?'checked':'' }}><input type="hidden" name="s_c_v[{{$i}}]" class="s_c_v" id="s_c_V[{{$i}}]" value="{{ $schedule_complete[$i]}}"></td>
+                                                            
                                                             <td ><input type="text" id="kms[{{$i}}]" name="kms[{{$i}}]"  class="decimalonly kms form-control kms_auto" value="{{$kms[$i]}}" /></td>
 
                                                             <td ><input type="text" data-precision="2" id="diesel_ltr[{{$i}}]" name="diesel_ltr[{{$i}}]"  class="decimalonly form-control  diesel_ltr diesel_ltr_auto" value="{{$diesel_ltr[$i]}}"></td>
@@ -320,6 +325,8 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         @else
                                                         <tr class="parishishtha_b">
                                                             <td ><input type="text" readonly id="date_pb[{{$i}}]" name="date_pb[{{$i}}]"  class="date_pb form-control" value="{{date("d-m-Y",strtotime($date[$i])) }}"></td>
+
+                                                            <td align="center"><input type="checkbox" name="schedule_complete[{{$i}}]" class="schedule_complete" id="schedule_complete[{{$i}}]" value="1" style="height:25px;width:25px;" {{($schedule_complete[$i]==1)?'checked':'' }}><input type="hidden" name="s_c_v[{{$i}}]" class="s_c_v" id="s_c_V[{{$i}}]" value="{{ $schedule_complete[$i]}}"></td>
 
                                                             <td><input type="text" id="kms[{{$i}}]" name="kms[{{$i}}]"  class="decimalonly kms form-control kms_auto_total" value="{{$kms[$i]}}" /></td>
 
@@ -464,7 +471,7 @@ overflow-x: scroll; overflow-y:hidden;}
 								<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
 									<input type="hidden" value="" name="status" id="status" />
 
-                                    @if(Auth::user()->usertype_id=='1' || Auth::user()->usertype_id=='2')
+                                    @if(Auth::user()->usertype_id=='2')
                                         @if($parisishthab->publish_flag == '1' && $parisishthab->is_approved == '0')
                                             <input type="submit" class="btn btn-success" name="confirm" value="Confirm"/>
                                         @endif
@@ -1159,33 +1166,42 @@ jQuery(document).ready(function($){
         }
 
         $('body').on('keyup','.kms',function(e){
-             var route_id = $('#route_id').val();
-             var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
-             if(route_id == ''){
+            var route_id = $('#route_id_ajax').val();
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            if(route_id == ''){
                 $('.kms').val('');
-             }
-             var route_km = $('#route_km').val();
+            }
+            var route_km = $('#route_km').val();
             var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
 
             var kmsVal = kms;
             kmsarr = kmsVal.split(',');
             var totalDays = 0;
             for(i=0; i < kmsarr.length; i++){
-                if(kmsarr[i]!=''){
-                    if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
-                        totalDays += parseFloat(1);
+                if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                    kmsarr[i] = 0;
+                }
+                
+                if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                    totalDays += parseFloat(1);
+                } else {
+                    var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                    
+                    if (checkedCustomer.length > 0) {
+                        totalDays++;
                     }
                 }
             }
+            
             if(isNaN(totalDays) || totalDays == ''){
                 totalDays = 0;
             }
             calculatekms();
             var total_kms = $('#total_kms').val();
+
             var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
 
-
-            if(avgKm != '' && vehicle_id != ''){
+            if(avgKm != '' && route_id != ''){
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1194,7 +1210,7 @@ jQuery(document).ready(function($){
                     type:'POST',
                     dataType:'json',
                     async:false,
-                    data:{avgKm:avgKm,vehicle_id:vehicle_id},
+                    data:{avgKm:avgKm,route_id:route_id},
                     success:function(result){
                         var totalAmount = total_kms*result;
                         if(isNaN(totalAmount) && totalAmount == ''){
@@ -1205,29 +1221,64 @@ jQuery(document).ready(function($){
                 });
             }
             getTotal();
-
         });
 
-        $('body').on('change','#route_id',function(e){
-            var route_id = $(this).val();
+        $('body').on('click', '.schedule_complete', function(e){
+            var route_id = $('#route_id_ajax').val();
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            if(route_id == ''){
+                $('.kms').val('');
+            }
+            var route_km = $('#route_km').val();
+            var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
 
-            if(route_id ==''){
-                $('#route_km').val('');
-                return false;
-            }else{
+            var kmsVal = kms;
+            kmsarr = kmsVal.split(',');
+            var totalDays = 0;
+            for(i=0; i < kmsarr.length; i++){
+                if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                    kmsarr[i] = 0;
+                }
+                
+                if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                    totalDays += parseFloat(1);
+                } else {
+                    var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                    
+                    if (checkedCustomer.length > 0) {
+                        totalDays++;
+                    }
+                }
+            }
+            
+            if(isNaN(totalDays) || totalDays == ''){
+                totalDays = 0;
+            }
+            calculatekms();
+            var total_kms = $('#total_kms').val();
+
+            var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
+
+            if(avgKm != '' && route_id != ''){
                 $.ajax({
-                    url:'{{url('/getschedulekm')}}',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url:'{{url('/getavgrate')}}',
                     type:'POST',
                     dataType:'json',
-                    data:{route_id:route_id},
+                    async:false,
+                    data:{avgKm:avgKm,route_id:route_id},
                     success:function(result){
-                        $('#route_km').val(result);
-                        $('#sch_km').text("Min. Schedule KM : "+result);
+                        var totalAmount = total_kms*result;
+                        if(isNaN(totalAmount) && totalAmount == ''){
+                            totalAmount = 0;
+                        }
+                        $('body').find('#total_amount').val(totalAmount.toFixed(2));
                     }
                 });
             }
-
-            $('.kms').trigger('change');
+            getTotal();
         });
 
         $(document).on('click','.minus' ,function(event){

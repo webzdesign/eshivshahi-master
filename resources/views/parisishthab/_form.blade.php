@@ -935,7 +935,7 @@ jQuery(document).ready(function($){
             $.ajax({
                 type:'POST',
                 dataType:'json',
-                url:'{{url('/getinvoice')}}',
+                url:'{{url('/getinvoicepb')}}',
                 data:{
                     vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
                 },
@@ -1636,7 +1636,7 @@ jQuery(document).ready(function($){
 
                     $t.find(".other_exp").addClass('other_exp_auto_total');
 
-                    $t.find(".idling_minutes").addClass('idling_minutes _auto_total');
+                    $t.find(".idling_minutes").addClass('idling_minutes_auto_total');
 
                 }
 
@@ -2720,7 +2720,7 @@ jQuery(document).ready(function($){
 
                         type: 'POST',
 
-                        url:'{{url('/getinvoice')}}',
+                        url:'{{url('/getinvoicepb')}}',
 
                         dataType:'json',
 
@@ -3016,7 +3016,7 @@ jQuery(document).ready(function($){
 
                         type: 'POST',
 
-                        url:'{{url('/getinvoice')}}',
+                        url:'{{url('/getinvoicepb')}}',
 
                         dataType:'json',
 

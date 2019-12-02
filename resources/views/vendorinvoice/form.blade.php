@@ -104,7 +104,7 @@ overflow-x: scroll; overflow-y:hidden;}
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Time - Number<span class="required">*</span>
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Schedule Number - Time<span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <input type="text" name="schedule_number" id="schedule_number" class="form-control" placeholder="Schedule Number"  readonly/>
@@ -1036,7 +1036,6 @@ jQuery(document).ready(function($){
     $('body').on('keyup','.kms',function(e){
         var route_id = $('#route_id').val();
         var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
-
         if(route_id == ''){
             $('.kms').val('');
         }
@@ -1047,12 +1046,21 @@ jQuery(document).ready(function($){
         kmsarr = kmsVal.split(',');
         var totalDays = 0;
         for(i=0; i < kmsarr.length; i++){
-            if(kmsarr[i]!=''){
-                if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
-                    totalDays += parseFloat(1);
+            if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                kmsarr[i] = 0;
+            }
+            
+            if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                totalDays += parseFloat(1);
+            } else {
+                var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                
+                if (checkedCustomer.length > 0) {
+                    totalDays++;
                 }
             }
         }
+        
         if(isNaN(totalDays) || totalDays == ''){
             totalDays = 0;
         }
@@ -1061,8 +1069,7 @@ jQuery(document).ready(function($){
 
         var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
 
-
-        if(avgKm != '' && vehicle_id != ''){
+        if(avgKm != '' && route_id != ''){
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1071,7 +1078,7 @@ jQuery(document).ready(function($){
                 type:'POST',
                 dataType:'json',
                 async:false,
-                data:{avgKm:avgKm,vehicle_id:vehicle_id},
+                data:{avgKm:avgKm,route_id:route_id},
                 success:function(result){
                     var totalAmount = total_kms*result;
                     if(isNaN(totalAmount) && totalAmount == ''){
@@ -1082,7 +1089,64 @@ jQuery(document).ready(function($){
             });
         }
         getTotal();
+    });
 
+    $('body').on('click', '.schedule_complete', function(e){
+        var route_id = $('#route_id').val();
+        var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+        if(route_id == ''){
+            $('.kms').val('');
+        }
+        var route_km = $('#route_km').val();
+        var kms = $(".kms").map(function(){return $(this).val();}).get().join(",");
+
+        var kmsVal = kms;
+        kmsarr = kmsVal.split(',');
+        var totalDays = 0;
+        for(i=0; i < kmsarr.length; i++){
+            if (isNaN(kmsarr[i]) || kmsarr[i] == '') {
+                kmsarr[i] = 0;
+            }
+            
+            if(parseFloat(route_km) <= parseFloat(kmsarr[i])){
+                totalDays += parseFloat(1);
+            } else {
+                var checkedCustomer = $.map($('input[name="schedule_complete['+i+']"]:checked'), function(e){return e.value; });
+                
+                if (checkedCustomer.length > 0) {
+                    totalDays++;
+                }
+            }
+        }
+        
+        if(isNaN(totalDays) || totalDays == ''){
+            totalDays = 0;
+        }
+        calculatekms();
+        var total_kms = $('#total_kms').val();
+
+        var avgKm = parseFloat(total_kms)/parseFloat(totalDays);
+
+        if(avgKm != '' && route_id != ''){
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url:'{{url('/getavgrate')}}',
+                type:'POST',
+                dataType:'json',
+                async:false,
+                data:{avgKm:avgKm,route_id:route_id},
+                success:function(result){
+                    var totalAmount = total_kms*result;
+                    if(isNaN(totalAmount) && totalAmount == ''){
+                        totalAmount = 0;
+                    }
+                    $('body').find('#total_amount').val(totalAmount.toFixed(2));
+                }
+            });
+        }
+        getTotal();
     });
 
     $('body').on('change','#route_id',function(e){

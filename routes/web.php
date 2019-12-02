@@ -163,7 +163,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 		Route::post('checkvoucher','ParisishthaBController@checkvoucher');
 		Route::post('getinvoicedata','ParisishthaBController@getinvoicedata');
 		Route::post('checkinvoice','ParisishthaBController@checkinvoice');
-		Route::post('getinvoice','ParisishthaBController@getinvoice');
+		Route::post('getinvoicepb','ParisishthaBController@getinvoice');
 		Route::post('getparisishthadepotondivision','ParisishthaBController@getDepot');
 		Route::post('checkcityname','ParisishthaBController@checkCityName');
 		Route::post('addcityname','ParisishthaBController@addCityName');

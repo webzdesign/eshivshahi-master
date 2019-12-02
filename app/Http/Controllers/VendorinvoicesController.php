@@ -72,8 +72,8 @@ class VendorinvoicesController extends Controller
 
     public function getavgrate(Request $request){
         $avgKm = $request->avgKm;
-        $vehicle_id = $request->vehicle_id;
-        $rate = Helper::getRate($avgKm, $vehicle_id);
+        $route_id = $request->route_id;
+        $rate = Helper::getRate($avgKm, $route_id);
         $res[0] = $rate;
         echo json_encode($res);
     }
@@ -105,6 +105,7 @@ class VendorinvoicesController extends Controller
                 ->join('depots as d2', 'd2.id', '=', 'route_masters.to_depot')
                 ->where('route_masters.division_id', $division_id)
                 ->where('route_masters.from_depot', $depot_id)
+                ->where('route_masters.status', 1)
                 ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot', 'route_masters.scheduled_number')
                 ->get();
 
@@ -201,7 +202,7 @@ class VendorinvoicesController extends Controller
         return DataTables::of($vendorinvoice)
 				->addIndexColumn('id')
                 ->addColumn('route', function ($vendorinvoice){
-                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.'('.$vendorinvoice->scheduled_time.' - '.$vendorinvoice->scheduled_number.')';
+                    return $vendorinvoice->from_depot.'-'.$vendorinvoice->to_depot.'('.$vendorinvoice->scheduled_number.' - '.$vendorinvoice->scheduled_time.')';
                 })
                 ->editColumn('billing_period', function($vendorinvoice) {
                     $billing_period=explode(",",$vendorinvoice->billing_period);
@@ -432,7 +433,7 @@ class VendorinvoicesController extends Controller
         $confirmvendorinvoice='confirmvendorinvoice';
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
+        $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
         $default_diseal = Charge::first();
         return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal', 'schTimeNum'));
     }
@@ -496,7 +497,7 @@ class VendorinvoicesController extends Controller
         $default_diseal = Charge::first();
         $getSchKm = RouteMaster::where('id',$parisishthab->route_id)->first();
         $schduleKm = $getSchKm->scheduled_km;
-        $schTimeNum = $getSchKm->scheduled_time.' - '.$getSchKm->scheduled_number;
+        $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
 
 
         return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal', 'schTimeNum'));
@@ -1074,7 +1075,7 @@ class VendorinvoicesController extends Controller
     {
         $routeData = RouteMaster::where('id', $request->route_id)->first();
         if ($routeData) {
-            $route = $routeData->scheduled_time.' - '.$routeData->scheduled_number;
+            $route = $routeData->scheduled_number.' - '.$routeData->scheduled_time;
         } else {
             $route = '-';
         }

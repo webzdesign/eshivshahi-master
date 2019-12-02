@@ -81,11 +81,11 @@ class Helper
 
 
 
-  public static function getRate($km,$vehicle_id){
+  public static function getRate($km,$route_id){
 
-    $vehicle = Vehicle::where('status',1)->where('id',$vehicle_id)->first();
+    $routeType = RouteMaster::where('status',1)->where('id',$route_id)->first();
 
-    $type= $vehicle->bus_type;
+    $type= $routeType->bus_type;
     $km = round($km);
     $kms = RateMaster::where('from_km','<=',$km)->where('to_km','>=',$km)->where('bus_type',$type)->get();
 
