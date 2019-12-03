@@ -61,8 +61,8 @@ header( 'Content-Type: text/html; charset=utf-8' );
                             <td colspan="2"  class="lt">{{ $parisishthab->vendorinvoice->invoice_no }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2"  class="lt">Vehicle No.</td>
-                            <td  class="lt">{{ $parisishthab->vehicle->vehicle_no }}</td>
+                            <td colspan="2"  class="lt">Route</td>
+                            <td  class="lt">{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_number.' - '.$parisishthab->route->scheduled_time.')' }}</td>
                             <td colspan="2"  class="lt">Voucher No.</td>
                             <td colspan="2"  class="lt">
                             {{ $parisishthab->voucher_no }}

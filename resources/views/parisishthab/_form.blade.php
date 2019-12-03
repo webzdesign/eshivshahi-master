@@ -107,7 +107,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                 <label class=" col-md-3 col-sm-3 col-xs-12" >Select Route <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select  id="destination_id" name="route_id"  class="form-control select2_single col-md-7 col-xs-12 route_id" style="width:100%;">
+                                    <select  id="route_id" name="route_id"  class="form-control select2_single col-md-7 col-xs-12 route_id" style="width:100%;">
                                         <option value=""></option>
                                         @foreach($routes as $rout)
                                             <option value="{{$rout->id}}" @if(isset($parisishthab->route_id)){{$parisishthab->route_id == $rout->id?'selected':''}}@endif>{{$rout->from_depot.' - '.$rout->to_depot.' ('.$rout->scheduled_time.')'}}</option>
@@ -928,6 +928,7 @@ jQuery(document).ready(function($){
         var from_date = $('#from_date').val();
         var to = $('#to').val();
         var p_id = $("#id").val();
+        var route_id = $('#route_id').val();
 
         if(vendor_id == '' || from_date == '' || to == ''){
             return false;
@@ -937,7 +938,7 @@ jQuery(document).ready(function($){
                 dataType:'json',
                 url:'{{url('/getinvoicepb')}}',
                 data:{
-                    vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
+                    vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id,route_id:route_id
                 },
                 success:function(result){
                     $("#invoiceNo").val(result[1]);
@@ -2715,6 +2716,7 @@ jQuery(document).ready(function($){
                     var to = $('#to').val();
 
                     var p_id = $("#id").val();
+                    var route_id = $('#route_id').val();
 
                     $.ajax({
 
@@ -2728,7 +2730,7 @@ jQuery(document).ready(function($){
 
                         data:{
 
-                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
+                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id,route_id:route_id
 
                         },
 
@@ -3011,6 +3013,7 @@ jQuery(document).ready(function($){
                     var to = $('#to').val();
 
                     var p_id = $("#id").val();
+                    var route_id = $('#route_id').val();
 
                     $.ajax({
 
@@ -3024,7 +3027,7 @@ jQuery(document).ready(function($){
 
                         data:{
 
-                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id
+                            vendor_id:vendor_id,from_date:from_date,to:to,p_id:p_id,route_id:route_id
 
                         },
 
@@ -3273,7 +3276,7 @@ jQuery(document).ready(function($){
             });
         });
 
-        $('body').on('change','#destination_id',function(e){
+        $('body').on('change','#route_id',function(e){
             var route_id = $(this).val();
 
             if(route_id ==''){

@@ -2,7 +2,7 @@
 
 <div class="table-responsive" style="width:100%;margin: 0 auto;">
 
-<table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1540px;">
+<table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1700px;">
 
     <tr>
 
@@ -10,7 +10,7 @@
 
         <th style="text-align:center;">महामंडठ्ठाचा देयक क्र</th>
 
-        <th style="text-align:center;">बस क्रमांक</th>
+        <th width="150px !important;"  style="text-align:center;">मार्ग (वेळापत्रक)</th>
 
         <th style="text-align:center;">पुरवठादाराने दिलेला देयक क्र</th>
 

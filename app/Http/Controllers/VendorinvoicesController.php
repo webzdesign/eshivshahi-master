@@ -737,13 +737,14 @@ class VendorinvoicesController extends Controller
         $toDate = date("Y-m-d", strtotime($request->toDate));
         $action = $request->action;
         $id = $request->id;
+        $vendorId = $request->vendor_id;
 
         $billingPeriod = $fromDate.",".$toDate;
 
         if ($action == 'insert') {
-            $checkInvoice = Vendorinvoice::where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('vendor_id', $vendorId)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         } else {
-            $checkInvoice = Vendorinvoice::where('id', '!=', $id)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('vendor_id', $vendorId)->where('id', '!=', $id)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         }
 
         if ($checkInvoice > 0) {

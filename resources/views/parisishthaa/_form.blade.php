@@ -77,10 +77,10 @@ $route = url("/$route/".$parisishthab->id);
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-md-2 col-sm-3 col-xs-12" >बस क्रमांक :
+                            <label class=" col-md-2 col-sm-3 col-xs-12" >मार्ग (वेळापत्रक) :
                             </label>
                             <div class="col-md-4 col-sm-6 col-xs-12">
-                                <input type="text" readonly value="{{ $parisishthab->vehicle->vehicle_no }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
+                                <input type="text" readonly value="{{ $parisishthab->route->fromdepot->name.'-'.$parisishthab->route->todepot->name.' ('.$parisishthab->route->scheduled_number.' - '.$parisishthab->route->scheduled_time.')' }}" class="form-control  col-md-7 col-xs-12 " style="width:100%;">
                             </div>
 
                             <label class=" col-md-2 col-sm-3 col-xs-12" >महामंडळाचा देयक क्र :</label>
@@ -336,9 +336,7 @@ jQuery(document).ready(function($){
         $('#amount').val(finalAmount.toFixed(2));
         $('#finalAmount').val(finalAmount.toFixed(2));
 
-        var pFinalAmount = parseFloat(pActualKm)*parseFloat(pRate);
-        $('#pAmount').val(pFinalAmount.toFixed(2));
-        $('#pFinalAmount').val(pFinalAmount.toFixed(2));
+        var pFinalAmount = $('#pFinalAmount').val();
 
         var dFinalAmount = parseFloat(diselAmount)*parseFloat(dRate);
         $('#dAmount').val(dFinalAmount.toFixed(2));

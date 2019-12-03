@@ -1661,6 +1661,7 @@ jQuery(document).ready(function($){
     function checkVehicleValidate()
     {
         var res = false;
+        var vendor_id = $('body').find('#vendor_id').val();
         var routeId = $('body').find('#route_id').val();
         var fromDate = $('body').find('#from_date').val();
         var toDate = $('body').find('#to').val();
@@ -1671,6 +1672,7 @@ jQuery(document).ready(function($){
                 dataType:'json',
                 data:
                 {
+                    vendor_id:vendor_id,
                     routeId:routeId,
                     fromDate:fromDate,
                     toDate:toDate,

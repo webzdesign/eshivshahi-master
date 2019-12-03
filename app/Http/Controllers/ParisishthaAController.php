@@ -71,8 +71,7 @@ class ParisishthaAController extends Controller
         $scheduleKm = $scheduleKm->scheduled_km;
         $dates = $parisishthab->from_date;
         $dayOfWeek = date("d", strtotime($dates));
-        // echo $dayOfWeek;
-        // exit;
+       
         $month = date("m", strtotime($dates));
 
         $year = date("Y", strtotime($dates));
@@ -119,9 +118,9 @@ class ParisishthaAController extends Controller
             }
         }*/
 
-        if($cntdays == '0'){
+        /* if($cntdays == '0'){
             return redirect($this->route)->with('msg','All Kms Are Not Greater Then This Route.');
-        }
+        } */
 
 		return view($this->view.'/form',compact('modulename','route','parisishthab','vendorInvoiceFlag','scheduleKm','previous_data', 'prevParisishthaa', 'firstDays'));
     }

@@ -991,7 +991,7 @@ class ParisishthaBController extends Controller
     {
 
         $vendor_id = $request->vendor_id;
-       // $vehicle_id = $request->vehicle_id;
+        $route_id = $request->route_id;
 
         $from = date("Y-m-d",strtotime($request->from_date));
         $to = date("Y-m-d",strtotime($request->to));
@@ -1000,11 +1000,11 @@ class ParisishthaBController extends Controller
         $rows = Vendorinvoice::where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
         if($request->p_id !='')
         {
-            $count = ParisishthaB::where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
+            $count = ParisishthaB::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
         }
         else
         {
-            $count = ParisishthaB::where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->count();
+            $count = ParisishthaB::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->count();
         }
 
         if(! $rows->isEmpty()){
