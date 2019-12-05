@@ -20,7 +20,14 @@ error_reporting(0);
     @php  $route=route('parisishthab.update',Crypt::encryptString($parisishthab->id)); @endphp
 @else
 @php  $button = 'View'; @endphp
-@php $btn = 'View'; @endphp
+@php $btn = 'View'; 
+function calDiesel($no){
+    if($no != '' && $no != 0)
+    {
+        return(($no*6)/100);
+    }
+}
+@endphp
 @endif
 <style>
 .wrapper1, .wrapper2{width: 100%; border: none 0px RED;
@@ -666,7 +673,12 @@ overflow-x: scroll; overflow-y:hidden;}
 								</tr>
 								<tr>
 									<td><input type="text" class="form-control"  name="kms_total" id="kms_total" readonly value="{{ array_sum($kms) }}"></td>
-									<td><input type="text" class="form-control"  name="diesel_total" id="diesel_total" readonly value="{{ array_sum($diesel_ltr) }}"></td>
+									<td>
+                                        @php
+                                            
+                                            $ideling = array_map("calDiesel",$idling_minutes)
+                                        @endphp
+                                        <input type="text" class="form-control"  name="diesel_total" id="diesel_total" readonly value="{{ array_sum($diesel_ltr) - array_sum($ideling) }}"></td>
 									<td><input readonly type="text" data-precision="2" class="decimalonly form-control"  name="gov_diesel" id="gov_diesel" value="@if($action=='update' || $action=='view') {{$parisishthab->diesel_as_per_gov}} @endif" ></td>
 									<td><input type="text" class="form-control"  name="extra_diesel" id="extra_diesel" readonly value="{{ $parisishthab->extra_filled_diesel }}"></td>
 								</tr>
