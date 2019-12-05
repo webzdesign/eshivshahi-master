@@ -291,7 +291,20 @@ class VendorinvoicesController extends Controller
 			->make(true);
     }
 
-
+    public function getIdelingminutes(Request $request)
+    {
+        $route_id = $request->route_id;
+        $getminutes = Routemaster::where('id',$route_id)->get();
+        $idealing_minutes = ($getminutes[0]->maximum_ideling_minutes)/5;
+        $option = '<option value="0">0</option>';
+        $cnt = 0;
+        for($i = 0; $i<$idealing_minutes; $i++)
+        {
+            $cnt = $cnt+5;
+            $option .="<option value='$cnt'>$cnt</option>";
+        }
+        return $option;
+    }
 
     public function create(){
 
@@ -359,6 +372,7 @@ class VendorinvoicesController extends Controller
         $hault_tax=implode(",",$request->hault_exp);
         $wash_exp=implode(",",$request->wash_exp);
         $other_exp=implode(",",$request->other_exp);
+        $idling_minutes = implode(",", $request->idling_minutes);
         $remarks = implode("*++*",$request->remarks);
 
 
@@ -390,6 +404,7 @@ class VendorinvoicesController extends Controller
             'total_amount'=>$request->total_amount,
             'total_charge'=>$request->total_charge,
             'grand_amount'=>$request->grand_amount,
+            'idling_minutes'=>$idling_minutes,
             'remarks'=>$remarks,
             'publish_flag'=>$request->status,
 			'created_by'=>auth()->user()->id,
@@ -499,8 +514,19 @@ class VendorinvoicesController extends Controller
         $schduleKm = $getSchKm->scheduled_km;
         $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
 
+        $getminutes = Routemaster::where('id',$parisishthab->route_id)->first();
+        $idealing_minutes = ($getminutes->maximum_ideling_minutes)/5;
 
-        return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal', 'schTimeNum'));
+        $edit_ideal_min = array();
+        $cnt = 0;
+        $edit_ideal_min[]  = 0;
+        for($i = 0; $i<$idealing_minutes; $i++)
+        {
+            $cnt = $cnt+5;
+            $edit_ideal_min[] = $cnt;
+        }
+
+        return view($this->view.'/_form',compact('vehicle', 'vendors', 'modulename', 'route','action', 'depots', 'parisishthab', 'vendorinvoices', 'division', 'schduleKm', 'default_diseal', 'schTimeNum', 'edit_ideal_min'));
     }
 
 
@@ -530,6 +556,7 @@ class VendorinvoicesController extends Controller
         $hault_tax=implode(",",$request->hault_exp);
         $wash_exp=implode(",",$request->wash_exp);
         $other_exp=implode(",",$request->other_exp);
+        $idling_minutes = implode(",", $request->idling_minutes);
         $remarks = implode("*++*",$request->remarks);
 
         if(isset($request->save))
@@ -568,6 +595,7 @@ class VendorinvoicesController extends Controller
         $vendorinvoice->total_amount = $request->total_amount;
         $vendorinvoice->total_charge = $request->total_charge;
         $vendorinvoice->grand_amount = $request->grand_amount;
+        $vendorinvoice->idling_minutes = $idling_minutes;
         $vendorinvoice->remarks = $remarks;
         $vendorinvoice->publish_flag=$request->status;
 		$vendorinvoice->updated_by=auth()->user()->id;

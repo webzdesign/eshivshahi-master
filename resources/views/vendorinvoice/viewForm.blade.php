@@ -252,6 +252,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                 <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
                                                     <option value=""></option>
+                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
                                                     @foreach($vehicle as $key => $value)
                                                     <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
                                                     @endforeach
@@ -311,12 +312,13 @@ overflow-x: scroll; overflow-y:hidden;}
                                                             <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto"></td>
                                                             <td>
                                                           <?php /* <input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto"> */ ?>
-                                        <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                            <option value=""></option>
-                                            @foreach($vehicle as $key => $value)
-                                            <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                            @endforeach
-                                        <select>
+                                                            <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                <option value=""></option>
+                                                                <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
+                                                                @foreach($vehicle as $key => $value)
+                                                                <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                @endforeach
+                                                            <select>
                                                             </td>
                                                             <td>
                                                                 <textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea>
@@ -376,6 +378,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                 <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
                                                     <option value=""></option>
+                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
                                                     @foreach($vehicle as $key => $value)
                                                     <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
                                                     @endforeach

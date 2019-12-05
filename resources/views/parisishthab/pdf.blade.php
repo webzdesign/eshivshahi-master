@@ -375,7 +375,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 
                     <td style="width:5%;">{{$other_exp[$i]}}</td>
 
-                    <td style="width:12%;">{{$vehicle[$vehicleArr[$i]]}}</td>
+                    <td style="width:12%;">{{ ($vehicleArr[$i] == 'noVehicle') ? 'No Vehicle' : $vehicle[$vehicleArr[$i]]}}</td>
 
                     <td style="width:4%;">{{$idling_minutes[$i]}}</td>
 

@@ -165,7 +165,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     <td style="width:8%;" class="parishish_size">{{$hault_tax[$i]}}</td>
                     <td style="width:5%;" class="parishish_size">{{ $wash_exp[$i] }}</td>
                     <td style="width:8%;" class="parishish_size">{{$other_exp[$i]}}</td>
-                    <td style="width:10%;" class="parishish_size">{{$vehicle[$vehicleArr[$i]]}}</td>
+                    <td style="width:10%;" class="parishish_size">{{ ($vehicleArr[$i] == 'noVehicle') ? 'No Vehicle' : $vehicle[$vehicleArr[$i]] }}</td>
                     <td style="width:8%; font-size:10px;" class="parishish_size">{{ $remarks[$i] }}</td>
                 </tr>
             @endfor

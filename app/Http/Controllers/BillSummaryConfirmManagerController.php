@@ -52,12 +52,12 @@ class BillSummaryConfirmManagerController extends Controller
     public function getBillSummaryData(){
 
         if($this->userTypeId == '1'){
-            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','vehicle')->where('status','1')->get();
+            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','route')->where('status','1')->get();
         }else{
             $id = auth()->user()->id;
 			$getvendorId = VendorManager::where('user_id',$id)->first();
 			$vendor_id = $getvendorId['vendor_id'];
-            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','vehicle')->where('status','1')->groupBy('bill_no')->where('vendor_id',$vendor_id)->get();
+            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','route')->where('status','1')->groupBy('bill_no')->where('vendor_id',$vendor_id)->get();
         }
 
 		return Datatables::of($billSummary)
@@ -77,8 +77,8 @@ class BillSummaryConfirmManagerController extends Controller
             ->editColumn('vendor_name', function($billSummary){
                 return $billSummary->vendor->vendor_name;
             })
-            ->editColumn('vehicle_no', function($billSummary){
-                return $billSummary->vehicle->vehicle_no;
+            ->editColumn('route_id', function($billSummary){
+                 return $billSummary->route->fromdepot->name.'-'.$billSummary->route->todepot->name.' ('.$billSummary->route->scheduled_number.' - '.$billSummary->route->scheduled_time.')';
             })
             ->editColumn('voucher_no', function($billSummary){
                 if(isset($billSummary->vendorinvoice->invoice_no)){
@@ -100,7 +100,7 @@ class BillSummaryConfirmManagerController extends Controller
 
     public function show($id){
         $id = Crypt::decryptString($id);
-        $billsummary = Billsummary::with('vehicle','vendorinvoice')->where('bill_no',$id)->get();
+        $billsummary = Billsummary::with('route','vendorinvoice')->where('bill_no',$id)->get();
         $vendor = Vendor::get();
         $vehicle = Vehicle::where('status',1)->get();
         $modulename = $this->modulename;
@@ -182,7 +182,7 @@ class BillSummaryConfirmManagerController extends Controller
         $billsummary= Billsummary::where('bill_no',$id)->pluck('parisishtha_b_id')->toArray();
 
         $ids=array_unique($billsummary);
-        $parisishthabdata = ParisishthaB::with('depot','vendorinvoice')->whereIn('id',$ids)->get();
+        $parisishthabdata = ParisishthaB::with('depot','vendorinvoice', 'route')->whereIn('id',$ids)->get();
         return view($this->view.'/showparisishthb',compact('parisishthabdata','vendors','vendorinvoices','depots','cities','division','vehicle','routes','route','action','modulename', 'default_diseal'));
     }
     public function showParisishthA($id)
@@ -199,7 +199,7 @@ class BillSummaryConfirmManagerController extends Controller
         $vehicle = Vehicle::where('status',1)->get();
         $billsummary= Billsummary::where('bill_no',$id)->pluck('parisishtha_a_id')->toArray();
         $ids=array_unique($billsummary);
-        $parisishthaadata = ParisishthaA::with('depot','vendorinvoice','vendor','vehicle')->whereIn('id',$ids)->get();
+        $parisishthaadata = ParisishthaA::with('depot','vendorinvoice','vendor','route')->whereIn('id',$ids)->get();
         return view($this->view.'/showparisishthaa',compact('parisishthaadata','vendors','vendorinvoices','depots','cities','division','vehicle','route','action','modulename'));
     }
 }

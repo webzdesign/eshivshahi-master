@@ -92,7 +92,8 @@ class ParisishthaBController extends Controller
         $vehicleData = Vehicle::where('status',1)->where('vendor_id', $vendorId)->get();
 
 		if(count($vehicleData) > 0){
-			echo '<option value=""></option>';
+            echo '<option value=""></option>';
+            echo '<option value="noVehicle">No Vehicle</option>';
 			foreach($vehicleData as $vehicleVal){
 				echo '<option value="'.$vehicleVal->id.'">'.$vehicleVal->vehicle_no.'</option>';
 			}
@@ -997,7 +998,7 @@ class ParisishthaBController extends Controller
         $to = date("Y-m-d",strtotime($request->to));
         $billing_period = $from.",".$to;
 
-        $rows = Vendorinvoice::where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
+        $rows = Vendorinvoice::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
         if($request->p_id !='')
         {
             $count = ParisishthaB::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();

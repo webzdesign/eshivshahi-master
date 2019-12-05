@@ -428,6 +428,10 @@ jQuery(document).ready(function($){
         $('#dFinalAmount').val(dFinalAmount.toFixed(2));
 
         var finalTotal = parseFloat(finalAmount)+parseFloat(pFinalAmount)+parseFloat(dFinalAmount);
+
+        if (isNaN(finalTotal) || finalTotal == '') {
+            finalTotal = 0;
+        }
         
         $('#totalAmount').val(finalTotal.toFixed(2));
 

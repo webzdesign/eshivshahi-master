@@ -50,7 +50,7 @@
                           <th>Vendor</th>
                           <th>Depot</th>
                           <th>Division</th>
-                          <th>Vehicle No</th>
+                          <th>Route</th>
                           <th>Voucher No</th>
                           <th>Billing Period</th>
                           <th>Action</th>
@@ -109,7 +109,7 @@ docdatatable=$('#datatable-responsive').DataTable({
         { data: 'vendor_name' },
         { data: 'depo' },
         { data: 'division' },
-        { data: 'vehicle_no' },
+        { data: 'route_id' },
         { data: 'voucher_no'},
         { data: 'billing_period'},
         { data: 'actions' },

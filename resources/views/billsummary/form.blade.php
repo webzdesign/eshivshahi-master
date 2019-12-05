@@ -258,7 +258,7 @@
 
 
 
-                                        <th style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->vehicle->vehicle_no }}" /></th>
+                                        <th style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->route->fromdepot->name.'-'.$val->route->todepot->name.' ('.$val->route->scheduled_number.' - '.$val->route->scheduled_time.')' }}" /></th>
 
 
 

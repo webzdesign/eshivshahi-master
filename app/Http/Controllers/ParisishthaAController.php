@@ -259,7 +259,7 @@ class ParisishthaAController extends Controller
         'vendorinvoice_id'=>$parisishthab->vendorinvoice_id,
         'voucher_no'=>$parisishthab->voucher_no,
         'voucher_date'=>$parisishthab->voucher_date,
-        'vehicle_id_reff'=>$parisishthab->vehicle_id_reff,
+        'route_id'=>$parisishthab->route_id,
         'vehicle_id'=>implode(",",array_unique(explode(",",$parisishthab->vehicle_id))),
         'total_kms'=>$request->actualKm,
         'avg_kms'=>$request->averageKm,
@@ -357,7 +357,7 @@ class ParisishthaAController extends Controller
         $parisistha->vendorinvoice_id = $parisishthab->vendorinvoice_id;
         $parisistha->voucher_no = $parisishthab->voucher_no;
         $parisistha->voucher_date = $parisishthab->voucher_date;
-        $parisistha->vehicle_id_reff = $parisishthab->vehicle_id_reff;
+        $parisistha->route_id = $parisishthab->route_id;
         $parisistha->vehicle_id = implode(",",array_unique(explode(",",$parisishthab->vehicle_id)));
         $parisistha->total_kms = $request->actualKm;
         $parisistha->avg_kms = $request->averageKm;

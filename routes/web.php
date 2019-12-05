@@ -140,7 +140,7 @@ Route::group(['middleware' => 'auth','preventBackHistory'], function()
 
 		Route::post('getVehicleVendorWise','VendorinvoicesController@getVehicle');
 		Route::post('invoiceCheckdate','VendorinvoicesController@invoiceCheckdate');
-
+		Route::post('getIdelingminutesInvoice','VendorinvoicesController@getIdelingminutes');
 		Route::resource('vendorinvoice','VendorinvoicesController');
 
 

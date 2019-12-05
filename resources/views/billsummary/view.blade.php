@@ -130,7 +130,7 @@
 
                                     <th style="text-align:center;">महामंडठ्ठाचा देयक क्र</th>
 
-                                    <th style="text-align:center;">बस क्रमांक</th>
+                                    <th style="text-align:center;">मार्ग (वेळापत्रक)</th>
 
                                     <th style="text-align:center;">पुरवठादाराने दिलेला देयक क्र</th>
 
@@ -172,7 +172,7 @@
 
 
 
-                                    <th width="150px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->vehicle->vehicle_no }}" /></th>
+                                    <th width="300px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->route->fromdepot->name.'-'.$val->route->todepot->name.' ('.$val->route->scheduled_number.' - '.$val->route->scheduled_time.')' }}" /></th>
 
 
 

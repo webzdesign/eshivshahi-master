@@ -188,7 +188,7 @@
 
             <td style="text-align:center;width:7% !important">Voucher No</td>
 
-            <td style="text-align:center;width:9% !important">Vehicle No</td>
+            <td style="text-align:center;width:9% !important">Route</td>
 
             <td style="text-align:center;width:7% !important">Vendor Invoice</td>
 
@@ -228,7 +228,7 @@
 
 
 
-            <td style="text-align:center;">{{ $val->vehicle->vehicle_no }}</td>
+            <td style="text-align:center;">{{ $val->route->fromdepot->name.'-'.$val->route->todepot->name.' ('.$val->route->scheduled_number.' - '.$val->route->scheduled_time.')' }}</td>
 
 
 

@@ -56,7 +56,7 @@ class QueryController extends Controller
 				$getvendorId = VendorManager::where('user_id',$id)->first();
                 $vendor_id = $getvendorId['vendor_id'];
 
-                $billquery = BillSummaryConfirm::with(['user','billsummary'])->whereHas('billsummary', function($q){
+                $billquery = BillSummaryConfirm::with(['user','billsummary'])->whereHas('billsummary', function($q) use($vendor_id){
                     $q->where('vendor_id', $vendor_id);
                 })->where('user_id','!=', 0)->where('confirm_by', 0)->where('query_status', 1);
 
@@ -66,7 +66,7 @@ class QueryController extends Controller
                 $getvendoracId = VendorAccountant::where('user_id',$id)->first();
                 $vendor_id = $getvendoracId->vendor_id;
 
-                $billquery = BillSummaryConfirm::with(['user','billsummary'])->whereHas('billsummary', function($q){
+                $billquery = BillSummaryConfirm::with(['user','billsummary'])->whereHas('billsummary', function($q) use($vendor_id){
                     $q->where('vendor_id', $vendor_id);
                 })->where('user_id','!=', 0)->where('confirm_by', 0)->where('query_status', 1);
 

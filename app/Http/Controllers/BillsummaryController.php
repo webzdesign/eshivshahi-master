@@ -553,7 +553,7 @@ class BillsummaryController extends Controller
 
         if($this->userTypeId == '1'){
 
-            $parisishthaa = ParisishthaA::with('vendorinvoice','vehicle')->where('billing_period',$billnigPeriod)->where('vendor_id',$vendor_id)->where('pay_status','0')->where('delete_status','0')->get();
+            $parisishthaa = ParisishthaA::with('vendorinvoice','route')->where('billing_period',$billnigPeriod)->where('vendor_id',$vendor_id)->where('pay_status','0')->where('delete_status','0')->get();
 
         }else{
 
@@ -563,14 +563,14 @@ class BillsummaryController extends Controller
 
                 $depotId = $this->depotId;
 
-                $parisishthaa = ParisishthaA::with('vendorinvoice','vehicle')->where('vendor_id',$vendor_id)->where('billing_period',$billnigPeriod)->where('pay_status','0')->where('delete_status','0')->where('depot_id',$depotId)->get();
+                $parisishthaa = ParisishthaA::with('vendorinvoice','route')->where('vendor_id',$vendor_id)->where('billing_period',$billnigPeriod)->where('pay_status','0')->where('delete_status','0')->where('depot_id',$depotId)->get();
             }
 
             if($accessTypeId == '2'){
 
                 $divisionId = $this->divisionId;
 
-                $parisishthaa = ParisishthaA::with('vendorinvoice','vehicle')->where('vendor_id',$vendor_id)->where('billing_period',$billnigPeriod)->where('pay_status','0')->where('delete_status','0')->where('division_id',$divisionId)->get();
+                $parisishthaa = ParisishthaA::with('vendorinvoice','route')->where('vendor_id',$vendor_id)->where('billing_period',$billnigPeriod)->where('pay_status','0')->where('delete_status','0')->where('division_id',$divisionId)->get();
             }
         }
 
@@ -616,7 +616,7 @@ class BillsummaryController extends Controller
 
         $vehicle_id = $request->vehicle_id;
 
-        $vehicle_id_reff = $request->vehicle_id_reff;
+        $route_id = $request->route_id;
 
         $vendor_id = $request->vendor_id;
 
@@ -668,7 +668,7 @@ class BillsummaryController extends Controller
 
                     'gov_voucher_no'=>$voucher_no[$i],
 
-                    'vehicle_id_reff'=>$request->vehicle_id_reff[$i],
+                    'route_id'=>$request->route_id[$i],
 
                     'vehicle_id'=>$vehicle_id[$i],
 
@@ -739,7 +739,7 @@ class BillsummaryController extends Controller
 
                     'gov_voucher_no'=>$voucher_no[$i],
 
-                    'vehicle_id_reff'=>$request->vehicle_id_reff[$i],
+                    'route_id' => $request->route_id[$i],
 
                     'vehicle_id'=>$vehicle_id[$i],
 
@@ -885,7 +885,7 @@ class BillsummaryController extends Controller
 
         $action = 'update';
 
-        $result = Billsummary::with('parisisthab','vehicle','vendorinvoice')->where('bill_no',$id)->get();
+        $result = Billsummary::with('parisisthab','route','vendorinvoice')->where('bill_no',$id)->get();
 
         $vendor = Vendor::get();
 
@@ -1031,7 +1031,7 @@ class BillsummaryController extends Controller
 
 
 
-        $billsummary = Billsummary::with('vehicle','vendorinvoice')->where('bill_no',$id)->get();
+        $billsummary = Billsummary::with('route','vendorinvoice')->where('bill_no',$id)->get();
 
         $vendor = Vendor::get();
 
@@ -1131,7 +1131,7 @@ class BillsummaryController extends Controller
 
 
 
-        $billsummary = Billsummary::with('parisisthab','vehicle','vendorinvoice')->where('bill_no',$id)->get();
+        $billsummary = Billsummary::with('parisisthab','route','vendorinvoice')->where('bill_no',$id)->get();
 
         $vendor = Vendor::get();
 

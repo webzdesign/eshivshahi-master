@@ -84,11 +84,11 @@
 
                         <div id="summayData">
                         <div class="table-responsive" style="width:100%;margin: 0 auto;">
-                            <table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1540px;">
+                            <table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1700px;">
                                 <tr>
                                     <th style="text-align:center;">अ.क्र</th>
                                     <th style="text-align:center;">महामंडठ्ठाचा देयक क्र</th>
-                                    <th style="text-align:center;">बस क्रमांक</th>
+                                    <th style="text-align:center;">मार्ग (वेळापत्रक)</th>
                                     <th style="text-align:center;">पुरवठादाराने दिलेला देयक क्र</th>
                                     <th style="text-align:center;">पुरवठादाराने मागणी केलेली रक्कम रु</th>
                                     <th style="text-align:center;">महामंडठ्ठाने मंजुर केलेली ऐकूण रक्कम रु</th>
@@ -109,7 +109,7 @@
 
                                     <th style="text-align:center;"><input type="text" name="voucher_no[]" class="form-control" readonly value="{{ $val->gov_voucher_no }}" /></th>
 
-                                    <th width="150px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->vehicle->vehicle_no }}" /></th>
+                                    <th width="250px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->route->fromdepot->name.'-'.$val->route->todepot->name.' ('.$val->route->scheduled_number.' - '.$val->route->scheduled_time.')' }}" /></th>
 
                                     <th width="150px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ isset($val->vendorinvoice->invoice_no) ? $val->vendorinvoice->invoice_no : '' }}" /></th>
 

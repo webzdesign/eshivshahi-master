@@ -231,7 +231,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                 <th width="100px !important;">Ad Blue / अॅडब्लू </th>
 
-                                                <th width="100px !important;">AdBlue Price /अॅडब्लू किंमत</th>
+                                                <th width="100px !important;">AdBlue Price Per Litre/अॅडब्लू किंमत</th>
 
                                                 <th width="150px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
 
@@ -358,6 +358,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                             <?php /*<input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */?>
                                                             <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
                                                                 <option value=""></option>
+                                                                <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
                                                                 @foreach($vehicle as $key => $value)
                                                                 <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
                                                                 @endforeach
@@ -441,6 +442,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                           <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
                                                             <option value=""></option>
+                                                            <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
                                                             @foreach($vehicle as $key => $value)
                                                             <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
                                                             @endforeach
@@ -524,6 +526,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                            <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
                                                             <option value=""></option>
+                                                            <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
                                                             @foreach($vehicle as $key => $value)
                                                             <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
                                                             @endforeach
@@ -581,7 +584,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td></td>
                                                 <td><input type="text" class="form-control total_breaddown_charge" name="total_breaddown_charge" id="total_breaddown_charge" value="{{array_sum($breaddown_charge)}}" readonly></td>
 
-                                                <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value=" {{array_sum($vor_exp)}} " id="total_vor_exp" readonly></td>
+                                                <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value="{{array_sum($vor_exps)}}" id="total_vor_exp" readonly></td>
 
                                                 <td><input type="text" class="form-control" name="total_parking_exp" id="total_parking_exp" readonly></td>
 
@@ -1601,7 +1604,7 @@ jQuery(document).ready(function($){
 
                     $t.find(".other_exp").addClass('other_exp_auto');
 
-                    $t.find(".idling_minutes").addClass('idling_minutes _auto');
+                    $t.find(".idling_minutes").addClass('idling_minutes_auto');
 
                     continue;
 
@@ -2165,14 +2168,46 @@ jQuery(document).ready(function($){
         $(document).on('keyup','.kms',function(){
 
             calculatekms();
+            /* check validation for no vehicle start*/
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+            var kms = $(this).closest('tr').find('.kms').val();
 
+            if(diesel_ltr != '' && vehicle_id != '') {
+                if (kms == 0 && diesel_ltr == 0) {
+                    if (vehicle_id != 'noVehicle') {
+                        $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                    }
+                } else {
+                    if (vehicle_id == 'noVehicle') {
+                        $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                    }
+                }
+            }
+            /* check validation for no vehicle end*/
         });
 
         $(document).on('keyup',".diesel_ltr",function(){
 
             calculatediesel();
 
+            /* check validation for no vehicle start*/
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+            var kms = $(this).closest('tr').find('.kms').val();
 
+            if(kms != '' && vehicle_id != '') {
+                if (kms == 0 && diesel_ltr == 0) {
+                    if (vehicle_id != 'noVehicle') {
+                        $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                    }
+                } else {
+                    if (vehicle_id == 'noVehicle') {
+                        $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                    }
+                }
+            }
+            /* check validation for no vehicle end*/
 
         });
 
@@ -3274,6 +3309,27 @@ jQuery(document).ready(function($){
                     $(".vehicle_id").empty().html(result);
                 }
             });
+        });
+
+        $('body').on('change', '.vehicle_id', function(e){
+            /* check validation for no vehicle start*/
+            var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+            var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+            var kms = $(this).closest('tr').find('.kms').val();
+
+            if(diesel_ltr != '' && kms != '') {
+                if (kms == 0 && diesel_ltr == 0) {
+                    if (vehicle_id != 'noVehicle') {
+                        swal("warning", "Please Select Novehicle on Vehicle List","warning");
+                        $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                    }
+                } else {
+                    if (vehicle_id == 'noVehicle') {
+                        $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                    }
+                }
+            }
+            /* check validation for no vehicle end*/
         });
 
         $('body').on('change','#route_id',function(e){

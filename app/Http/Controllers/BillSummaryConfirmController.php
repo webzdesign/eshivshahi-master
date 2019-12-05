@@ -126,7 +126,7 @@ class BillSummaryConfirmController extends Controller
 
         if($this->userTypeId == '1'){
 
-            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','vehicle','depot','division')->where('status','1')->where('vendor_confirm','!=','0')->orderBy('id', 'desc')->groupBy('bill_no')->get();
+            $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','route','depot','division')->where('status','1')->where('vendor_confirm','!=','0')->orderBy('id', 'desc')->groupBy('bill_no')->get();
 
         }else{
 
@@ -138,7 +138,7 @@ class BillSummaryConfirmController extends Controller
 
                 $depotId = $this->depotId;
 
-                $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','vehicle','depot','division')->where('depot_id',$depotId)->where('vendor_confirm','!=','0')->whereIn('bill_no',$parisithbConfirm)->where('status','1')->orderBy('id', 'desc')->groupBy('bill_no')->get();
+                $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','route','depot','division')->where('depot_id',$depotId)->where('vendor_confirm','!=','0')->whereIn('bill_no',$parisithbConfirm)->where('status','1')->orderBy('id', 'desc')->groupBy('bill_no')->get();
 
             }
 
@@ -146,7 +146,7 @@ class BillSummaryConfirmController extends Controller
 
                 $divisionId = $this->divisionId;
 
-                $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','vehicle','depot','division')->where('division_id',$divisionId)->where('vendor_confirm','!=','0')->whereIn('bill_no',$parisithbConfirm)->where('status','1')->orderBy('id', 'desc')->groupBy('bill_no')->get();
+                $billSummary = Billsummary::with('vendorinvoice','vendor','parisisthab','route','depot','division')->where('division_id',$divisionId)->where('vendor_confirm','!=','0')->whereIn('bill_no',$parisithbConfirm)->where('status','1')->orderBy('id', 'desc')->groupBy('bill_no')->get();
 
 
 
@@ -254,9 +254,9 @@ class BillSummaryConfirmController extends Controller
 
             })
 
-            ->editColumn('vehicle_no', function($billSummary){
+            ->editColumn('route_id', function($billSummary){
 
-                return $billSummary->vehicle->vehicle_no;
+                return $billSummary->route->fromdepot->name.'-'.$billSummary->route->todepot->name.' ('.$billSummary->route->scheduled_number.' - '.$billSummary->route->scheduled_time.')';
 
             })
 
@@ -302,7 +302,7 @@ class BillSummaryConfirmController extends Controller
 
         $userTypeId = $this->userTypeId;
 
-        $billsummary = Billsummary::with('vehicle','vendorinvoice')->where('bill_no',$id)->get();
+        $billsummary = Billsummary::with('route','vendorinvoice')->where('bill_no',$id)->get();
 
         $viewSummaryDetail = BillSummaryView::where('usertype_id',$userTypeId)->where('billsummary_id',$billsummary[0]->bill_no)->first();
 

@@ -162,6 +162,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                             <th width="100px !important;">Washing Charges</th>
                                             <th width="100px !important;">Other Exp./इतर वसुली रक्कम<span class="required"></span></th>
                                             <th width="150px !important;">VehicleNumber<span class="required">*</span></th>
+                                            <th width="120px !important;">Idling Minutes</th>
                                             <th width="120px !important;">Remarks</th>
                                         </tr>
                                     </thead>
@@ -233,10 +234,17 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                             <select  id="vehicle_id[0]" name="vehicle_id[0]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id vehicle_id_auto" style="width:100%;">
                                                 <option value=""></option>
+                                                <option value="noVehicle">No Vehicle</option>
                                                 @foreach($vehicle as $key => $value)
                                                 <option value="{{$value->id}}">{{$value->vehicle_no}}</option>
                                                 @endforeach
                                             <select>
+                                            </td>
+                                            
+                                            <td>
+                                                <select  id="idling_minutes" name="idling_minutes[]"  class="form-control select2_single col-md-7 col-xs-12 idling_minutes" style="width:100%;">
+                                                    <option value=""></option>
+                                                <select>
                                             </td>
 
                                             <td>
@@ -259,6 +267,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                             <td></td>
                                             <td></td>
                                             <td><label id="vehicle_id_er"></label></td>
+                                            <td></td>
                                             <td></td>
                                         </tr>
                                         <tr>
@@ -286,6 +295,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                             <td><input type="text" class="form-control" name="total_other_exp" id="total_other_exp" readonly>
                                             </td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                         </tr>
@@ -771,6 +781,7 @@ jQuery(document).ready(function($){
                     $t.find(".breaddown_charge").addClass('breaddown_charge_auto');
                     $t.find(".hault_exp").addClass('hault_exp_auto');
                     $t.find(".other_exp").addClass('other_exp_auto');
+                    $t.find(".idling_minutes").addClass('idling_minutes_auto');
                     continue;
                 } else {
                     $t.find(".vehicle_id").addClass('vehicle_id_auto_total');
@@ -785,6 +796,7 @@ jQuery(document).ready(function($){
                     $t.find(".breaddown_charge").addClass('breaddown_charge_auto_total');
                     $t.find(".hault_exp").addClass('hault_exp_auto_total');
                     $t.find(".other_exp").addClass('other_exp_auto_total');
+                    $t.find(".idling_minutes").addClass('idling_minutes_auto_total');
                 }
                 var num = $('.parishishtha_b').length;
                 var $clone=$t.clone();
@@ -806,6 +818,7 @@ jQuery(document).ready(function($){
                     $clone.find(".hault_exp").attr('readonly','readonly').removeClass('hault_exp_auto_total');
                     $clone.find(".wash_exp").attr('disabled','disabled');
                     $clone.find(".other_exp").attr('readonly','readonly').removeClass('other_exp_auto_total');
+                    $clone.find(".idling_minutes").attr('disabled','disabled').removeClass('idling_minutes_auto_total');
                 }
 
                 $("#parishishtha_b tbody").children().last().after($clone);
@@ -829,6 +842,7 @@ jQuery(document).ready(function($){
                 $clone.find(".hault_exp").attr('id', 'hault_exp['+num+']').attr('name', 'hault_exp['+num+']').removeClass('hault_exp_auto');
                 $clone.find(".wash_exp").attr('id', 'wash_exp['+num+']').attr('name', 'wash_exp['+num+']');
                 $clone.find(".other_exp").attr('id', 'other_exp['+num+']').attr('name', 'other_exp['+num+']').removeClass('other_exp_auto');
+                $clone.find(".idling_minutes").attr('id', 'idling_minutes['+num+']').attr('name', 'idling_minutes['+num+']').removeClass('idling_minutes_auto');
                 $clone.find(".remarks").attr('id', 'remarks['+num+']').attr('name', 'remarks['+num+']').removeClass('remarks_auto');
 
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -943,7 +957,7 @@ jQuery(document).ready(function($){
             $clone.find(".date_pb") .removeClass('hasDatepicker').removeData('datepicker').unbind().datepicker({ format: 'dd-mm-yy',autoclose:true,});
 
             $clone.find(".kms").attr('id', 'kms['+num+']').attr('name', 'kms['+num+']');
-            $clone.find(".vehicle_id").attr('id', 'vehicle_id['+num+']').attr('name', 'kms['+num+']');
+            $clone.find(".vehicle_id").attr('id', 'vehicle_id['+num+']').attr('name', 'vehicle_id['+num+']');
             $clone.find(".diesel_ltr").attr('id', 'diesel_ltr['+num+']').attr('name', 'diesel_ltr['+num+']');
             $clone.find(".diese_per_ltr_price").attr('id', 'diese_per_ltr_price['+num+']').attr('name', 'diese_per_ltr_price['+num+']');
             $clone.find(".adblue").attr('id', 'adblue['+num+']').attr('name', 'adblue['+num+']').val('');
@@ -1028,12 +1042,53 @@ jQuery(document).ready(function($){
             $(this).find('.wash_exp').attr('name','wash_exp['+i+']').attr('id','wash_exp['+i+']');
             $(this).find('.other_exp').attr('name','other_exp['+i+']').attr('id','other_exp['+i+']');
             $(this).find('.remarks').attr('name','remarks['+i+']').attr('id','remarks['+i+']');
+            $(this).find('.idling_minutes').attr('name','idling_minutes['+i+']').attr('id','idling_minutes['+i+']');
             i++;
         });
         }
     }
 
+    $('body').on('change', '.vehicle_id', function(e){
+        /* check validation for no vehicle start*/
+        var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+        var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+        var kms = $(this).closest('tr').find('.kms').val();
+
+        if(diesel_ltr != '' && kms != '') {
+            if (kms == 0 && diesel_ltr == 0) {
+                if (vehicle_id != 'noVehicle') {
+                    swal("warning", "Please Select Novehicle on Vehicle List","warning");
+                    $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                }
+            } else {
+                if (vehicle_id == 'noVehicle') {
+                    $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                }
+            }
+        }
+        /* check validation for no vehicle end*/
+    });
+
     $('body').on('keyup','.kms',function(e){
+
+        /* check validation for no vehicle start*/
+        var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+        var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+        var kms = $(this).closest('tr').find('.kms').val();
+
+        if(diesel_ltr != '' && vehicle_id != '') {
+            if (kms == 0 && diesel_ltr == 0) {
+                if (vehicle_id != 'noVehicle') {
+                    $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                }
+            } else {
+                if (vehicle_id == 'noVehicle') {
+                    $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                }
+            }
+        }
+        /* check validation for no vehicle end*/
+
         var route_id = $('#route_id').val();
         var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
         if(route_id == ''){
@@ -1176,6 +1231,15 @@ jQuery(document).ready(function($){
                     $('#schedule_number').val(result);
                 }
             });
+
+            $.ajax({
+            type:'POST',
+                url:'{{url("/getIdelingminutesInvoice")}}',
+                data:{ route_id:route_id },
+                success:function(option){
+                    $(".idling_minutes").html(option);
+                }
+            });
         }
 
         $('.kms').trigger('change');
@@ -1201,6 +1265,23 @@ jQuery(document).ready(function($){
     $(document).on('keyup',".diesel_ltr",function(){
         calculatediesel();
         getTotal();
+        /* check validation for no vehicle start*/
+        var vehicle_id = $(this).closest('tr').find('.vehicle_id').val();
+        var diesel_ltr = $(this).closest('tr').find('.diesel_ltr').val();
+        var kms = $(this).closest('tr').find('.kms').val();
+
+        if(kms != '' && vehicle_id != '') {
+            if (kms == 0 && diesel_ltr == 0) {
+                if (vehicle_id != 'noVehicle') {
+                    $(this).closest('tr').find('.vehicle_id').val('noVehicle').trigger('change');
+                }
+            } else {
+                if (vehicle_id == 'noVehicle') {
+                    $(this).closest('tr').find('.vehicle_id').val('').trigger('change');
+                }
+            }
+        }
+        /* check validation for no vehicle end*/
     });
     $(document).on('keyup',".parking_exp",function(){
         calculateparkingcharges();
@@ -1256,9 +1337,63 @@ jQuery(document).ready(function($){
             }
             total_diesel=total_diesel+diesel_ltr;
         });
+
+        var IdlingMin =$(".idling_minutes").map(function(){return $(this).val();}).get().join(",");
+        var Idling_minVal = IdlingMin;
+        arr5 = Idling_minVal.split(',');
+        var totalIdlingMin=0;
+        for(i=0; i < arr5.length; i++)
+        {
+            if(arr5[i]!='' && arr5[i]!=0)
+            {
+                totalIdlingMin += (parseFloat(arr5[i])*6)/100;
+            }
+        }
+        if(isNaN(totalIdlingMin))
+        {
+            totalIdlingMin=0;
+        }
+
+        var ttl_min = total_diesel - totalIdlingMin;
         $('.table tfoot').find("#total_diesel").val(total_diesel);
-        $("#diesel_total").val(total_diesel);
+        $("#diesel_total").val(ttl_min.toFixed(2));
     }
+
+    function IdlingMinutes()
+    {
+        var DisealTotal = $("#diesel_total").val();
+        var IdlingMin =$(".idling_minutes").map(function(){return $(this).val();}).get().join(",");
+		var Idling_minVal = IdlingMin;
+        arr5 = Idling_minVal.split(',');
+        var totalIdlingMin=0;
+
+		for(i=0; i < arr5.length; i++)
+		{
+			if(arr5[i]!='' && arr5[i]!=0)
+			{
+				totalIdlingMin += (parseFloat(arr5[i])*6)/100;
+			}
+        }
+
+        if(isNaN(totalIdlingMin))
+        {
+            totalIdlingMin=0;
+        }
+
+        if(isNaN(DisealTotal))
+        {
+            DisealTotal=0;
+        }
+        var total_diseal_min = parseFloat(totalIdlingMin) - parseFloat(DisealTotal)
+        $('.table tfoot').find('#diesel_total').val(total_diseal_min.toFixed(2));
+    }
+
+    /*Idling Minutes Calculation start */
+    $("body").on("change",".idling_minutes",function(){
+        calculatediesel();
+        IdlingMinutes();
+	});
+    /*Idling Minutes Calculation end */
 
     function calculateparkingcharges()
     {

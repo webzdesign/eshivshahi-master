@@ -62,7 +62,7 @@
 
             <input type="hidden" id="vehicle_id" name="vehicle_id[]" class="form-control" value="{{ $val->vehicle_id }}" />
 
-            <input type="hidden" id="vehicle_id_reff" name="vehicle_id_reff[]" class="form-control" value="{{ $val->vehicle_id_reff }}" />
+            <input type="hidden" id="route_id" name="route_id[]" class="form-control" value="{{ $val->route_id }}" />
 
             <input type="hidden" id="vendorinvoice_id" name="vendorinvoice_id[]" class="form-control" value="{{ $val->vendorinvoice_id }}" />
 
@@ -74,7 +74,7 @@
 
 
 
-            <th width="150px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->vehicle->vehicle_no }}" /></th>
+            <th width="300px !important;" style="text-align:center;"><input type="text" class="form-control" readonly value="{{ $val->route->fromdepot->name.'-'.$val->route->todepot->name.' ('.$val->route->scheduled_number.' - '.$val->route->scheduled_time.')' }}" /></th>
 
 
 

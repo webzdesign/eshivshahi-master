@@ -48,7 +48,7 @@
                                         @foreach($resultquery as $k=>$value)
                                         @if($val->usertype_name==$value->usertype_name)
                                         <tr>
-                                            <td>{{ $key+1  }}</td>
+                                            <td>{{ $key+1 }}</td>
                                             <td>{{ $value->first_name.' '.$value->last_name }}</td>
                                             <td>{{ $value->usertype_name }}</td>
                                             <td>{{ ($value->user_id != null) ? date("d-M-Y",strtotime($value->queryraised_at)) : '' }}</td>
