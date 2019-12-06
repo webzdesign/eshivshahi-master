@@ -216,7 +216,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                             <th width="100px !important;">AdBlue Price Per Litre/अॅडब्लू किंमत</th>
 
-                                            <th width="150px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
+                                            <th width="160px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
 
                                             <th width="100px !important;">Vor. Exp/मार्ग बंद वाहने वसुली</th>
 
@@ -257,7 +257,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                             <td>
                                             <input type="hidden" class="breaddown_charge_value" id="breaddown_charge_value[0]" name="breaddown_charge_value[0]" />
 
-                                            <input style="width:80px;display:inline;" type="text" id="breaddown_charge[0]" readonly name="breaddown_charge[0]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto" >
+                                            <input style="width:66px;display:inline;" type="text" id="breaddown_charge[0]" readonly name="breaddown_charge[0]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto" >
 
                                             <a class="btn btn-primary btn-xs" data-toggle="modal" id="breakModelAdd" data-target="#breakModal">Add</a>
                                             </td>

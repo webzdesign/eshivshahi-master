@@ -1879,6 +1879,7 @@ jQuery(document).ready(function($){
                     var diesel_ltr_er = diesel_ltr_a.indexOf(0);
                     var diese_per_ltr_price_er = diese_per_ltr_price_a.indexOf(0);
                     var parking_exp_er = parking_exp_a.indexOf(0);
+                    
 
                     if(kms_er != '-1'){
                         var str = 'Please Enter Kms For All Field';

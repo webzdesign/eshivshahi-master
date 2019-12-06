@@ -230,7 +230,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                 <th width="100px !important;">AdBlue Price Per Litre /अॅडब्लू किंमत</th>
 
-                                                <th width="150px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
+                                                <th width="160px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
 
                                                 <th width="100px !important;">Vor. Exp/मार्ग बंद वाहने वसुली</th>
 
@@ -316,7 +316,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <input type="hidden" class="breaddown_charge_value" id="breaddown_charge_value[{{$i}}]" name="breaddown_charge_value[{{$i}}]" value="{{$breaddown_charge_value[$i]}}" />
 
 
-                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge" style="width:80px;display:inline;" value="{{$breaddown_charge[$i]}}" >
+                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge" style="width:66px;display:inline;" value="{{$breaddown_charge[$i]}}" >
                                                         <a class="btn btn-primary btn-xs" data-toggle="modal" id="breakModelAdd" data-target="#breakModal">Add</a>
                                                         </td>
 
@@ -398,7 +398,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <td>
                                                         <input type="hidden" class="breaddown_charge_value" id="breaddown_charge_value[{{$i}}]" name="breaddown_charge_value[{{$i}}]"  value="{{$breaddown_charge_value[$i]}}" />
 
-                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto" style="width:80px;display:inline;" value="{{$breaddown_charge[$i]}}" >
+                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto" style="width:66px;display:inline;" value="{{$breaddown_charge[$i]}}" >
 
                                                         <a class="btn btn-primary btn-xs breakModelAdd" data-toggle="modal" id="breakModelAdd" data-target="#breakModal">Edit</a>
                                                         </td>
@@ -481,7 +481,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                         <td>
                                                         <input type="hidden" class="breaddown_charge_value" id="breaddown_charge_value[{{$i}}]" name="breaddown_charge_value[{{$i}}]" value="{{$breaddown_charge_value[$i]}}" />
 
-                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto_total" style="width:80px;display:inline;" value="{{$breaddown_charge[$i]}}" >
+                                                        <input type="text" readonly id="breaddown_charge[{{$i}}]" name="breaddown_charge[{{$i}}]"  class="numberonly form-control  breaddown_charge breaddown_charge_auto_total" style="width:66px;display:inline;" value="{{$breaddown_charge[$i]}}" >
 
                                                         <a class="btn btn-primary btn-xs breakModelAdd" data-toggle="modal" id="breakModelAdd" data-target="#breakModal">Edit</a>
                                                         </td>

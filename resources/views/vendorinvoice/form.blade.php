@@ -874,12 +874,12 @@ jQuery(document).ready(function($){
                             }
                             el.addClass('diese_per_ltr_price');
                         }
-                        if(prefix=="parking_exp"){
+                        /*if(prefix=="parking_exp"){
                             if(el.next().hasClass('errors')){
                                 el.next().remove();
                             }
                             el.addClass('parking_exp');
-                        }
+                        }*/
                     }
                 }
             });
@@ -1684,7 +1684,7 @@ jQuery(document).ready(function($){
             });
 
             $('.parking_exp').each(function (){
-                if($(this).val() == '' )
+                if($(this).val() == '')
                 {
                     parking_exp_a.push(0);
                 }
@@ -1698,8 +1698,8 @@ jQuery(document).ready(function($){
             var vehicle_er = checkVehicle.indexOf(0);
             var diesel_ltr_er = diesel_ltr_a.indexOf(0);
             var diese_per_ltr_price_er = diese_per_ltr_price_a.indexOf(0);
-            var parking_exp_er = parking_exp_a.indexOf(0);
-
+            var parking_exps_er = parking_exp_a.indexOf(0);
+            
             if(kms_er != '-1'){
                 var str = 'Please Enter Kms For All Field';
                 var result = str.fontcolor("red");
@@ -1732,7 +1732,7 @@ jQuery(document).ready(function($){
                             return false;
                         } else {
                             document.getElementById('diese_per_ltr_price_er').innerHTML = '';
-                            if(parking_exp_er != '-1') {
+                            if(parking_exps_er != '-1') {
                                 var str = 'Please Enter Parking Expense For All Field';
                                 var result = str.fontcolor("red");
                                 document.getElementById('parking_exp_er').innerHTML = result;
