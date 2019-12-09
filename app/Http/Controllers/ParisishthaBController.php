@@ -649,7 +649,7 @@ class ParisishthaBController extends Controller
             ->select('route_masters.*','d1.name as from_depot','d2.name as to_depot')
             ->where(function ($query){
                 $query->where('route_masters.division_id',$this->divisionId)
-                ->orwhere('route_masters;.to_division',$this->divisionId);
+                ->orwhere('route_masters.to_division',$this->divisionId);
             })
             ->where('route_masters.status', 1)
             ->get();

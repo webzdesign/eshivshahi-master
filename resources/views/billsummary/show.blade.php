@@ -2,7 +2,7 @@
 
 <div class="table-responsive" style="width:100%;margin: 0 auto;">
 
-<table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1700px;">
+<table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1800px;">
 
     <tr>
 
@@ -26,7 +26,7 @@
 
         <th style="text-align:center;">60 % Deduction</th>
 
-        <th style="text-align:center;">60 % Deduction Remarks</th>
+        <th width="200px !important;" style="text-align:center;">60 % Deduction Remarks</th>
 
       <!-- <th style="text-align:center;">Previous Deduction</th>
 
@@ -133,7 +133,7 @@
         <th style="text-align:center;"> - </th>
         <th style="text-align:center;" colspan="1">ऐकुण रक्कम रु</th>
 
-        <th><input type="text" name="finalAmount" class="form-control" id="finalAmount" readonly value="{{ $total }}" /></th>
+        <th><input type="text" name="finalAmount" class="form-control finalAmount" id="finalAmount" readonly value="{{ $total }}" /></th>
 
     </tr>
 
@@ -163,7 +163,7 @@
         <th style="text-align:center;"> - </th>
         <th style="text-align:center;" colspan="1">TDS</th>
 
-        <th><input type="text" class="form-control" id="tds" name="tds"  value="" /></th>
+        <th><input type="text" class="form-control tds" id="tds" name="tds"  value="" /></th>
 
     </tr>
 

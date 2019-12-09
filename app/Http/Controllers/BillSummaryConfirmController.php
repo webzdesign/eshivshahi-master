@@ -262,9 +262,9 @@ class BillSummaryConfirmController extends Controller
 
             ->editColumn('voucher_no', function($billSummary){
 
-                if(isset($billSummary->vendorinvoice->invoice_no)){
+                if(isset($billSummary->parisisthab->voucher_no)){
 
-                    return $billSummary->vendorinvoice->invoice_no;
+                    return $billSummary->parisisthab->voucher_no;
 
                 }else{
 

@@ -280,7 +280,7 @@
 
 
 
-               <td  style="text-align:center;">{{ $billsummary[0]->final_payable_amt }}</td>
+               <td  style="text-align:center;">{{ $val->final_payable_amt }}</td>
 
       </tr>
 

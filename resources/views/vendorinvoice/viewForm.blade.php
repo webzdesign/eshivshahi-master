@@ -397,6 +397,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                         <tfoot>
                                             <tr>
                                                 <td></td>
+                                                <td></td>
                                                 <td><label id="kms_er"></label></td>
                                                 <td><label id="diesel_ltr_er"></label></td>
                                                 <td><label id="diese_per_ltr_price_er"></label></td>
@@ -412,7 +413,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td></td>
                                             </tr>
                                             <tr>
-                                                <td>Total</td>
+                                                <td colspan="2"Total</td>
 
                                                 <td><input type="text" class="form-control"  name="total_kms" id="total_kms" value="" readonly></td>
                                                 <td><input type="text" class="form-control" name="total_diesel" id="total_diesel" value="" readonly></td>

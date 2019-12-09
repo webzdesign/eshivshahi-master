@@ -30,10 +30,10 @@ function calDiesel($no){
 @endphp
 @endif
 <style>
-.wrapper1, .wrapper2{width: 100%; border: none 0px RED;
-overflow-x: scroll; overflow-y:hidden;}
+.wrapper1, .wrapper2{width: 100%; overflow-x: scroll; overflow-y:hidden;}
+
 .wrapper1{height: 20px; }
-.wrapper2{ }
+
 .div1 {width:1540px; height: 20px; }
 .div2 {width:1540px; overflow: auto;}
 </style>
@@ -177,7 +177,7 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                 <input type="hidden" id="invoice_no" name="invoice_no" class="form-control col-md-7 col-xs-12	invoice_no" value="{{ $parisishthab->vendorinvoice_id }}">
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" readonly id="invoiceNo" name="invoiceNo" class="form-control col-md-7 col-xs-12 invoiceNo" value="{{ $invoiceNo }}">
+                                    <input type="text" readonly id="invoiceNo" name="invoiceNo" class="form-control col-md-7 col-xs-12 invoiceNo" value="{{ $parisishthab->vendorinvoice->invoice_no }}">
                                 </div>
 
                                 <div id="viewInvoice">

@@ -184,7 +184,7 @@
 
                         <div class="table-responsive" style="width:100%;margin: 0 auto;">
 
-                            <table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1700px;">
+                            <table border="1" class="table table-bordered dttable" cellspacing="0" style="width:1800px;">
 
                                 <tr>
 
@@ -208,7 +208,7 @@
 
                                     <th style="text-align:center;">60 % Deduction</th>
 
-                                    <th style="text-align:center;">60 % Deduction Remarks</th>
+                                    <th width="200px !important;" style="text-align:center;">60 % Deduction Remarks</th>
 
                                  <!-- <th style="text-align:center;">Previous Deduction</th>
 
@@ -456,389 +456,208 @@ jQuery(document).ready(function($){
     function totalFunction(){
 
         var payAmount = $(".final_payable_amt").map(function(){return $(this).val();}).get().join(",");
-
 		var finalPayAmount = payAmount;
-
 		arrpayAmount = finalPayAmount.split(',');
-
 		var totalamount=0;
-
 		for(i=0; i < arrpayAmount.length; i++)
-
 		{
-
 			if(arrpayAmount[i]!='')
-
 			{
-
 				totalamount += parseFloat(arrpayAmount[i]);
-
 			}
-
-
-
 		}
 
 		if(isNaN(totalamount) || totalamount == '')
-
         {
-
             totalamount=0;
-
         }
-
         $('body').find('#finalAmount').val(totalamount.toFixed(2));
-
     }
 
+    $('body').on('keyup','.tds, .vendor_deduction, .vendor_reimbursement',function(e){
+
+        var tds =  $("#tds").val();
+        var finalamount = $("#finalAmount").val();
+        var vendor_deduction = $("#vendor_deduction").val();
+        var vendor_reimbursement = $("#vendor_reimbursement").val();
+
+        if(isNaN(tds) || tds == ''){
+            tds = 0;
+        }
+
+        if(isNaN(finalamount) || finalamount == ''){
+            finalamount = 0;
+        }
+
+        if(isNaN(vendor_deduction) || vendor_deduction == ''){
+            vendor_deduction = 0;
+        }
+
+        if(isNaN(vendor_reimbursement) || vendor_reimbursement == ''){
+            vendor_reimbursement = 0;
+        }
+
+        var amt_after_tds = parseFloat(finalamount) - parseFloat(vendor_deduction) + parseFloat(vendor_reimbursement) - parseFloat(tds);
+
+        $("input[name='amountafter_tds']").val(amt_after_tds);
+    });
 
 
-    $('body').on('keyup','#other_deduction,#per_deduction,#prev_deduction',function(e){
+    $('body').on('keyup', '#other_deduction,#per_deduction,#prev_deduction',function(e){
 
         var other_deduction = $(this).closest('tr').find('#other_deduction').val();
-
         var per_deduction = $(this).closest('tr').find('#per_deduction').val();
-
         var prev_deduction = $(this).closest('tr').find('#prev_deduction').val();
-
-
-
         var gov_approve_amt = $(this).closest('tr').find('#gov_approve_amt').val();
-
         var vendor_deduction_amt = $(this).closest('tr').find('#vendor_deduction_amt').val();
 
-
-
-
-
         if(isNaN(other_deduction) || other_deduction ==''){
-
             other_deduction = 0;
-
         }
-
-
 
         if(isNaN(per_deduction) || per_deduction ==''){
-
             per_deduction = 0;
-
         }
-
-
 
         if(isNaN(prev_deduction) || prev_deduction ==''){
-
             prev_deduction = 0;
-
         }
-
-
 
         if(isNaN(gov_approve_amt) || gov_approve_amt ==''){
-
             gov_approve_amt = 0;
-
         }
-
-
 
         if(isNaN(vendor_deduction_amt) || vendor_deduction_amt ==''){
-
             vendor_deduction_amt = 0;
-
         }
-
-
 
         var total = parseFloat(gov_approve_amt)-parseFloat(vendor_deduction_amt)-parseFloat(other_deduction)-parseFloat(per_deduction)-parseFloat(prev_deduction);
 
-
-
         if(isNaN(total) || total == ''){
-
             total = 0;
-
         }
 
-
-
         $(this).closest('tr').find('#final_payable_amt').val(total);
-
         totalFunction();
-
+        $('.tds').trigger('keyup');
     });
-
-
-
-
 
     $("body").on("change","#vendor_id",function(){
-
         var vendor_id =  $("#vendor_id").val();
 
-
-
         $.ajax({
-
             type:'POST',
-
             url:'{{ url('getvehicleData') }}',
-
             data:{
-
                 vendor_id:vendor_id
-
             },
-
             success:function(result){
-
                 $("#vehicle_id").empty().html(result);
-
             }
-
         });
-
     });
-
 
 
     $("body").on("change","#vendor_id,#from_date,#to_date",function(){
 
         var vendor_id = $("#vendor_id").val();
-
         var from_date = $("#from_date").val();
-
         var to_date = $('#to_date').val();
 
-
-
         if(vendor_id == '' || from_date == '' || to_date == ''){
-
             return false;
-
         }else{
-
             $.ajax({
-
                 type:'POST',
-
                 url:'{{url('getBillSummay')}}',
-
                 data:{
-
                     vendor_id:vendor_id,
-
                     from_date:from_date,
-
                     to_date:to_date
-
                 },
-
                 success:function(result){
-
                     $("#summayData").empty().html(result);
                     $(".vendor_deduction").trigger('keyup');
                 }
 
             });
-
         }
-
     });
 
 
 
     $('#frm_single').validate({
-
         rules:
-
         {
-
             vendor_id:{required: true,},
-
             vehicle_id:{required: true,},
-
             approvalStatus:{required: true,},
-
-          /*  vendor_deduction:{jquerynumber:true,},
-
-            vendor_reimbursement:{jquerynumber:true,},*/
-
-
-
         },
-
         messages:
-
         {
-
             vendor_id:{required:"Please Select Vendor",},
-
             vehicle_id:{required:"Please Select Vehicle",},
-
             approvalStatus:{required:"Please Select Approval Or not.",},
-
-           /* vendor_deduction:{jquerynumber:true,jquerynumber:"Please Enter Positive Numbers"},
-
-            vendor_reimbursement:{jquerynumber:true,jquerynumber:"Please Enter Positive Numbers"},*/
-
         },
-
         errorPlacement: function(error, element) {
-
 			error.appendTo(element.parent("div"));
-
 		},
-
     });
 
     $('#frm_single').on('submit', function(e){
-
 		e.preventDefault();
-
 		var form = this;
-
 		if($("#frm_single").valid() )
-
 		{
-
             var dataCheck = $("#finalAmount").val();
-
             if(dataCheck == 0){
-
                 alert("Bill Not Available.");
-
                 return false;
-
             }else{
-
                 var publishFlag = $('#publish_flag').val();
-
                 if(publishFlag == 1){
-
                     var parisishtha_a_id =$(".parisishtha_a_id").map(function(){return $(this).val();}).get().join(",");
 
                     var parisishtha_b_id =$(".parisishtha_b_id").map(function(){return $(this).val();}).get().join(",");
 
                     $.ajax({
+                        type:'POST',
+                        url:'{{url('/checkinvoiceab')}}',
+                        data:{
+                            parisishtha_a_id:parisishtha_a_id,parisishtha_b_id:parisishtha_b_id
+                        },
+                        success:function(res){
+                            if(res == '1'){
 
-                            type:'POST',
+                                alert("Please Save And Submit From Parisishth A And B.")
 
-                            url:'{{url('/checkinvoiceab')}}',
-
-                            data:{
-
-                                parisishtha_a_id:parisishtha_a_id,parisishtha_b_id:parisishtha_b_id
-
-                            },
-
-                            success:function(res){
-
-                                if(res == '1'){
-
-                                    alert("Please Save And Submit From Parisishth A And B.")
-
-                                }else{
-
-                                    $(':input[type="submit"]').prop('disabled', true);
-
-                                    form.submit();
-
-                                }
-
+                            }else{
+                                $(':input[type="submit"]').prop('disabled', true);
+                                form.submit();
                             }
-
+                        }
                     });
 
                 }else{
 
                     $(':input[type="submit"]').prop('disabled', true);
-
                     form.submit();
-
                 }
-
             }
-
         }else{
 
             return false;
 
         }
-
     });
-
-
-
-    $('body').on('keyup','.tds, .vendor_deduction, .vendor_reimbursement',function(e){
-
-        var tds =  $("#tds").val();
-
-        var finalamount = $("#finalAmount").val();
-
-        var vendor_deduction = $("#vendor_deduction").val();
-
-        var vendor_reimbursement = $("#vendor_reimbursement").val();
-
-
-
-        if(isNaN(tds) || tds == ''){
-
-            tds = 0;
-
-        }
-
-        if(isNaN(finalamount) || finalamount == ''){
-
-            finalamount = 0;
-
-        }
-
-        if(isNaN(vendor_deduction) || vendor_deduction == ''){
-
-            vendor_deduction = 0;
-
-        }
-
-        if(isNaN(vendor_reimbursement) || vendor_reimbursement == ''){
-
-            vendor_reimbursement = 0;
-
-        }
-
-
-
-        var amt_after_tds = parseFloat(finalamount) - parseFloat(vendor_deduction) + parseFloat(vendor_reimbursement) - parseFloat(tds);
-
-
-        //alert(amt_after_tds);
-        $("input[name='amountafter_tds']").val(amt_after_tds);
-
-    });
-
-
-
 });
-
-
 
 jQuery.validator.addMethod("jquerynumber", function(value, element) {
-
     return this.optional(element) || /^[0-9]+$/i.test(value);
-
-    // [0-9]+(\.[0-9][0-9]?)?
-
-
-
 });
 
-
-
 function setFlag(p){
-
     $("#publish_flag").val(p);
-
 }
 
 </script>

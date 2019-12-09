@@ -139,44 +139,52 @@ $route = url("/$route");
                                         $rate = Helper::getRate($avgKm,$parisishthab->route_id);
 
                                         if ($previous_data) {
-
                                             $prevtotalKm = $previous_data->total_km;
-                                            $previousp_k = explode("*++*",$previous_data->relevant_agreement);
-                                            $prev_schedule_complete = explode("*++*",$previous_data->schedule_complete);
+                                            
+                                            
+                                            if ($prevtotalKm == 0 || $totalKm == 0) {
+                                                $totalKms = 0;
+                                                $totalAvg = 0;
+                                                $prevRate = 0;
+                                                $monthAmount = 0;
+                                            } else {
+                                                $previousp_k = explode("*++*",$previous_data->relevant_agreement);
+                                                $prev_schedule_complete = explode("*++*",$previous_data->schedule_complete);
 
-                                            $prevkmsAll = explode(",",$previous_data->kms);
-                                            $prevcntdays = 0;
+                                                $prevkmsAll = explode(",",$previous_data->kms);
+                                                $prevcntdays = 0;
 
-                                            foreach($prevkmsAll as $key=>$kms){
-                                                if($kms != ''){
-                                                    if($kms >= $scheduleKm){
-                                                        $prevcntdays++;
-                                                    } else {
-                                                        if($previousp_k[$key]==1 || $prev_schedule_complete[$key] == 1){
+                                                foreach($prevkmsAll as $key=>$kms){
+                                                    if($kms != ''){
+                                                        if($kms >= $scheduleKm){
                                                             $prevcntdays++;
+                                                        } else {
+                                                            if($previousp_k[$key]==1 || $prev_schedule_complete[$key] == 1){
+                                                                $prevcntdays++;
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
 
-                                            $totalKms = ($prevtotalKm) + (array_sum(explode(",",$parisishthab->kms)));
-                                            $totalDays = $prevcntdays + $cntdays;
-                                            $totalAvg = $totalKms / $totalDays;
-                                            
+                                                $totalKms = ($prevtotalKm) + (array_sum(explode(",",$parisishthab->kms)));
+                                                $totalDays = $prevcntdays + $cntdays;
+                                                $totalAvg = $totalKms / $totalDays;
+                                                
 
-                                            $prevRate = Helper::getRate($totalAvg,$previous_data->route_id);
-                                            $totalAvg = number_format($totalAvg,2);
+                                                $prevRate = Helper::getRate($totalAvg,$previous_data->route_id);
+                                                $totalAvg = number_format($totalAvg,2);
 
-                                            if (floatval($prevRate) == floatval($rate)) {
-                                                $monthAmount = 0;
-                                            } else if(floatval($prevRate) > floatval($rate)) {
-                                                $diductAvg =  floatval($rate) - floatval($prevRate);
-                                                $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
-                                            } else if(floatval($prevRate) < floatval($rate)) {
-                                                $diductAvg = floatval($rate) - floatval($prevRate);
-                                                $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
-                                            } else {
-                                                $monthAmount = 0;
+                                                if (floatval($prevRate) == floatval($rate)) {
+                                                    $monthAmount = 0;
+                                                } else if(floatval($prevRate) > floatval($rate)) {
+                                                    $diductAvg =  floatval($rate) - floatval($prevRate);
+                                                    $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
+                                                } else if(floatval($prevRate) < floatval($rate)) {
+                                                    $diductAvg = floatval($rate) - floatval($prevRate);
+                                                    $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
+                                                } else {
+                                                    $monthAmount = 0;
+                                                }
                                             }
                                         }
                                     @endphp

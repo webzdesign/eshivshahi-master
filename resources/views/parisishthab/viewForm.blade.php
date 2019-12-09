@@ -15,10 +15,10 @@ error_reporting(0);
 @endif
 
 <style>
-.wrapper1, .wrapper2{width: 100%; border: none 0px RED;
-overflow-x: scroll; overflow-y:hidden;}
+.wrapper1, .wrapper2{width: 100%; overflow-x: scroll; overflow-y:hidden;}
+
 .wrapper1{height: 20px; }
-.wrapper2{ }
+
 .div1 {width:1540px; height: 20px; }
 .div2 {width:1540px; overflow: auto;}
 </style>
