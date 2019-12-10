@@ -174,6 +174,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <th width="100px !important;">Washing Charges</th>
                                                 <th width="100px !important;">Other Exp./इतर वसुली रक्कम<span class="required"></span></th>
                                                 <th width="150px !important;">VehicleNumber<span class="required">*</span></th>
+                                                <th width="120px !important;">Idling Minutes</th>
                                                 <th width="120px !important;">Remarks</th>
                                             </tr>
                                         </thead>
@@ -194,7 +195,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                     $wash_exps = explode(",",$parisishthab->wash_exp);
                                                     $other_exp = explode(",",$parisishthab->other_exp);
                                                     $remarks = explode("*++*",$parisishthab->remarks);
-
+                                                    $idling_minutes = explode(",",$parisishthab->idling_minutes);
                                                     $vor_charges = explode(",", $default_diseal->vor_charges);
                                                     $parking_charges = explode(",",$default_diseal->parking_charges);
                                                     $wash_charges = explode(",",$default_diseal->washing_charges);
@@ -247,17 +248,26 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                             <td><input type="text" readonly id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp"></td>
 
-                                            <td>
-                                            <?php /*  <input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */ ?>
+                                                            <td>
+                                                            <?php /*  <input type="text" readonly id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class="form-control  vehicle_id"> */ ?>
 
-                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                                    <option value=""></option>
-                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
-                                                    @foreach($vehicle as $key => $value)
-                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                                    @endforeach
-                                                <select>
-                                            </td>
+                                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                    <option value=""></option>
+                                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
+                                                                    @foreach($vehicle as $key => $value)
+                                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                    @endforeach
+                                                                <select>
+                                                            </td>
+
+                                                            <td>
+                                                                <select  id="idling_minutes[{{$i}}]" name="idling_minutes[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 idling_minutes" style="width:100%;" disabled>
+    
+                                                                @foreach($edit_ideal_min as $idealMin)
+                                                                    <option value="{{$idealMin}}" {{($idling_minutes[$i] == $idealMin) ? 'selected':'' }}>{{$idealMin}}</option>
+                                                                @endforeach
+                                                                <select>
+                                                            </td>
 
                                                             <td><textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea></td>
                                                         </tr>
@@ -321,6 +331,13 @@ overflow-x: scroll; overflow-y:hidden;}
                                                             <select>
                                                             </td>
                                                             <td>
+                                                                <select  id="idling_minutes[{{$i}}]" name="idling_minutes[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 idling_minutes" style="width:100%;">
+                                                                    @foreach($edit_ideal_min as $idealMin)
+                                                                    <option value="{{$idealMin}}" {{($idling_minutes[$i] == $idealMin) ? 'selected':'' }}>{{$idealMin}}</option>
+                                                                    @endforeach
+                                                                <select>
+                                                            </td>
+                                                            <td>
                                                                 <textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea>
                                                             </td>
                                                         </tr>
@@ -373,17 +390,26 @@ overflow-x: scroll; overflow-y:hidden;}
 
                                                             <td><input type="text" id="other_exp[{{$i}}]" name="other_exp[{{$i}}]" value="{{$other_exp[$i]}}"  class=" numberonly form-control  other_exp other_exp_auto_total"></td>
 
-                                            <td>
-                                                <?php /*<input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total"> */ ?>
+                                                            <td>
+                                                                <?php /*<input type="text" id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]" value="{{$vehicleArr[$i]}}"  class=" numberonly form-control  vehicle_id vehicle_id_auto_total"> */ ?>
 
-                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
-                                                    <option value=""></option>
-                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
-                                                    @foreach($vehicle as $key => $value)
-                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
-                                                    @endforeach
-                                                <select>
-                                            </td>
+                                                                <select  id="vehicle_id[{{$i}}]" name="vehicle_id[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id" style="width:100%;">
+                                                                    <option value=""></option>
+                                                                    <option {{ ($vehicleArr[$i] == 'noVehicle') ? 'selected' : '' }} value="noVehicle">No Vehicle</option>
+                                                                    @foreach($vehicle as $key => $value)
+                                                                    <option value="{{$value->id}}" {{($value->id == $vehicleArr[$i]) ? 'selected':'' }}>{{$value->vehicle_no}}</option>
+                                                                    @endforeach
+                                                                <select>
+                                                            </td>
+
+                                                            <td>
+                                                                <select  id="idling_minutes[{{$i}}]" name="idling_minutes[{{$i}}]"  class="form-control select2_single col-md-7 col-xs-12 idling_minutes" style="width:100%;" disabled>
+    
+                                                                @foreach($edit_ideal_min as $idealMin)
+                                                                    <option value="{{$idealMin}}" {{($idling_minutes[$i] == $idealMin) ? 'selected':'' }}>{{$idealMin}}</option>
+                                                                @endforeach
+                                                                <select>
+                                                            </td>
 
                                                             <td>
                                                                 <textarea rows="1" id="remarks[{{ $i }}}]" name="remarks[{{ $i }}]"  class="form-control  remarks ">{{ $remarks[$i] }}</textarea>
@@ -411,6 +437,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td></td>
                                                 <td><label id="vehicle_id_er"></label></td>
                                                 <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2"Total</td>
@@ -431,6 +458,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td><input type="text" class="form-control total_wash_exp"  value="{{array_sum($wash_exp)}}" name="total_wash_exp" id="total_wash_exp" readonly></td>
 
                                                 <td><input type="text" class="form-control" name="total_other_exp" id="total_other_exp" readonly></td>
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -740,7 +768,30 @@ jQuery(document).ready(function($){
 
         var extra_diesel_charge = $('#extra_diesel_charge').val();
         var total_adblue = $('#total_adblue').val();
-        var adblue_price = $('.adblue_price').val();
+
+        /* adblue Calculation start */
+        var adbluePrice = $(".adblue_price").map(function(){return $(this).val();}).get().join(",");
+		adbluePriceArr = adbluePrice.split(',');
+		var totalAdbluePrice = 0;
+		var totaladblueCount = 0;
+        for (i=0; i < adbluePriceArr.length; i++) {
+			if (adbluePriceArr[i] != '' ) {
+                if (adbluePriceArr[i] > 0) {
+                    totalAdbluePrice += parseFloat(adbluePriceArr[i]);
+                    totaladblueCount++;
+                }
+			}
+		}
+
+		if (isNaN(totalAdbluePrice)) {
+            totalAdbluePrice = 0;
+        }
+
+        console.log(totalAdbluePrice);
+        console.log(totaladblueCount);
+
+        var totalAdblueAvgPrice = totalAdbluePrice / totaladblueCount;
+        /* adblue Calculation End */
 
         if(isNaN(extra_diesel_charge) || extra_diesel_charge == ''){
             extra_diesel_charge = 0;
@@ -750,11 +801,11 @@ jQuery(document).ready(function($){
             total_adblue = 0;
         }
 
-        if(isNaN(adblue_price) || adblue_price == ''){
-            adblue_price = 0;
+        if(isNaN(totalAdblueAvgPrice) || totalAdblueAvgPrice == ''){
+            totalAdblueAvgPrice = 0;
         }
 
-        var adblue_val = parseFloat(total_adblue)*parseFloat(adblue_price);
+        var adblue_val = parseFloat(total_adblue)*parseFloat(totalAdblueAvgPrice);
         if(isNaN(adblue_val) || adblue_val == ''){
             adblue_val = 0;
         }

@@ -450,7 +450,20 @@ class VendorinvoicesController extends Controller
         $schduleKm = $getSchKm->scheduled_km;
         $schTimeNum = $getSchKm->scheduled_number.' - '.$getSchKm->scheduled_time;
         $default_diseal = Charge::first();
-        return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal', 'schTimeNum'));
+
+        $getminutes = Routemaster::where('id',$parisishthab->route_id)->first();
+        $idealing_minutes = ($getminutes->maximum_ideling_minutes)/5;
+
+        $edit_ideal_min = array();
+        $cnt = 0;
+        $edit_ideal_min[]  = 0;
+        for($i = 0; $i<$idealing_minutes; $i++)
+        {
+            $cnt = $cnt+5;
+            $edit_ideal_min[] = $cnt;
+        }
+
+        return view($this->view.'/viewForm',compact('vendors','modulename','route','action','depots','vehicle', 'parisishthab','vendorinvoices','division','confirmvendorinvoice','routes','schduleKm', 'default_diseal', 'schTimeNum', 'edit_ideal_min'));
     }
 
 
@@ -770,9 +783,9 @@ class VendorinvoicesController extends Controller
         $billingPeriod = $fromDate.",".$toDate;
 
         if ($action == 'insert') {
-            $checkInvoice = Vendorinvoice::where('vendor_id', $vendorId)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         } else {
-            $checkInvoice = Vendorinvoice::where('vendor_id', $vendorId)->where('id', '!=', $id)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
+            $checkInvoice = Vendorinvoice::where('id', '!=', $id)->where('route_id', $routeId)->where('billing_period', $billingPeriod)->count();
         }
 
         if ($checkInvoice > 0) {

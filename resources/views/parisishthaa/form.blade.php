@@ -107,11 +107,7 @@ $route = url("/$route");
                                     <th style="text-align:center;">एकुण रक्कम (रु)</th>
                                 </tr>
                                 <tr>
-                                    <th style="text-align:center;">१</th>
-                                    <th style="text-align:center;">सार्थ किमी प्रमाणे देय रक्कम</th>
-                                    <th style="text-align:center;"><input readonly type="text" value="{{ array_sum(explode(",",$parisishthab->kms)) }}" name="actualKm" id="actualKm" class="form-control decimalonly " /></th>
                                     @php
-
                                         $totalKm = $parisishthab->total_km;
                                         $p_k = explode("*++*",$parisishthab->relevant_agreement);
                                         $schedule_complete = explode("*++*",$parisishthab->schedule_complete);
@@ -137,16 +133,18 @@ $route = url("/$route");
                                         }
                                         
                                         $rate = Helper::getRate($avgKm,$parisishthab->route_id);
-
+                                        $monthlyRate = $rate;
+                                       
                                         if ($previous_data) {
                                             $prevtotalKm = $previous_data->total_km;
-                                            
+                                            $prevPeriodRate = $previous_data->per_km_rate;
                                             
                                             if ($prevtotalKm == 0 || $totalKm == 0) {
                                                 $totalKms = 0;
                                                 $totalAvg = 0;
                                                 $prevRate = 0;
                                                 $monthAmount = 0;
+                                                $rate = 0;
                                             } else {
                                                 $previousp_k = explode("*++*",$previous_data->relevant_agreement);
                                                 $prev_schedule_complete = explode("*++*",$previous_data->schedule_complete);
@@ -173,9 +171,11 @@ $route = url("/$route");
 
                                                 $prevRate = Helper::getRate($totalAvg,$previous_data->route_id);
                                                 $totalAvg = number_format($totalAvg,2);
+                                                
 
                                                 if (floatval($prevRate) == floatval($rate)) {
                                                     $monthAmount = 0;
+                                                    $diductAvg = 0;
                                                 } else if(floatval($prevRate) > floatval($rate)) {
                                                     $diductAvg =  floatval($rate) - floatval($prevRate);
                                                     $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
@@ -184,13 +184,21 @@ $route = url("/$route");
                                                     $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
                                                 } else {
                                                     $monthAmount = 0;
+                                                    $diductAvg = 0;
                                                 }
-                                            }
+                                                $monthlyRate = $prevRate;
+                                            }   
+                                        } else {
+                                            $totalAvg = $avgKm;
+                                            $diductAvg = 0;
                                         }
                                     @endphp
-                                    <th style="text-align:center;"><input readonly type="text" name="averageKm" id="averageKm" value="{{ number_format((float)$avgKm,2,'.','') }}" class="form-control decimalonly " /></th>
+                                    <th style="text-align:center;">१</th>
+                                    <th style="text-align:center;">सार्थ किमी प्रमाणे देय रक्कम</th>
+                                    <th style="text-align:center;"><input readonly type="text" value="{{ array_sum(explode(",",$parisishthab->kms)) }}" name="actualKm" id="actualKm" class="form-control decimalonly " /></th>
+                                    <th style="text-align:center;"><input readonly type="text" name="averageKm" id="averageKm" value="{{ number_format((float)$totalAvg,2,'.','') }}" class="form-control decimalonly " /></th>
 
-                                    <th style="text-align:center;"><input readonly type="text" value="{{ $rate }}" name="rate" id="rate" class="form-control decimalonly" /></th>
+                                    <th style="text-align:center;"><input readonly type="text" value="{{ $monthlyRate }}" name="rate" id="rate" class="form-control decimalonly" /></th>
 
                                     <th style="text-align:center;"><input readonly type="text" name="amount" id="amount" class="form-control decimalonly " /></th>
 
@@ -199,9 +207,9 @@ $route = url("/$route");
                                 <tr>
                                     <th style="text-align:center;">२</th>
                                     <th style="text-align:center;">मासिक सरासरी वजावट / प्रतिपूर्ती</th>
-                                    <th style="text-align:center;"><input type="text" name="pActualKm" id="pActualKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $totalKms }}" readonly/></th>
-                                    <th style="text-align:center;"><input type="text" name="pAverageKm" id="pAverageKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $totalAvg }}"  readonly/></th>
-                                    <th style="text-align:center;"><input type="text" name="pRate" id="pRate" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : $prevRate }}"  readonly/></th>
+                                    <th style="text-align:center;"><input type="text" name="pActualKm" id="pActualKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $prevtotalKm }}" readonly/></th>
+                                    <th style="text-align:center;"><input type="text" name="pAverageKm" id="pAverageKm" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : '-' }}"  readonly/></th>
+                                    <th style="text-align:center;"><input type="text" name="pRate" id="pRate" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : $diductAvg }}"  readonly/></th>
                                     <th style="text-align:center;"><input type="text" name="pAmount" id="pAmount" class="form-control decimalonly" value="{{ ($firstDays == 1) ? '0' : $monthAmount }}" readonly/></th>
                                     <th style="text-align:center;"><input type="text" name="pFinalAmount" id="pFinalAmount" class="form-control decimalonly " value="{{ ($firstDays == 1) ? '0' : $monthAmount }}"  readonly/></th>
                                 </tr>
@@ -271,6 +279,7 @@ $route = url("/$route");
                                     $adblue = array_sum(explode(",",$parisishthab->adblue));
                                     $adbluePrice = explode(",",$parisishthab->adblue_price);
                                     $days=0;
+                                    $abprice = 0;
                                     foreach($adbluePrice as $ab)
                                     {
                                         if($ab>0 && $ab !='')

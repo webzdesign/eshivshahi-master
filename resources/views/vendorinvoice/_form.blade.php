@@ -770,7 +770,28 @@ jQuery(document).ready(function($){
 
         var extra_diesel_charge = $('#extra_diesel_charge').val();
         var total_adblue = $('#total_adblue').val();
-        var adblue_price = $('.adblue_price').val();
+
+        /* adblue Calculation start */
+        var adbluePrice = $(".adblue_price").map(function(){return $(this).val();}).get().join(",");
+		adbluePriceArr = adbluePrice.split(',');
+		var totalAdbluePrice = 0;
+		var totaladblueCount = 0;
+        for (i=0; i < adbluePriceArr.length; i++) {
+			if (adbluePriceArr[i] != '' ) {
+                if (adbluePriceArr[i] > 0) {
+                    totalAdbluePrice += parseFloat(adbluePriceArr[i]);
+                    totaladblueCount++;
+                }
+			}
+		}
+
+		if (isNaN(totalAdbluePrice)) {
+            totalAdbluePrice = 0;
+        }
+        
+
+        var totalAdblueAvgPrice = totalAdbluePrice / totaladblueCount;
+        /* adblue Calculation End */
 
         if(isNaN(extra_diesel_charge) || extra_diesel_charge == ''){
             extra_diesel_charge = 0;
@@ -780,11 +801,11 @@ jQuery(document).ready(function($){
             total_adblue = 0;
         }
 
-        if(isNaN(adblue_price) || adblue_price == ''){
-            adblue_price = 0;
+        if(isNaN(totalAdblueAvgPrice) || totalAdblueAvgPrice == ''){
+            totalAdblueAvgPrice = 0;
         }
 
-        var adblue_val = parseFloat(total_adblue)*parseFloat(adblue_price);
+        var adblue_val = parseFloat(total_adblue)*parseFloat(totalAdblueAvgPrice);
         if(isNaN(adblue_val) || adblue_val == ''){
             adblue_val = 0;
         }

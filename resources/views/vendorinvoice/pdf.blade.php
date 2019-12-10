@@ -71,7 +71,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                         @endforeach
                     </td>
                     <td class="lt" colspan="3">Vendor</td>
-                    <td class="lt" colspan="5">
+                    <td class="lt" colspan="6">
                         @foreach($vendors as $vendor)
                             <label >
                                 {{$vendorinvoice_data->vendor_id==$vendor->id?$vendor->vendor_name:''}}
@@ -89,7 +89,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     <td class="lt" colspan="3">
                         Invoice No
                     </td>
-                    <td class="lt" colspan="5">
+                    <td class="lt" colspan="6">
                         {{$vendorinvoice_data->invoice_no}}
                     </td>
                 </tr>
@@ -101,7 +101,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     To :{{date("d-m-Y",strtotime($dates[1]))}}
                     </td>
                     <td class="lt" colspan="3">Route</td>
-                    <td class="lt" colspan="5">
+                    <td class="lt" colspan="6">
                         @foreach($routes as $rout)
                             <label >{{$vendorinvoice_data->route_id == $rout->id ? $rout->from_depot.' - '.$rout->to_depot.' ('.$rout->scheduled_time.')' : ''}}</label>
                         @endforeach
@@ -110,7 +110,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                 </tr>
                 <tr>
                     <td class="lt" colspan="7">Schedule Time - Schedule Number</td>
-                    <td class="lt" colspan="8">{{ $routes[0]->scheduled_number.' - '.$routes[0]->scheduled_time }}</td>
+                    <td class="lt" colspan="9">{{ $routes[0]->scheduled_number.' - '.$routes[0]->scheduled_time }}</td>
                 </tr>
 				<tr>
                     <td style="width:8%;" class="parishish_size">Date</td>
@@ -127,6 +127,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     <td style="width:5%;" class="parishish_size">Washing Charges</td>
 					<td style="width:8%;" class="parishish_size">Other Exp</span><span class="required"></span></td>
                     <td style="width:13%;" class="parishish_size">VehicleNumber</td>
+                    <td style="width:13%;" class="parishish_size">Idling Minutes</td>
 					<td style="width:12%;" class="parishish_size">Remarks</td>
 				</tr>
 			</thead>
@@ -145,7 +146,8 @@ header( 'Content-Type: text/html; charset=utf-8' );
     			$parking_exp = explode(",",$vendorinvoice_data->parking_exp);
     			$hault_tax = explode(",",$vendorinvoice_data->hault_tax);
                 $wash_exp = explode(",",$vendorinvoice_data->wash_exp);
-    			$other_exp = explode(",",$vendorinvoice_data->other_exp);
+                $other_exp = explode(",",$vendorinvoice_data->other_exp);
+                $idling_minutes = explode(",",$parisishthab->idling_minutes);
                 $remarks = explode("*++*",$vendorinvoice_data->remarks);
                 $breaddown_charge_value = explode("*++*",$vendorinvoice_data->breaddown_charge_value);
     		@endphp
@@ -166,6 +168,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
                     <td style="width:5%;" class="parishish_size">{{ $wash_exp[$i] }}</td>
                     <td style="width:8%;" class="parishish_size">{{$other_exp[$i]}}</td>
                     <td style="width:10%;" class="parishish_size">{{ ($vehicleArr[$i] == 'noVehicle') ? 'No Vehicle' : $vehicle[$vehicleArr[$i]] }}</td>
+                    <td style="width:8%; font-size:10px;" class="parishish_size">{{ $idling_minutes[$i] }}</td>
                     <td style="width:8%; font-size:10px;" class="parishish_size">{{ $remarks[$i] }}</td>
                 </tr>
             @endfor
@@ -186,22 +189,23 @@ header( 'Content-Type: text/html; charset=utf-8' );
 					<td style="width:8%;">{{array_sum($other_exp)}}</td>
                     <td></td>
 					<td></td>
+					<td></td>
 				</tr>
                 <tr>
                     <td colspan="3">Total Kms</td>
                     <td colspan="4">Total Filled Diesel</td>
                     <td colspan="4">Diesel as per norms</td>
-                    <td colspan="4">Extra Diesel Filled</td>
+                    <td colspan="5">Extra Diesel Filled</td>
 			    </tr>
                 <tr>
 				    <td colspan="3">{{ array_sum(explode(",",$vendorinvoice_data->kms)) }}</td>
 				    <td colspan="4">{{ array_sum(explode(",",$vendorinvoice_data->diesel_ltr)) }}</td>
 				    <td colspan="4">{{$vendorinvoice_data->diesel_as_per_gov}}</td>
-				    <td colspan="4">{{ number_format(array_sum(explode(",",$vendorinvoice_data->diesel_ltr))-$vendorinvoice_data->diesel_as_per_gov,2,'.','') }}</td>
+				    <td colspan="5">{{ number_format(array_sum(explode(",",$vendorinvoice_data->diesel_ltr))-$vendorinvoice_data->diesel_as_per_gov,2,'.','') }}</td>
 			    </tr>
                 <tr>
     			    <td colspan="11" style="text-align:right;">Extra Filled Diesel Charges</td>
-				    <td colspan="4">
+				    <td colspan="5">
                     <?php
                      $total_diesel=array_sum(explode(",",$vendorinvoice_data->diesel_ltr));
                      $total_price=array_sum(explode(",",$vendorinvoice_data->diese_per_ltr_price));
@@ -223,16 +227,16 @@ header( 'Content-Type: text/html; charset=utf-8' );
                 </tr>
                 <tr>
                     <td colspan="11" style="text-align:right;">Amount</td>
-				    <td colspan="4"> {{ number_format($vendorinvoice_data->total_amount,2,'.','') }}</td>
+				    <td colspan="5"> {{ number_format($vendorinvoice_data->total_amount,2,'.','') }}</td>
 
 			    </tr>
                 <tr>
                     <td colspan="11" style="text-align:right;">Total Deduction</th>
-                    <td colspan="4">{{ number_format($vendorinvoice_data->total_charge,2,'.','') }}</td>
+                    <td colspan="5">{{ number_format($vendorinvoice_data->total_charge,2,'.','') }}</td>
 				</tr>
                  <tr>
                     <td colspan="11" style="text-align:right;">Grand Total</th>
-                    <td colspan="4">{{ number_format($vendorinvoice_data->grand_amount,2,'.','') }}</td>
+                    <td colspan="5">{{ number_format($vendorinvoice_data->grand_amount,2,'.','') }}</td>
 				</tr>
 			</tfoot>
 		</table>

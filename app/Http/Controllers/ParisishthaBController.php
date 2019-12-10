@@ -1001,11 +1001,11 @@ class ParisishthaBController extends Controller
         $rows = Vendorinvoice::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('billing_period',$billing_period)->where('is_approved','1')->get();
         if($request->p_id !='')
         {
-            $count = ParisishthaB::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
+            $count = ParisishthaB::where('route_id', $route_id)->where('from_date',$from)->where('to_date',$to)->where('id','!=',$request->p_id)->count();
         }
         else
         {
-            $count = ParisishthaB::where('route_id', $route_id)->where('vendor_id',$request->vendor_id)->where('from_date',$from)->where('to_date',$to)->count();
+            $count = ParisishthaB::where('route_id', $route_id)->where('from_date',$from)->where('to_date',$to)->count();
         }
 
         if(! $rows->isEmpty()){
