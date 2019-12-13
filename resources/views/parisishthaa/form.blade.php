@@ -133,18 +133,16 @@ $route = url("/$route");
                                         }
                                         
                                         $rate = Helper::getRate($avgKm,$parisishthab->route_id);
-                                        $monthlyRate = $rate;
-                                       
+                                                                               
                                         if ($previous_data) {
                                             $prevtotalKm = $previous_data->total_km;
-                                            $prevPeriodRate = $previous_data->per_km_rate;
                                             
                                             if ($prevtotalKm == 0 || $totalKm == 0) {
-                                                $totalKms = 0;
-                                                $totalAvg = 0;
-                                                $prevRate = 0;
+                                                $totalAvg = $avgKm;
+                                                $monthlyRate = $rate;
+                                                $prevtotalKm = 0;
+                                                $diductAvg = 0;
                                                 $monthAmount = 0;
-                                                $rate = 0;
                                             } else {
                                                 $previousp_k = explode("*++*",$previous_data->relevant_agreement);
                                                 $prev_schedule_complete = explode("*++*",$previous_data->schedule_complete);
@@ -163,33 +161,37 @@ $route = url("/$route");
                                                         }
                                                     }
                                                 }
-
                                                 $totalKms = ($prevtotalKm) + (array_sum(explode(",",$parisishthab->kms)));
                                                 $totalDays = $prevcntdays + $cntdays;
                                                 $totalAvg = $totalKms / $totalDays;
-                                                
 
-                                                $prevRate = Helper::getRate($totalAvg,$previous_data->route_id);
+                                                /* get prev rate */
+                                                $prevAvg = $prevtotalKm / $prevcntdays;
+                                                $prevRate = Helper::getRate($prevAvg,$parisishthab->route_id);
+                                                /* get prev rate */
+
+                                                $monthlyRate = Helper::getRate($totalAvg,$previous_data->route_id);
                                                 $totalAvg = number_format($totalAvg,2);
-                                                
 
-                                                if (floatval($prevRate) == floatval($rate)) {
+                                                if (floatval($prevRate) == floatval($monthlyRate)) {
                                                     $monthAmount = 0;
                                                     $diductAvg = 0;
-                                                } else if(floatval($prevRate) > floatval($rate)) {
-                                                    $diductAvg =  floatval($rate) - floatval($prevRate);
+                                                } else if(floatval($prevRate) > floatval($monthlyRate)) {
+                                                    $diductAvg =  floatval($monthlyRate) - floatval($prevRate);
                                                     $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
-                                                } else if(floatval($prevRate) < floatval($rate)) {
-                                                    $diductAvg = floatval($rate) - floatval($prevRate);
+                                                } else if(floatval($prevRate) < floatval($monthlyRate)) {
+                                                    $diductAvg = floatval($monthlyRate) - floatval($prevRate);
                                                     $monthAmount = floatval($diductAvg) * floatval($prevtotalKm);
                                                 } else {
                                                     $monthAmount = 0;
                                                     $diductAvg = 0;
                                                 }
-                                                $monthlyRate = $prevRate;
-                                            }   
+                                            }
                                         } else {
+                                            $prevtotalKm = 0;
                                             $totalAvg = $avgKm;
+                                            $monthlyRate = $rate;
+                                            $monthAmount = 0;
                                             $diductAvg = 0;
                                         }
                                     @endphp

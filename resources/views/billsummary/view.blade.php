@@ -196,9 +196,9 @@
 
                                         <th style="text-align:center;"><textarea rows="1" name="other_deduction_remark" readonly class="form-control">{{  $val->other_deduction_remark }}</textarea></th>
 
-                                        <th style="text-align:center;"><input type="text" readonly name="per_deduction" id="per_deduction" class="form-control amountonly per_deduction" value="{{ $val->per_deduction }}"/></th>
+                                        <th width="150px !important;" style="text-align:center;"><input type="text" readonly name="per_deduction" id="per_deduction" class="form-control amountonly per_deduction" value="{{ $val->per_deduction }}"/></th>
 
-                                        <th width="200px !important;" style="text-align:center;"><textarea rows="1" readonly name="per_deduction_remark" class="form-control">{{ $val->per_deduction_remark }}</textarea></th>
+                                        <th width="150px !important;" style="text-align:center;"><textarea rows="1" readonly name="per_deduction_remark" class="form-control">{{ $val->per_deduction_remark }}</textarea></th>
 
                                         <!--  <th style="text-align:center;"><input type="text" readonly name="prev_deduction" id="prev_deduction" class="form-control prev_deduction" value="{{ $val->prev_deduction }}" /></th>
 

@@ -537,12 +537,12 @@ class BillsummaryController extends Controller
 
         $prevBillnigPeriod = $fromDate.','.$toDate;
 
-        $prevParisishthaa = ParisishthaA::where('billing_period',$prevBillnigPeriod)->where('vendor_id',$vendor_id)->first();
+        $prevBill = Billsummary::where('billing_period',$prevBillnigPeriod)->where('vendor_id',$vendor_id)->first();
 
-        if ($prevParisishthaa) {
-            $prevDeducton = $prevParisishthaa->amount_payable;
+        if ($prevBill) {
+            $prevDeducton = $prevBill->amount_after_tds;
             if ($prevDeducton < 0) {
-                $prevDeducton = $prevParisishthaa->amount_payable;
+                $prevDeducton = $prevBill->amount_after_tds;
             } else {
                 $prevDeducton = 0;
             }

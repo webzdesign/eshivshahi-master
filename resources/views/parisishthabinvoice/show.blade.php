@@ -578,7 +578,7 @@ overflow-x: scroll; overflow-y:hidden;}
                                                 <td></td>
                                                 <td><input type="text" class="form-control total_breaddown_charge" name="total_breaddown_charge" id="total_breaddown_charge" value="{{array_sum($breaddown_charge)}}" readonly></td>
 
-                                                <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value=" {{array_sum($vor_exp)}} " id="total_vor_exp" readonly></td>
+                                                <td><input type="text" class="form-control total_vor_exp" name="total_vor_exp" value=" {{array_sum($vor_exps)}} " id="total_vor_exp" readonly></td>
 
                                                 <td><input type="text" class="form-control" name="total_parking_exp" id="total_parking_exp" readonly></td>
 

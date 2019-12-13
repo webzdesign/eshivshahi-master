@@ -119,6 +119,9 @@
                                     <th style="text-align:center;">Previous Deduction Remarks</th>
                                     <th style="text-align:center;" width="10%">निव्व्ठ्ठ देय रक्कम</th>
                                 </tr>
+                                @php
+                                    $total = 0;
+                                @endphp
                                 @foreach($billsummary as $key=>$val)
                                 <tr>
                                     <th style="text-align:center;">
@@ -139,20 +142,23 @@
 
                                     <th style="text-align:center;"><input type="text" readonly name="other_deduction" id="other_deduction" class="form-control amountonly other_deduction" value="{{ $val->other_deduction }}" /></th>
                                         <th style="text-align:center;"><textarea rows="1" name="other_deduction_remark" readonly class="form-control">{{  $val->other_deduction_remark }}</textarea></th>
-                                        <th style="text-align:center;"><input type="text" readonly name="per_deduction" id="per_deduction" class="form-control amountonly per_deduction" value="{{ $val->per_deduction }}"/></th>
-                                        <th style="text-align:center;"><textarea rows="1" readonly name="per_deduction_remark" class="form-control">{{ $val->per_deduction_remark }}</textarea></th>
+                                        <th width="150px !important;" style="text-align:center;"><input type="text" readonly name="per_deduction" id="per_deduction" class="form-control amountonly per_deduction" value="{{ $val->per_deduction }}"/></th>
+                                        <th width="150px !important;" style="text-align:center;"><textarea rows="1" readonly name="per_deduction_remark" class="form-control">{{ $val->per_deduction_remark }}</textarea></th>
                                         <th style="text-align:center;"><input type="text" readonly name="prev_deduction" id="prev_deduction" class="form-control prev_deduction" value="{{ $val->prev_deduction }}" /></th>
                                         <th style="text-align:center;"><textarea readonly rows="1" name="prev_deduction_remark" class="form-control">{{ $val->prev_deduction_remark }}</textarea></th>
 
                                     <th style="text-align:center;"><input type="text" name="final_payable_amt[]" class="form-control" readonly value="{{ $val->final_payable_amt }}" /></th>
                                 </tr>
+                                @php
+                                    $total += $val->final_payable_amt;
+                                @endphp
                                 @endforeach
                                 <tr>
                                 <th colspan="10"></th>
                                     <th style="text-align:center;"> - </th>
                                     <th style="text-align:center;" colspan="2">ऐकुण रक्कम रु</th>
 
-                                    <th><input type="text" class="form-control" id="finalAmount" readonly value="{{ $billsummary[0]->final_payable_amt }}" /></th>
+                                    <th><input type="text" class="form-control" id="finalAmount" readonly value="{{ $total }}" /></th>
                                 </tr>
                                 <tr>
                                     <th colspan="10"></th>

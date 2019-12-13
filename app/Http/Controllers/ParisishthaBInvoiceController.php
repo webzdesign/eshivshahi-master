@@ -14,6 +14,8 @@ use App\Model\Vehicle;
 use App\Model\RouteMaster;
 use App\Model\ParisishthaBConfirm;
 use App\Model\Billsummary;
+use App\Model\Charge;
+
 
 use Illuminate\Http\Request;
 use DB;
@@ -152,7 +154,9 @@ class ParisishthaBInvoiceController extends Controller
             $chekBill = 'no';
         }
 
-        return view($this->view.'/show',compact('user','routes','vendors','modulename','route','action','dataurl','depots','getdata','getinvoicedata','parisishthab','vendorinvoices','parisishthabsId','division','vehicle','schedule_time', 'schduleKm', 'schTimeNum', 'invoiceNo', 'chekBill'));
+        $default_diseal = Charge::first();
+
+        return view($this->view.'/show',compact('user','routes','vendors','modulename','route','action','dataurl','depots','getdata','getinvoicedata','parisishthab','vendorinvoices','parisishthabsId','division','vehicle','schedule_time', 'schduleKm', 'schTimeNum', 'invoiceNo', 'chekBill', 'default_diseal'));
     }
 
 

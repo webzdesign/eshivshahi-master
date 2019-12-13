@@ -98,7 +98,7 @@
 
             <th style="text-align:center;"><textarea rows="1" name="other_deduction_remark[]" id="other_deduction_remark" class="form-control other_deduction_remark"></textarea></th>
 
-            <th style="text-align:center;"><input type="text" name="per_deduction[]" id="per_deduction" class="form-control amountonly per_deduction" /></th>
+            <th width="150px !important;" style="text-align:center;"><input type="text" name="per_deduction[]" id="per_deduction" class="form-control amountonly per_deduction" /></th>
 
             <th style="text-align:center;"><textarea rows="1" name="per_deduction_remark[]" id="per_deduction_remark" class="form-control per_deduction_remark"></textarea></th>
 

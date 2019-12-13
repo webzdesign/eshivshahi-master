@@ -204,11 +204,11 @@
 
                                     <th style="text-align:center;">Other Deductions</th>
 
-                                    <th style="text-align:center;">Other Deductions Remarks</th>
+                                    <th width="140px !important;" style="text-align:center;">Other Deductions Remarks</th>
 
-                                    <th style="text-align:center;">60 % Deduction</th>
+                                    <th width="150px !important;" style="text-align:center;">60 % Deduction</th>
 
-                                    <th width="200px !important;" style="text-align:center;">60 % Deduction Remarks</th>
+                                    <th width="150px !important;" style="text-align:center;">60 % Deduction Remarks</th>
 
                                  <!-- <th style="text-align:center;">Previous Deduction</th>
 

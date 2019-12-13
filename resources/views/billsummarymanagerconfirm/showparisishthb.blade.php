@@ -34,8 +34,8 @@ function calDiesel($no){
 
 .wrapper1{height: 20px; }
 
-.div1 {width:1540px; height: 20px; }
-.div2 {width:1540px; overflow: auto;}
+.div1 {width:1700px; height: 20px; }
+.div2 {width:1700px; overflow: auto;}
 </style>
 <div class="right_col" role="main">
 	<div class="">
@@ -223,7 +223,7 @@ function calDiesel($no){
                             </div>
                             <div class="wrapper2">
                                 <div class="div2">
-							<table id="parishishtha_b" class="table table-bordered dttable" style="width:1540px;">
+							<table id="parishishtha_b" class="table table-bordered dttable" style="width:1700px;">
 									<thead>
 										<tr>
 											<th width="120px !important;">Date/दिनांक<span class="required">*</span></th>
@@ -234,7 +234,7 @@ function calDiesel($no){
 											<th width="100px !important;">Diesel Rate/डिझेल दर प्रति लिटर रू<span class="required">*</span></th>
 											<th width="100px !important;">Ad Blue / अॅडब्लू </th>
 											<th width="100px !important;">AdBlue Price /अॅडब्लू किंमत</th>
-											<th width="150px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
+											<th width="200px !important;">Break Down Charges/वाहन बिघाड रक्कम</th>
 											<th width="100px !important;">Vor. Exp/मार्ग बंद वाहने वसुली</th>
 											<th width="100px !important;">Parking Exp. /पार्किंग वीज इ. रक्कम <span class="required">*</span></th>
 											<th width="100px !important;">Hotel Halt/थांबा वसुली रक्कम</th>
@@ -719,6 +719,14 @@ function calDiesel($no){
     </div>
   </div>
 </div>
+<style>
+    .wrapper1, .wrapper2{width: 100%; overflow-x: scroll; overflow-y:hidden;}
+    
+    .wrapper1{height: 20px; }
+    
+    .div1 {width:1700px; height: 20px; }
+    .div2 {width:1700px; overflow: auto;}
+    </style>
 <!--City Modal -->
 <div class="modal fade" id="cityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
