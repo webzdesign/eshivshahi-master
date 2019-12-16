@@ -222,71 +222,44 @@ class VendorinvoicesController extends Controller
                 $route = $this->route;
                 $btn="";
 
-                if(!in_array($editId ,$vendorinvoice_id))
-                {
-                    if(Auth::user()->usertype_id=='3')
-                    {
-                        if($vendorinvoice->is_approved==0)
-                        {
-                            $btn .='<a href="'.url($route.'/'.encrypt($editId)).'/edit" class="btn btn-warning btn-xs" ><i class="fa fa-eye"></i> Edit</a><a class="btn btn-danger btn-xs vendor-confirm-delete" data-id="'.Crypt::encryptString($deleteId).'" ><i class="fa fa-trash"></i> Delete</a>';
-                        }
-                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                        //$btn .='  <a href="'.url('/vendor_invoice_print/'.encrypt($printId)).'" target="_blank" class="btn btn-danger btn-xs" ><i class="fa fa-print"></i> Print</a>';
+                
+                if (Auth::user()->usertype_id == '3') {
+                    if ($vendorinvoice->is_approved == 0) {
+                        $btn .='<a href="'.url($route.'/'.encrypt($editId)).'/edit" class="btn btn-warning btn-xs" ><i class="fa fa-eye"></i> Edit</a><a class="btn btn-danger btn-xs vendor-confirm-delete" data-id="'.Crypt::encryptString($deleteId).'" ><i class="fa fa-trash"></i> Delete</a>';
                     }
-                    else if(Auth::user()->usertype_id=='2')
-                    {
-                        if($vendorinvoice->is_approved==0)
-                        {
-                            if($vendorinvoice->publish_flag == 1){
-                                $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                            }else{
-                                $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                            }
-                        }else{
+                    $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                } else if (Auth::user()->usertype_id == '2') {
+                    if ($vendorinvoice->is_approved == 0) {
+                        if ($vendorinvoice->publish_flag == 1) {
+                            $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs'><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        } else {
                             $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                            '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
                         }
-                        //$btn .='  <a href="'.url('/vendor_invoice_print/'.encrypt($printId)).'" target="_blank" class="btn btn-danger btn-xs" ><i class="fa fa-print"></i> Print</a>';
-                    }
-                    else{
-                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target = '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                    }
-
-                    return $btn;
-                }
-                else
-                {
-                    if(Auth::user()->usertype_id=='3')
-                    {
-                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target ='_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                    }
-                    else
-                    {
-                        if($vendorinvoice->is_approved == 1)
-                        {
-                            $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='glyphicon glyphicon-edit'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                    } else {
+                        if ($vendorinvoice->update_status_division == 0) {
+                            $btn .="<a href='".url($route.'/'.encrypt($editId))."/edit' class='btn btn-warning btn-xs' ><i class='fa fa-eye'></i> Edit</a>";
                         }
-                        else
-                        {
-                            if($vendorinvoice->publish_flag == 1){
-                                $btn .="<a href=
-                                '".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                            }else{
-                                $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs ><i class='fa fa-eye'></i> View </a><a id='print'  target =
-                                '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
-                            }
-                        }
-
+                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View </a><a id='print'  target =
+                            '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
                     }
-                    //$btn.='<a href="'.url('/vendor_invoice_print/'.encrypt($printId)).'" target="_blank" class="btn btn-danger btn-xs" ><i class="glyphicon glyphicon-print"></i> Print</a>';
-                    //$btn.= "<a class='btn btn-danger btn-xs vendor-confirm-delete' data-id='".Crypt::encryptString($deleteId)."' ><i class='fa fa-trash'></i> Delete</a>";
-                    return $btn;
+                } else {
+                    if ($vendorinvoice->is_approved == 1) {
+                        $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='glyphicon glyphicon-edit'></i> View </a><a id='print'  target =
+                            '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                    } else {
+                        if ($vendorinvoice->publish_flag == 1) {
+                            $btn .="<a href=
+                            '".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs' ><i class='fa fa-eye'></i> View / Confirm</a><a id='print'  target =
+                            '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        } else {
+                            $btn .="<a href='".url($route.'/'.encrypt($showId))."' class='btn btn-primary btn-xs ><i class='fa fa-eye'></i> View </a><a id='print'  target =
+                            '_blank' href='printVendorinvoice/".Crypt::encryptString($vendorinvoice->id)."' class='btn btn-info btn-xs'><i class='fa fa-print'></i>  Print</a>";
+                        }
+                    }
                 }
 
-
+                return $btn;
 			})
 			->make(true);
     }

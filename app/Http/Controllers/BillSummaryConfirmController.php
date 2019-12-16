@@ -474,6 +474,8 @@ class BillSummaryConfirmController extends Controller
 
                 DB::table('parisishtha_as')->where('id',$getid->parisishtha_a_id)->update(['update_status'=>'1']);
 
+                DB::table('vendorinvoices')->where('id',$getid->vendorinvoice_id)->update(['update_status'=>'1']);
+
             }
 
         }
@@ -517,6 +519,8 @@ class BillSummaryConfirmController extends Controller
                 DB::table('parisishtha_bs')->where('id',$getid->parisishtha_b_id)->update(['update_status_division'=>'1']);
 
                 DB::table('parisishtha_as')->where('id',$getid->parisishtha_a_id)->update(['update_status_division'=>'1']);
+                
+                DB::table('vendorinvoices')->where('id',$getid->vendorinvoice_id)->update(['update_status_division'=>'1']);
 
             }
 
