@@ -65,40 +65,24 @@
                             </div>
                         </div>
 
-                        <!-- <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" > Vehicle<span class="error">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select disabled id="vehicle_id" name="vehicle_id"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id">
-                                    <option value=""></option>
-                                    @foreach($vehicle as $key=>$val)
-                                        <option {{ ($val->id == $billsummary[0]->vehicle_id) ? 'selected' : '' }} value="{{ $val->id }}">{{ $val->vehicle_no }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> -->
+                       
+                        @php $dates = explode(",",$billsummary[0]->billing_period) @endphp
                         <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" >Date<span class="required">*</span>
+                            <label class=" col-md-3 col-sm-3 col-xs-12" >Billing Period<span class="required">*</span>
                             </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input readonly type="text" id="date" name="date" class="datepicker form-control col-md-7 col-xs-12 date" value="{{ date('d-m-Y',strtotime($billsummary[0]->created_at)) }}">
+                           
+                              <div class=" col-md-3 col-sm-3 col-xs-12">
+
+                                <input type="text" readonly name="from_date" id="from_date" class="form-control" value="{{date("d-m-Y",strtotime($dates[0]))}}" placeholder="From Date"  />
+
+                            </div>
+
+                            <div class=" col-md-3 col-sm-3 col-xs-12">
+
+                                <input type="text" readonly name="to_date" id="to_date" class="form-control" value="{{date("d-m-Y",strtotime($dates[1]))}}" placeholder="To Date"  />
+
                             </div>
                         </div>
-
-
-
-                        <!-- <div class="form-group">
-                            <label class=" col-md-3 col-sm-3 col-xs-12" > Vehicle<span class="error">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select disabled id="vehicle_id" name="vehicle_id"  class="form-control select2_single col-md-7 col-xs-12 vehicle_id">
-                                    <option value=""></option>
-                                    @foreach($vehicle as $key=>$val)
-                                        <option {{ ($val->id == $billsummary[0]->vehicle_id) ? 'selected' : '' }} value="{{ $val->id }}">{{ $val->vehicle_no }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> -->
 
                         <div id="summayData">
                         <div class="table-responsive" style="width:100%;margin: 0 auto;">
