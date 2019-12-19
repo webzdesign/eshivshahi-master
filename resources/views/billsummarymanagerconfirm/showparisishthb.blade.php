@@ -848,6 +848,25 @@ function calDiesel($no){
 @endsection
 @section('script')
 <script type="text/javascript">
+
+    $(function(){
+        $(".wrapper1").scroll(function(){
+            var $th = $(this);
+          var $index = $("div.wrapper1").index(this);
+          $th.parent().find(".wrapper2:eq("+$index+")")
+                .scrollLeft($th.scrollLeft());
+        });
+        $(".wrapper2").scroll(function(){
+          var $th = $(this);
+          var $index = $("div.wrapper2").index(this);
+            $th.parent().find(".wrapper1:eq("+$index+")")
+            .scrollLeft($th.scrollLeft());
+        });
+        
+    });
+</script>
+<script type="text/javascript">
+
 jQuery(document).ready(function($){
     $('textarea').prop('readonly',true);
     $('input').prop('readonly',true);

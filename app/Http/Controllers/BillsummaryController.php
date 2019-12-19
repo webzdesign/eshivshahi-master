@@ -585,16 +585,17 @@ class BillsummaryController extends Controller
     public function store(Request $request){
 
 
+        DB::beginTransaction();
+      $b = Billsummary::select('bill_no')->orderBy('bill_no','desc')->lockForUpdate()->first();
 
-      $b = Billsummary::select('bill_no')->orderBy('bill_no','desc')->get();
+      if($b){
 
-      if($b->isEmpty()){
-
-        $billno = 1;
+        $billno = ($b->bill_no) + (1);
 
       }else{
 
-        $billno = ($b[0]->bill_no) + (1);
+        
+        $billno = 1;
 
       }
 
@@ -818,6 +819,8 @@ class BillsummaryController extends Controller
             $i++;
 
         }
+
+        DB::commit();
 
         $getModuleHierarchy = DB::table('module_hierarchies')->where('module_id','14')->orderBy('hierarchy_sequence','asc')->get();
 

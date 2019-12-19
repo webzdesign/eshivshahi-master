@@ -587,7 +587,7 @@ error_reporting(0);
 
                                                 <td><input type="text" class="form-control total_hault_exp"  value="{{array_sum($hault_tax)}}" name="total_hault_exp" id="total_hault_exp" readonly></td>
 
-                                                <td><input type="text" class="form-control total_wash_exp"  value="{{array_sum($wash_exp)}}" name="total_wash_exp" id="total_wash_exp" readonly></td>
+                                                <td><input type="text" class="form-control total_wash_exp"  value="{{array_sum($wash_exps)}}" name="total_wash_exp" id="total_wash_exp" readonly></td>
 
                                                 <td><input type="text" class="form-control" name="total_other_exp" id="total_other_exp" readonly></td>
 
