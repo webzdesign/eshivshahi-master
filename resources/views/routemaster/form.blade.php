@@ -265,13 +265,14 @@ jQuery(document).ready(function() {
 		var from_depot = $('#from_depot').val();
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
+		var schedule_number =$(".schedule_number").map(function(){return $(this).val();}).get().join(",");
 		var s_time = $(".s_time").map(function(){return $(this).val();}).get().join(",");
 
 		$.ajax({
 			url: "{{url('/checkScheduledTiming')}}",
 			type: "POST",
 			dataType:'json',
-			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time },
+			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time, schedule_number:schedule_number },
 			success:function(data){
 				if(data == false){
 					serverTimeStatus = 1;
@@ -294,12 +295,13 @@ jQuery(document).ready(function() {
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
 		var schedule_number =$(".schedule_number").map(function(){return $(this).val();}).get().join(",");
+		var s_time = $(".s_time").map(function(){return $(this).val();}).get().join(",");
 
 		$.ajax({
 			url: "{{url('/checkScheduledNumber')}}",
 			type: "POST",
 			dataType:'json',
-			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
+			data: { division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number, s_time:s_time },
 			success:function(data){
 				if(data == false){
 					serverNumberStatus = 1;
@@ -491,15 +493,16 @@ jQuery(document).ready(function() {
 		var timeVals = [];
 		var submitStatus = 0;
 		$('.s_time').each(function (){
-			if($(this).val() !=''){
-				var val = $(this).val();
-				if (jQuery.inArray( val,timeVals ) !== -1) {
-					submitStatus = 1;
-						var str = 'Scheduled Time Already Exists.';
-						var result = str.fontcolor("red");
-						$('body').find('#stime_duplicate_err').html(result);
+			if ($(this).val() !='') {
+				var snum = $(this).closest('tr').find('.schedule_number').val();
 
-				} else{
+				var val = $(this).val()+'='+snum;
+				if (jQuery.inArray( val,timeVals) !== -1) {
+					submitStatus = 1;
+					var str = 'Scheduled Time Already Exists.';
+					var result = str.fontcolor("red");
+					$('body').find('#stime_duplicate_err').html(result);
+				} else {
 					$('body').find('#stime_duplicate_err').html('');
 					timeVals.push(val);
 				}
@@ -509,14 +512,16 @@ jQuery(document).ready(function() {
 		var scheduleNumberVals = [];
 
 		$('.schedule_number').each(function (){
-			if($(this).val() !=''){
-				var val = $(this).val();
-				if (jQuery.inArray( val,scheduleNumberVals ) !== -1) {
+			if ($(this).val() !='') {
+				var stime = $(this).closest('tr').find('.s_time').val();
+
+				var val = $(this).val()+'='+stime;
+				if (jQuery.inArray( val,scheduleNumberVals) !== -1) {
 					submitStatus = 1;
 					var str = 'Scheduled Number Already Exists.';
 					var result = str.fontcolor("red");
 					$('body').find('#snumber_duplicate_err').html(result);
-				} else{
+				} else {
 					$('body').find('#snumber_duplicate_err').html('');
 					scheduleNumberVals.push(val);
 				}

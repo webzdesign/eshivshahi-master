@@ -211,12 +211,13 @@ jQuery(document).ready(function() {
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
 		var s_time = $('.s_time').val();
+		var schedule_number = $('.schedule_number').val();
 
 		$.ajax({
 			url: "{{url('/checkScheduledTiming')}}",
 			type: "POST",
 			dataType:'json',
-			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time },
+			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, s_time:s_time,schedule_number:schedule_number },
 			success:function(data){
 				if(data == false){
 					serverStatus = 1;
@@ -233,6 +234,7 @@ jQuery(document).ready(function() {
 
 	$('.s_time').on('dp.change', function(e){
 		checkvalidtime();
+		checkvalidSchNumber();
 	});
 	/* check Schedule time server side End */
 
@@ -245,13 +247,14 @@ jQuery(document).ready(function() {
 		var to_division = $('#to_division').val();
 		var to_depot = $('#to_depot').val();
 		var schedule_number = $('.schedule_number').val();
+		var s_time = $('.s_time').val();
 		
 
 		$.ajax({
 			url: "{{url('/checkScheduledNumber')}}",
 			type: "POST",
 			dataType:'json',
-			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number },
+			data: { id:id, division_id:division_id, from_depot:from_depot, to_division:to_division, to_depot:to_depot, schedule_number:schedule_number,s_time:s_time },
 			success:function(data){
 				if(data == false){
 					serverNumberStatus = 1;
@@ -268,6 +271,7 @@ jQuery(document).ready(function() {
 
 	$("body").on('keyup','.schedule_number' ,function(e){
 		checkvalidSchNumber();
+		checkvalidtime();
 	});
 
 	$("body").on('change', '#division_id, #from_depot, #to_division, #to_depot', function(e){

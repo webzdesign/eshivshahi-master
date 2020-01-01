@@ -207,34 +207,61 @@ class RouteMasterController extends Controller
 
     public function checkScheduledTiming(Request $request){
 
-        $scheduleNum = explode(",", $request->s_time);
+        $schTime = explode(",", $request->s_time);
+        $scheduleNumber = explode(",",$request->schedule_number);
 
         if (!isset($request->id)) {
-            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_time', $scheduleNum)->first();
+            $cnt = 0;
+            foreach ($schTime as $sTime) {
+                $scheduleNum = $scheduleNumber[$cnt];
+                $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $sTime)->where('scheduled_number', $scheduleNum)->first();
+                if ($checkTime) {
+                    echo json_encode(false);exit;
+                }
+                $cnt++;
+            }
+            echo json_encode(true);exit;
         } else {
-            $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_time', $scheduleNum)->where('id', '!=', $request->id)->first();
-        }
-        if($checkTime)
-        {
-            echo json_encode(false);
-        } else {
-            echo json_encode(true);
+            $cnt = 0;
+            foreach ($schTime as $sTime) {
+                $scheduleNum = $scheduleNumber[$cnt];
+                $checkTime = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_time', $sTime)->where('scheduled_number', $scheduleNum)->where('id', '!=', $request->id)->first();
+                if ($checkTime) {
+                    echo json_encode(false);exit;
+                }
+                $cnt++;
+            }
+            echo json_encode(true);exit;
         }
     }
 
     public function checkScheduledNumber(Request $request)
     {
-        $scheduleNumber = explode(",",$request->schedule_number);   
+        $scheduleNumber = explode(",",$request->schedule_number);
+        $schTime = explode(",", $request->s_time);
+
         if (!isset($request->id)) {
-            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_number', $scheduleNumber)->first();
+            $cnt = 0;
+            foreach ($scheduleNumber as $schNum) {
+                $scheduleTime = $schTime[$cnt];
+                $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $schNum)->where('scheduled_time', $scheduleTime)->first();
+                if ($checkNumber) {
+                    echo json_encode(false);exit;
+                }
+                $cnt++;
+            }
+            echo json_encode(true);exit;
         } else {
-            $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->whereIn('scheduled_number', $scheduleNumber)->where('id', '!=', $request->id)->first();
-        }
-        if($checkNumber)
-        {
-            echo json_encode(false);
-        } else {
-            echo json_encode(true);
+            $cnt = 0;
+            foreach ($scheduleNumber as $schNum) {
+                $scheduleTime = $schTime[$cnt];
+                $checkNumber = RouteMaster::where('division_id', $request->division_id)->where('from_depot',$request->from_depot)->where('to_division', $request->to_division)->where('to_depot', $request->to_depot)->where('scheduled_number', $schNum)->where('scheduled_time', $scheduleTime)->where('id', '!=', $request->id)->first();
+                if ($checkNumber) {
+                    echo json_encode(false);exit;
+                }
+                $cnt++;
+            }
+            echo json_encode(true);exit;
         }
     }
 }
