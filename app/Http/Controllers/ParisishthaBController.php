@@ -953,7 +953,7 @@ class ParisishthaBController extends Controller
 
 
 
-        $parisishthaA = parisishthaA::where('parisishtha_b_id', $id)->first();
+        $parisishthaA = parisishthaA::where('parisishtha_b_id', $id)->where('delete_status', 0)->first();
 
         if($parisishthaA){
 
